@@ -9,6 +9,9 @@ import type { ReactNode } from 'react';
 
 const ArrowHead = createContext('');
 
+/** Labels are set at 13 px. Below this share of its drawn width a diagram's labels fall under 11 px. */
+const SMALLEST_SCALE = 11 / 13;
+
 export function Diagram({
   width,
   height,
@@ -28,7 +31,9 @@ export function Diagram({
       viewBox={`0 0 ${width} ${height}`}
       role="img"
       aria-label={label}
-      style={{ maxWidth: width }}
+      // On a narrow screen the diagram stops shrinking while its labels can
+      // still be read, and its frame scrolls sideways instead.
+      style={{ maxWidth: width, minWidth: Math.ceil(width * SMALLEST_SCALE) }}
     >
       <defs>
         <marker id={head} viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
