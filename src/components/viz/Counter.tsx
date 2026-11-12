@@ -45,8 +45,9 @@ export function Counter({ value, format = group, mode = 'subtle', className }: C
       key={shown.tick}
       className={`t-subtle-number mono ${shown.tick > 0 ? 'is-animating ' : ''}${className ?? ''}`}
       style={{ '--subtle-dir': shown.direction } as CSSProperties}
-      aria-label={text}
     >
+      {/* The value once, as text, for readers who do not see the digits move. */}
+      <span className="visually-hidden">{text}</span>
       {[...text].map((char, index) =>
         sameLength && shown.previous[index] === char ? (
           <span key={index} aria-hidden="true">

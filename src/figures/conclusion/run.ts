@@ -9,7 +9,7 @@
  */
 import { bytesToHex, hexToBytes, utf8 } from '@/lib/bytes';
 import { sha256, sha256Hex } from '@/lib/hash';
-import { GENESIS_HASH, bitsToTarget, targetFromZeroBits, targetToBits } from '@/lib/header';
+import { GENESIS_HASH, compactTargetFromZeroBits } from '@/lib/header';
 import type { BlockHeader } from '@/lib/header';
 import { keyPairFromPrivate, pubkeyToAddress, sign, verify } from '@/lib/keys';
 import { merkleProof, merkleRoot, verifyProof } from '@/lib/merkle';
@@ -93,8 +93,8 @@ export function runOnce(): MachineRun {
   const blockTxids = [coinbase, ...mempool];
   const root = merkleRoot(blockTxids);
 
-  const bits = targetToBits(targetFromZeroBits(ZERO_BITS));
-  const found = mineSync({ version: 1, prevHash: GENESIS_HASH, merkleRoot: root, time: 1231006505 + 600, bits, nonce: 0 }, bitsToTarget(bits), 5_000_000);
+  const { bits, target } = compactTargetFromZeroBits(ZERO_BITS);
+  const found = mineSync({ version: 1, prevHash: GENESIS_HASH, merkleRoot: root, time: 1231006505 + 600, bits, nonce: 0 }, target, 5_000_000);
   const header: BlockHeader = { version: 1, prevHash: GENESIS_HASH, merkleRoot: root, time: 1231006505 + 600, bits, nonce: found.nonce };
 
   const proof = merkleProof(blockTxids, blockTxids.indexOf(id));

@@ -134,7 +134,7 @@ one band (`fig-band`) for the hash, solid blocks whose state is their fill,
 and a list of actors with hairlines between them.
 
 - Use the shared parts: `BlockTile`, `ChainRow`, `HashText`, `Counter`, `HexView` from `src/components/viz`.
-- Use the shared classes from `src/styles`: `fig-stack`, `fig-row`, `fig-group`, `fig-band`, `fig-pointed`, `fig-note`, `fig-status`, `stat`, `label`, `mono`, `ui`, `poster`, `tag`, `tag-orange`, `tag-line`, `tag-valid`, `tag-invalid`, `btn`, `btn-dark`, `btn-line`, `btn-sm`.
+- Use the shared classes from `src/styles`: `fig-stack`, `fig-row`, `fig-group`, `fig-band`, `fig-pointed`, `fig-note`, `fig-status`, `stat-value`, `label`, `mono`, `ui`, `poster`, `tag`, `tag-orange`, `tag-line`, `tag-valid`, `tag-invalid`, `btn`, `btn-dark`, `btn-line`, `btn-sm`.
 - Controls: `Slider`, `SegmentedControl`, `Switch` from `src/components/base`; plain `<button className="btn …">` for actions; every input has a visible label.
 - Colours only through the tokens: `--color-orange`, `--color-orange-ink`, `--color-orange-soft`, `--color-ink`, `--color-ink-2`, `--color-ink-3`, `--color-ink-4`, `--color-cream`, `--color-cream-2`, `--color-cream-3`, `--color-paper`, `--color-rule`, `--color-valid`, `--color-valid-soft`, `--color-invalid`, `--color-invalid-soft`. No new colours, no gradients, no rounded corners, no soft shadows.
 - Text needs 4.5 to 1 against its ground (3 to 1 from 24 px, or 18.66 px in the display face). Orange type on a light ground is `--color-orange-ink`, never `--color-orange`; `--color-ink-4` is for marks, not words; dimming with `opacity` counts against the ratio. The audit below measures it.

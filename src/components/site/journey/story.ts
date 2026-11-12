@@ -1,6 +1,6 @@
-import { toyTarget } from '@/figures/pow/blocks';
 import { bytesToHex, hexToBytes } from '@/lib/bytes';
 import { sha256Hex } from '@/lib/hash';
+import { compactTargetFromZeroBits } from '@/lib/header';
 import type { BlockHeader } from '@/lib/header';
 import { keyPairFromPrivate, pubkeyToAddress, sign } from '@/lib/keys';
 import { merkleProof, merkleRoot } from '@/lib/merkle';
@@ -85,7 +85,7 @@ export function buildStory(): Story {
   const txIndex = blockTxids.indexOf(id);
   const root = merkleRoot(blockTxids);
 
-  const { bits, target } = toyTarget(ZERO_BITS);
+  const { bits, target } = compactTargetFromZeroBits(ZERO_BITS);
   const tip = HERO_SEED[HERO_SEED.length - 1];
   const header: BlockHeader = {
     version: 1,

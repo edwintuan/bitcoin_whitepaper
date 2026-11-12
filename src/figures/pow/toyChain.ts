@@ -1,13 +1,12 @@
 import { utf8, wireToHash } from '@/lib/bytes';
 import { sha256d } from '@/lib/hash';
-import { GENESIS_HASH, headerHash, meetsTarget } from '@/lib/header';
+import { GENESIS_HASH, compactTargetFromZeroBits, headerHash, meetsTarget } from '@/lib/header';
 import type { BlockHeader } from '@/lib/header';
 import { mineSync } from '@/lib/miner';
-import { toyTarget } from './blocks';
 
 /** Easy enough to redo in a second or two, hard enough to watch. */
 export const TOY_ZERO_BITS = 10;
-const { bits: TOY_BITS, target } = toyTarget(TOY_ZERO_BITS);
+const { bits: TOY_BITS, target } = compactTargetFromZeroBits(TOY_ZERO_BITS);
 export const TOY_TARGET = target;
 
 /** A block of the tamper scene: real header, one line of text for contents. */

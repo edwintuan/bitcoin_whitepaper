@@ -5,10 +5,10 @@ import { useFigure } from '@/components/site/FigureFrame';
 import { HashText } from '@/components/viz/HashText';
 import { useSettings, useT } from '@/i18n/settings';
 import { cx } from '@/utils/cx';
-import { leadingZeroBits, targetToHex } from '@/lib/header';
+import { compactTargetFromZeroBits, leadingZeroBits, targetToHex } from '@/lib/header';
 import { useMiner } from '@/state/useMiner';
 import { fill, formatCount } from '@/text/format';
-import { BLOCK_1, HEADER_FIELDS, expectedTries, toyTarget } from './blocks';
+import { BLOCK_1, HEADER_FIELDS, expectedTries } from './blocks';
 import type { HeaderField } from './blocks';
 import { COPY } from './copy';
 import type { Point } from './steps';
@@ -31,7 +31,7 @@ export function MineScene({ point }: { point: Point | null }) {
   // The last speed this machine was timed at: enough to say how long a harder block would take.
   const [speed, setSpeed] = useState(0);
 
-  const { bits, target } = useMemo(() => toyTarget(zeroBits), [zeroBits]);
+  const { bits, target } = useMemo(() => compactTargetFromZeroBits(zeroBits), [zeroBits]);
   const { view, start, stop, reset } = useMiner({ active, calm: reducedMotion });
 
   const time = BLOCK_1.time + runs;

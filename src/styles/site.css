@@ -629,21 +629,12 @@
     color: var(--color-orange);
     font-weight: 500;
   }
-  .stat {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    min-width: 0;
-  }
   .stat-value {
     font-family: var(--font-display);
     font-size: clamp(26px, 3.4vw, 38px);
     line-height: 1;
     letter-spacing: 0.01em;
     font-variant-numeric: tabular-nums;
-  }
-  .stat-label {
-    color: var(--color-ink-3);
   }
   .fig-tabs {
     margin-bottom: 14px;

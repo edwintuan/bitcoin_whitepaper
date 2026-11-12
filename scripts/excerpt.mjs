@@ -20,4 +20,4 @@ const file = join(dirname(fileURLToPath(import.meta.url)), '..', 'reference', ta
 const lines = readFileSync(file, 'utf8').replace(/\r\n/g, '\n').split('\n');
 const excerpt = lines.slice(Number(from) - 1, Number(to)).join('\n');
 const escaped = excerpt.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$\{/g, '\\${');
-process.stdout.write(`String.raw-free template literal for ${tag}/${path} L${from}-L${to}:\n\`${escaped}\`\n`);
+process.stdout.write(`${tag}/${path}, lines ${from} to ${to}, as a template literal:\n\`${escaped}\`\n`);

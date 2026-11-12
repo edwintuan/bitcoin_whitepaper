@@ -1,12 +1,12 @@
 import { utf8, wireToHash } from '@/lib/bytes';
 import { sha256d } from '@/lib/hash';
-import { bitsToTarget, targetFromZeroBits, targetToBits } from '@/lib/header';
+import { compactTargetFromZeroBits } from '@/lib/header';
 import type { BlockHeader } from '@/lib/header';
 
 /** Leading zero bits a hero block needs: about 16,000 tries, a few seconds at the capped rate. */
 export const HERO_ZERO_BITS = 14;
-const HERO_BITS = targetToBits(targetFromZeroBits(HERO_ZERO_BITS));
-export const HERO_TARGET = bitsToTarget(HERO_BITS);
+const { bits: HERO_BITS, target } = compactTargetFromZeroBits(HERO_ZERO_BITS);
+export const HERO_TARGET = target;
 
 /** Hashes per second the hero allows itself. Enough to watch, light on the reader's machine. */
 export const HERO_RATE = 4200;

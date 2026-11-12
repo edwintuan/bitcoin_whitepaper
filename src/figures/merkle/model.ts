@@ -5,7 +5,7 @@
  * recomputed from what is left all come from the engine in src/lib.
  */
 import { sha256Hex } from '@/lib/hash';
-import { GENESIS_HASH, bitsToTarget, targetFromZeroBits, targetToBits } from '@/lib/header';
+import { GENESIS_HASH, compactTargetFromZeroBits } from '@/lib/header';
 import type { BlockHeader } from '@/lib/header';
 import { merkleRoot, prunableNodes } from '@/lib/merkle';
 import type { PrunedStore } from '@/lib/merkle';
@@ -42,8 +42,8 @@ export function blockTxids(count: number): string[] {
 /* ------------------------------------------------------------------- header */
 
 /** Easy enough to mine in a few milliseconds whenever the transactions change. */
-const BLOCK_BITS = targetToBits(targetFromZeroBits(10));
-export const BLOCK_TARGET = bitsToTarget(BLOCK_BITS);
+const { bits: BLOCK_BITS, target: blockTarget } = compactTargetFromZeroBits(10);
+export const BLOCK_TARGET = blockTarget;
 
 /**
  * A real header for the block: it commits to the transactions through the

@@ -152,14 +152,11 @@
 }
 
 @layer base {
-  /* The whole identity is square. Circles are opted into with .is-round. */
+  /* The whole identity is square. */
   *,
   ::before,
   ::after {
     border-radius: 0 !important;
-  }
-  .is-round {
-    border-radius: 9999px !important;
   }
 
   html {
@@ -383,19 +380,6 @@
   .panel {
     background: var(--color-paper);
     border: 3px solid var(--color-ink);
-  }
-  .panel-ink {
-    background: var(--color-ink);
-    color: var(--color-cream);
-  }
-  .rule-3 {
-    border-bottom: 3px solid var(--color-ink);
-  }
-  .rule-2 {
-    border-bottom: 2px solid var(--color-ink);
-  }
-  .rule-1 {
-    border-bottom: 1px solid var(--color-rule);
   }
 
   /* ---- buttons ---------------------------------------------------------- */

@@ -2,7 +2,7 @@
 import { describe, expect, it } from 'vitest';
 import { bytesToHex } from './bytes';
 import {
-  GENESIS_HASH, GENESIS_HEADER, bitsToTarget, hashToBigInt, headerHash, leadingZeroBits,
+  GENESIS_HASH, GENESIS_HEADER, bitsToTarget, compactTargetFromZeroBits, hashToBigInt, headerHash, leadingZeroBits,
   meetsTarget, serializeHeader, targetFromZeroBits, targetToBits, targetToHex,
 } from './header';
 import type { BlockHeader } from './header';
@@ -196,5 +196,30 @@ describe('compact target', () => {
     expect(() => hashToBigInt('g' + '0'.repeat(63))).toThrow(RangeError);
     expect(() => leadingZeroBits('0'.repeat(65))).toThrow(RangeError);
     expect(() => meetsTarget('0x' + '0'.repeat(62), 1n)).toThrow(RangeError);
+  });
+});
+
+describe('compactTargetFromZeroBits', () => {
+  it('gives a target a header can declare: packing it again yields the same four bytes', () => {
+    for (let n = 0; n <= 64; n++) {
+      const { bits, target } = compactTargetFromZeroBits(n);
+      expect(bitsToTarget(bits)).toBe(target);
+      expect(targetToBits(target)).toBe(bits);
+    }
+  });
+
+  it('asks for exactly the zero bits it was given, and is only a hair harder than the exact target', () => {
+    for (let n = 1; n <= 64; n++) {
+      const { target } = compactTargetFromZeroBits(n);
+      expect(leadingZeroBits(targetToHex(target))).toBe(n);
+      // The compact form keeps three bytes of precision: never easier than asked.
+      expect(target <= targetFromZeroBits(n)).toBe(true);
+      expect(meetsTarget(targetToHex(target), targetFromZeroBits(n))).toBe(true);
+    }
+  });
+
+  it('refuses what targetFromZeroBits refuses', () => {
+    expect(() => compactTargetFromZeroBits(-1)).toThrow(RangeError);
+    expect(() => compactTargetFromZeroBits(1.5)).toThrow(RangeError);
   });
 });

@@ -139,6 +139,21 @@ export function targetFromZeroBits(n: number): bigint {
 }
 
 /**
+ * The toy difficulty as a header can declare it: the target for `n` leading
+ * zero bits packed into the four-byte compact form, and that form expanded
+ * again. A figure that mines against the expanded value shows a `bits` field
+ * and a target that are one and the same number, as on the real chain. The
+ * compact form keeps three bytes of precision, so the target is never easier
+ * than `targetFromZeroBits(n)` and only a hair harder.
+ *
+ * @throws RangeError unless `n` is an integer within 0 … 256.
+ */
+export function compactTargetFromZeroBits(n: number): { bits: number; target: bigint } {
+  const bits = targetToBits(targetFromZeroBits(n));
+  return { bits, target: bitsToTarget(bits) };
+}
+
+/**
  * Reads a display-order hash as the 256-bit number that proof-of-work compares
  * with the target. Display order is big-endian, so the string converts as written.
  *

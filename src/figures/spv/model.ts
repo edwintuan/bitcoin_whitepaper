@@ -7,7 +7,7 @@
  */
 import { utf8, wireToHash } from '@/lib/bytes';
 import { sha256Hex, sha256d } from '@/lib/hash';
-import { GENESIS_HASH, bitsToTarget, targetFromZeroBits, targetToBits } from '@/lib/header';
+import { GENESIS_HASH, compactTargetFromZeroBits } from '@/lib/header';
 import type { BlockHeader } from '@/lib/header';
 import { merkleProof, merkleRoot } from '@/lib/merkle';
 import type { ProofStep } from '@/lib/merkle';
@@ -90,9 +90,9 @@ export function nodeRoles(leafCount: number, index: number): NodeRole[][] {
 
 /* ------------------------------------------------------------- the headers */
 
-const CHAIN_BITS = targetToBits(targetFromZeroBits(10));
 /** A toy target: about a thousand tries a block, so the chain is mined as the page loads. */
-export const CHAIN_TARGET = bitsToTarget(CHAIN_BITS);
+const { bits: CHAIN_BITS, target: chainTarget } = compactTargetFromZeroBits(10);
+export const CHAIN_TARGET = chainTarget;
 
 /** Position, in `headerChain()`, of the block that holds the payments. */
 export const PAYMENT_BLOCK = 1;
