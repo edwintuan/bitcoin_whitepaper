@@ -320,7 +320,7 @@ export function Journey() {
                   onClick={() => pick(index)}
                 >
                   <span className="station-top">
-                    <span className="station-no mono">{index + 1}</span>
+                    <span className="station-no mono">{String(index + 1).padStart(2, '0')}</span>
                     <ActorIcon id={item.actor} size={24} />
                   </span>
                   <span className="station-name poster">{t(item.name ?? ACTORS[item.actor].name)}</span>

@@ -108,12 +108,31 @@ The stage is about 560 px wide beside the text on a desktop and about 358 px
 on a phone. It must work at both without horizontal scrolling, except inside
 code and byte views.
 
+**One frame, nothing boxed inside it.** The frame `FigureFrame` draws is the
+figure's only border. Inside the stage:
+
+- Tell things apart with space, a label, a 1 px rule (`fig-group`) or the one
+  tint (`fig-band`). Do not put a border around a group, a readout, a list, a
+  legend or a set of controls.
+- An object of the story (a block, a transaction, a coin, a message) is a solid
+  shape, filled, with no outline, and it never contains another bordered box.
+  Fields inside it are lines of text separated by hairlines.
+- The walkthrough points at a part with `fig-pointed`, an orange bar in the
+  gutter beside it. Never an outline around it.
+- A state such as "not checked" is words (`tag-line`), not a boxed pill. Only
+  results that matter get a filled tag (`tag-valid`, `tag-invalid`, `tag`).
+- No element whose only job is to wrap one other element. If a `div` has no
+  class that changes how something looks or works, delete it.
+
+Section 4 after this rule is the model: a ruled list under one heavy line, a
+tinted band for the hash, and a list of actors with hairlines between them.
+
 - Use the shared parts: `BlockTile`, `ChainRow`, `HashText`, `Counter`, `HexView` from `src/components/viz`.
-- Use the shared classes from `src/styles`: `fig-stack`, `fig-row`, `fig-note`, `fig-status`, `stat`, `label`, `mono`, `ui`, `poster`, `panel`, `tag`, `tag-orange`, `tag-line`, `tag-valid`, `tag-invalid`, `btn`, `btn-dark`, `btn-line`, `btn-sm`.
+- Use the shared classes from `src/styles`: `fig-stack`, `fig-row`, `fig-group`, `fig-band`, `fig-pointed`, `fig-note`, `fig-status`, `stat`, `label`, `mono`, `ui`, `poster`, `tag`, `tag-orange`, `tag-line`, `tag-valid`, `tag-invalid`, `btn`, `btn-dark`, `btn-line`, `btn-sm`.
 - Controls: `Slider`, `SegmentedControl`, `Switch` from `src/components/base`; plain `<button className="btn …">` for actions; every input has a visible label.
 - Colours only through the tokens: `--color-orange`, `--color-orange-ink`, `--color-orange-soft`, `--color-ink`, `--color-ink-2`, `--color-ink-3`, `--color-ink-4`, `--color-cream`, `--color-cream-2`, `--color-cream-3`, `--color-paper`, `--color-rule`, `--color-valid`, `--color-invalid`. No new colours, no gradients, no rounded corners, no soft shadows.
 - Orange is the one accent: what is live, selected or newly valid. Green and red are only for the outcome of a check, and never the only signal: pair them with a word or a mark.
-- Borders: 3 px ink around a panel, 2 px inside it, 1 px `--color-rule` for quiet dividers.
+- Rules, not boxes: a 3 px ink line above a list or a result, 1 px `--color-rule` between rows and groups. Borders on all four sides belong to the figure's frame and to form controls only.
 - Figure styles go in a plain CSS file beside the figure, with a class prefix of its own.
 
 ### Motion

@@ -480,11 +480,11 @@
     background: var(--color-orange);
     color: var(--color-ink);
   }
+  /* A quiet state such as "not checked": words only, no box around them. */
   .tag-line {
+    padding-inline: 0;
     background: transparent;
-    color: var(--color-ink);
-    outline: 2px solid var(--color-ink);
-    outline-offset: -2px;
+    color: var(--color-ink-3);
   }
   .tag-valid {
     background: var(--color-valid);

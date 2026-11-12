@@ -3,6 +3,7 @@ import { Slider } from '@/components/base/slider/slider';
 import { useFigure } from '@/components/site/FigureFrame';
 import { HashText } from '@/components/viz/HashText';
 import { useT } from '@/i18n/settings';
+import { cx } from '@/utils/cx';
 import { leadingZeroBits, targetToHex } from '@/lib/header';
 import { BLOCK_1, expectedTries, toyTarget } from './blocks';
 import { fill, formatCount } from '@/text/format';
@@ -62,8 +63,8 @@ export function MineScene({ highlight }: { highlight: MineHighlight }) {
   };
 
   return (
-    <div className="pow-mine fig-stack" data-hl={highlight ?? undefined}>
-      <div className="pow-header" data-region="header">
+    <div className="pow-mine fig-stack">
+      <div className={cx(highlight === 'header' && 'fig-pointed')}>
         <p className="label pow-cap">{t(COPY.headerCaption)}</p>
         <ul className="pow-fields">
           {FIELDS.map(({ key, bytes }) => (
@@ -110,21 +111,7 @@ export function MineScene({ highlight }: { highlight: MineHighlight }) {
         </p>
       </div>
 
-      <div className="pow-controls" data-region="difficulty">
-        <div className="pow-slider">
-          <Slider
-            label={t(COPY.zeroBits)}
-            thumbLabel={t(COPY.zeroBits)}
-            minValue={4}
-            maxValue={24}
-            step={1}
-            value={zeroBits}
-            onChange={(value) => {
-              reset();
-              setZeroBits(value);
-            }}
-          />
-        </div>
+      <div className={cx(highlight === 'difficulty' && 'fig-pointed')}>
         <dl className="pow-facts">
           <div>
             <dt className="label">{t(COPY.zeroBits)}</dt>
@@ -141,9 +128,20 @@ export function MineScene({ highlight }: { highlight: MineHighlight }) {
             </dd>
           </div>
         </dl>
+        <Slider
+          thumbLabel={t(COPY.zeroBits)}
+          minValue={4}
+          maxValue={24}
+          step={1}
+          value={zeroBits}
+          onChange={(value) => {
+            reset();
+            setZeroBits(value);
+          }}
+        />
       </div>
 
-      <div className="fig-row" data-region="mine">
+      <div className={cx('fig-row', highlight === 'mine' && 'fig-pointed')}>
         {view.status === 'mining' ? (
           <button type="button" className="btn btn-dark" onClick={stop}>
             {t(COPY.stop)}

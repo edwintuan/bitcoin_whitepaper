@@ -529,7 +529,39 @@
     color: var(--color-ink-2);
   }
 
-  /* Inside a figure: shared vocabulary for controls and readouts. */
+  /*
+   * Inside a figure: shared vocabulary for controls and readouts.
+   *
+   * The figure's own frame is the only box. Inside it, things are told apart
+   * by space, a hairline or one tint, never by another border around them.
+   */
+
+  /* The walkthrough's pointer: an orange bar in the gutter beside the part a step talks about. */
+  .fig-pointed {
+    position: relative;
+  }
+  .fig-pointed::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -12px;
+    width: 4px;
+    background: var(--color-orange);
+    animation: t-fade-in var(--duration-fast) var(--ease-out);
+  }
+  /* A group with a label, set off from the one above by a hairline. */
+  .fig-group + .fig-group {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--color-rule);
+  }
+  /* The one tint: a band for the result a figure is about. */
+  .fig-band {
+    padding: 10px 12px;
+    background: var(--color-cream);
+  }
+
   .fig-row {
     display: flex;
     flex-wrap: wrap;
@@ -746,18 +778,22 @@
   }
 
   /* ------------------------------------------------------------------- who */
+  /* A list, not cards: one actor after another, a hairline between them. */
   .who {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-    gap: 10px;
     margin: 0;
     padding: 0;
     list-style: none;
   }
-  .who-card {
-    padding: 12px 14px 14px;
-    background: var(--color-paper);
-    border: 2px solid var(--color-ink);
+  .who-item {
+    padding: 14px 0 16px;
+    border-top: 1px solid var(--color-rule);
+  }
+  .who-item:first-child {
+    padding-top: 2px;
+    border-top: 0;
+  }
+  .who-item:last-child {
+    padding-bottom: 0;
   }
   .who-head {
     display: flex;
@@ -773,17 +809,12 @@
   .who-role {
     margin: 8px 0 0;
   }
-  .who-artifact {
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 2px solid var(--color-ink);
-  }
   .who-artifact-head {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 6px 8px;
-    margin: 0;
+    margin: 10px 0 0;
   }
   .who-label {
     font-size: 12.5px;
@@ -1441,15 +1472,16 @@
   }
 
   /* ---- glossary ---- */
+  /* A row of words; only the chosen one is filled. Ten outlined boxes in a row is ten boxes too many. */
   .cat-chips {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 4px 2px;
     margin-top: 22px;
   }
   .cat-chip {
     padding: 5px 10px 4px;
-    border: 2px solid var(--color-ink);
+    border: 0;
     background: transparent;
     font-family: var(--font-mono), var(--font-sans);
     font-size: 11px;
@@ -1705,10 +1737,8 @@
     margin: 0;
     padding: 0;
     list-style: none;
-    border: 2px solid var(--color-cream);
-  }
-  .journey-track li + li {
-    border-left: 2px solid var(--color-cream);
+    /* One line the stops hang from, not a box around each of them. */
+    border-top: 2px solid var(--color-cream);
   }
   .station {
     display: flex;
@@ -1743,15 +1773,12 @@
     width: 100%;
   }
   .station-no {
-    padding: 1px 6px;
-    border: 2px solid currentColor;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 500;
+    letter-spacing: 0.06em;
   }
   .station[data-state='done'] .station-no {
-    background: var(--color-cream);
-    border-color: var(--color-cream);
-    color: var(--color-ink);
+    color: var(--color-orange);
   }
   .station-name {
     font-size: clamp(15px, 1.5vw, 19px);
@@ -1831,8 +1858,8 @@
   }
 
   .journey-artifact {
-    padding: 14px 16px;
-    border: 2px solid var(--color-cream);
+    padding-left: 16px;
+    border-left: 2px solid var(--color-cream);
     font-size: 12px;
     line-height: 1.7;
   }

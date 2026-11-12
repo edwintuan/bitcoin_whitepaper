@@ -88,28 +88,26 @@ export function WhoRuns({ items }: { items: WhoRunsItem[] }) {
       {items.map((item) => {
         const actor = ACTORS[item.actor];
         return (
-          <li className="who-card" key={`${item.actor}-${item.artifact.label}`}>
-            <div className="who-head">
+          <li className="who-item" key={`${item.actor}-${item.artifact.label}`}>
+            <p className="who-head">
               <ActorIcon id={item.actor} />
               <span className="who-name poster">{t(actor.name)}</span>
-            </div>
+            </p>
             <p className="who-role ui">
               <Rich text={t(item.role)} />
             </p>
-            <div className="who-artifact">
-              <p className="who-artifact-head">
-                <span className="tag">{t(UI.artifact[item.artifact.kind])}</span>
-                <code className="who-label">{item.artifact.label}</code>
-              </p>
-              <p className="who-detail ui">
-                <Rich text={t(item.artifact.detail)} />
-              </p>
-              {item.artifact.snippet && depth === 'developer' ? (
-                <pre className="who-snippet on-ink" tabIndex={0}>
-                  {item.artifact.snippet}
-                </pre>
-              ) : null}
-            </div>
+            <p className="who-artifact-head">
+              <span className="tag">{t(UI.artifact[item.artifact.kind])}</span>
+              <code className="who-label">{item.artifact.label}</code>
+            </p>
+            <p className="who-detail ui">
+              <Rich text={t(item.artifact.detail)} />
+            </p>
+            {item.artifact.snippet && depth === 'developer' ? (
+              <pre className="who-snippet on-ink" tabIndex={0}>
+                {item.artifact.snippet}
+              </pre>
+            ) : null}
           </li>
         );
       })}

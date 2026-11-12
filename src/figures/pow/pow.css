@@ -13,11 +13,12 @@
 }
 
 /* ---- header fields ---- */
+/* A ruled list under one heavy line, not a box: the figure's frame is the only border. */
 .pow-fields {
   margin: 0;
   padding: 0;
   list-style: none;
-  border: 3px solid var(--color-ink);
+  border-top: 3px solid var(--color-ink);
 }
 .pow-field {
   display: grid;
@@ -76,7 +77,6 @@
 /* ---- hash readout ---- */
 .pow-result {
   padding: 10px 12px;
-  border: 3px solid var(--color-ink);
   background: var(--color-cream);
   transition:
     background-color var(--duration-fast) var(--ease-out),
@@ -107,7 +107,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px 28px;
-  margin: 10px 0 0;
+  margin: 0 0 4px;
 }
 .pow-facts dt {
   color: var(--color-ink-3);
@@ -141,20 +141,13 @@
   --shimmer-highlight: var(--color-orange);
 }
 
-/* The guided steps point at one region at a time. */
-[data-hl='header'] [data-region='header'],
-[data-hl='difficulty'] [data-region='difficulty'],
-[data-hl='mine'] [data-region='mine'] {
-  outline: 3px solid var(--color-orange);
-  outline-offset: 7px;
-}
-
 /* ---- tamper ---- */
+/* A field cut into the block, without a border of its own. */
 .pow-data input {
   width: 100%;
   margin-top: 8px;
-  padding: 5px 7px;
-  border: 2px solid var(--color-ink);
+  padding: 6px 8px;
+  border: 0;
   background: var(--color-paper);
   color: var(--color-ink);
   font-family: var(--font-mono), var(--font-sans);
@@ -164,7 +157,7 @@
   opacity: 0.6;
 }
 .tile[data-state='invalid'] .pow-data input {
-  border-color: var(--color-invalid);
+  background: var(--color-invalid-soft);
 }
 
 /* ---- genesis ---- */
