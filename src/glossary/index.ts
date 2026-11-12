@@ -5,7 +5,7 @@ export { TERMS, TERMS_WITH_VISUALS, TERM_IDS } from './terms';
 
 // A term's visual is the file visuals/<term-id>.tsx with a default export.
 // It is drawn on the black card: use cream and orange, no backgrounds.
-const visualLoaders = import.meta.glob<{ default: ComponentType }>('./visuals/*.tsx');
+const visualLoaders = import.meta.glob<{ default: ComponentType }>(['./visuals/*.tsx', '!**/*.test.tsx']);
 const visuals = new Map<string, LazyExoticComponent<ComponentType>>();
 
 export function hasVisual(termId: string): boolean {

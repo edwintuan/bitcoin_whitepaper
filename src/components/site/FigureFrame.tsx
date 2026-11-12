@@ -38,7 +38,7 @@ export const useFigure = () => useContext(FigureContext);
 /* ------------------------------------------------------------- lazy loading */
 
 // One chunk per figure: src/figures/<Name>.tsx with a default export.
-const loaders = import.meta.glob<{ default: ComponentType }>('../../figures/*.tsx');
+const loaders = import.meta.glob<{ default: ComponentType }>(['../../figures/*.tsx', '!**/*.test.tsx']);
 const loaded = new Map<string, LazyExoticComponent<ComponentType>>();
 
 function figureFor(name: string): LazyExoticComponent<ComponentType> | null {

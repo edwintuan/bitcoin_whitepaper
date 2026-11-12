@@ -158,6 +158,6 @@ Draw arrows after boxes so their heads are not painted over.
     --do 'goto:#network' --do 'wait:800' --do 'full:network-phone-zh'
   ```
 
-  A keyword is a `span` with the class `kw` and the button role. To look at a term's card and its visual: `--do 'goto:#glossary' --do 'click:#term-nonce .kw' --do 'wait:600' --do 'shot:card-nonce'`.
+  A keyword is a `span` with the class `kw` and the button role. To look at a term's card and its visual: `--do 'goto:#term-nonce' --do 'wait:500' --do 'click:#term-nonce .kw' --do 'wait:700' --do 'shot:card-nonce'`. Go to the entry and let the page come to rest first: a card closes if the page scrolls under it.
 
   Open the images and fix what is wrong: overflow, overlap, clipped text, poor contrast, misalignment, a walkthrough step that does not show what it says. Check both languages, all three reading depths (`--depth starter|curious|developer`), and `--reduced`.

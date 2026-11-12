@@ -5,7 +5,7 @@ import { UI } from '@/content/ui';
 import { useSettings, useT } from '@/i18n/settings';
 
 // Static redraws of the paper's seven diagrams: paper-figures/<id>.tsx.
-const figureLoaders = import.meta.glob<{ default: ComponentType }>('./paper-figures/*.tsx');
+const figureLoaders = import.meta.glob<{ default: ComponentType }>(['./paper-figures/*.tsx', '!**/*.test.tsx']);
 const figures = new Map<string, LazyExoticComponent<ComponentType>>();
 
 function PaperFigure({ id }: { id: PaperFigureId }) {
