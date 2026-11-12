@@ -338,3 +338,132 @@ describe('inventory type names', () => {
     expect(annotateMessage(encodeMessage('getdata', encodeInv([{ type, hash: TX }])))[5].value).toBe(name);
   });
 });
+
+// The transaction whose id is TX, the second of block 170: its 275 bytes as a `tx` message carries them.
+const TX_RAW = hexToBytes(
+  '0100000001c997a5e56e104102fa209c6a852dd90660a20b2d9c352423edce25857fcd3704000000004847304402204e45e16932b8af5149' +
+    '61a1d3a1a25fdf3f4f7732e9d624c6c61548ab5fb8cd410220181522ec8eca07de4860a4acdd12909d831cc56cbbac4622082221a8768d1d' +
+    '0901ffffffff0200ca9a3b00000000434104ae1a62fe09c5f51b13905f07f06b99a2f7159b2225f374cd378d71302fa28414e7aab37397f5' +
+    '54a7df5f142c21c1b7303b8a0626f1baded5c72a704f7e6cd84cac00286bee0000000043410411db93e1dcdb8a016b49840f8c53bc1eb68a' +
+    '382e97b1482ecad7b148a6909a5cb2e0eaddfb84ccf9744464f82e160bfa9b8b64f9d4c03f999b8643f656b412a3ac00000000',
+);
+
+describe('annotateMessage: a transaction', () => {
+  const message = encodeMessage('tx', TX_RAW);
+  const segments = annotateMessage(message);
+  const fields = segments.slice(4);
+  const valueOf = (name: string) => fields.find((segment) => segment.name === name)?.value;
+
+  /** A transaction in the basic format, built field by field from hex. */
+  const transaction = (inputs: string[], outputs: string[], count = (n: number) => n.toString(16).padStart(2, '0')) =>
+    hexToBytes(['01000000', count(inputs.length), ...inputs, count(outputs.length), ...outputs, '00000000'].join(''));
+  const input = (script: string) => `${'ab'.repeat(32)}01000000${(script.length / 2).toString(16).padStart(2, '0')}${script}ffffffff`;
+  const output = (script: string, length = (script.length / 2).toString(16).padStart(2, '0')) =>
+    `e803000000000000${length}${script}`;
+
+  it('is tested on real bytes: they hash to the id of the transaction', () => {
+    expect(TX_RAW).toHaveLength(275);
+    expect(bytesToHex(sha256d(TX_RAW))).toBe(TX_WIRE);
+  });
+
+  it('labels every field after the header, in the order of the bytes', () => {
+    expectContiguous(segments, message.length);
+    expect(fields[0].start).toBe(24);
+    expect(fields.map((segment) => [segment.name, segment.end - segment.start])).toEqual([
+      ['tx_version', 4],
+      ['tx_in_count', 1],
+      ['tx_in0_prev_hash', 32],
+      ['tx_in0_prev_index', 4],
+      ['tx_in0_script_length', 1],
+      ['tx_in0_script', 72],
+      ['tx_in0_sequence', 4],
+      ['tx_out_count', 1],
+      ['tx_out0_value', 8],
+      ['tx_out0_script_length', 1],
+      ['tx_out0_script', 67],
+      ['tx_out1_value', 8],
+      ['tx_out1_script_length', 1],
+      ['tx_out1_script', 67],
+      ['tx_lock_time', 4],
+    ]);
+  });
+
+  it('decodes what the fields say', () => {
+    expect(valueOf('tx_version')).toBe('1');
+    expect(valueOf('tx_in_count')).toBe('1');
+    // The coin being spent: output 0 of an earlier transaction, named by its id in display order.
+    expect(valueOf('tx_in0_prev_hash')).toBe('0437cd7f8525ceed2324359c2d0ba26006d92d856a9c20fa0241106ee5a597c9');
+    expect(valueOf('tx_in0_prev_index')).toBe('0');
+    expect(valueOf('tx_in0_script_length')).toBe('72');
+    expect(valueOf('tx_in0_script')).toMatch(/^47304402204e45e169[0-9a-f]+0901$/);
+    expect(valueOf('tx_in0_sequence')).toBe('4294967295');
+    expect(valueOf('tx_out_count')).toBe('2');
+    expect(valueOf('tx_out0_value')).toBe('1000000000'); // 10 BTC, in satoshis
+    expect(valueOf('tx_out0_script_length')).toBe('67');
+    expect(valueOf('tx_out0_script')).toMatch(/^4104ae1a62fe[0-9a-f]+ac$/);
+    expect(valueOf('tx_out1_value')).toBe('4000000000'); // 40 BTC
+    expect(valueOf('tx_lock_time')).toBe('0');
+  });
+
+  it('numbers the fields of each input and each output, so that every name is unique', () => {
+    const many = encodeMessage('tx', transaction([input('51'), input('5152')], [output('76'), output('a9'), output('')]));
+    const names = annotateMessage(many)
+      .slice(4)
+      .map((segment) => segment.name);
+    expect(names).toEqual([
+      'tx_version',
+      'tx_in_count',
+      'tx_in0_prev_hash',
+      'tx_in0_prev_index',
+      'tx_in0_script_length',
+      'tx_in0_script',
+      'tx_in0_sequence',
+      'tx_in1_prev_hash',
+      'tx_in1_prev_index',
+      'tx_in1_script_length',
+      'tx_in1_script',
+      'tx_in1_sequence',
+      'tx_out_count',
+      'tx_out0_value',
+      'tx_out0_script_length',
+      'tx_out0_script',
+      'tx_out1_value',
+      'tx_out1_script_length',
+      'tx_out1_script',
+      'tx_out2_value',
+      'tx_out2_script_length', // an empty script leaves a length and no segment of its own
+      'tx_lock_time',
+    ]);
+    expect(new Set(names).size).toBe(names.length);
+    expectContiguous(annotateMessage(many), many.length);
+  });
+
+  it('reads a script length written as a three-byte CompactSize', () => {
+    const long = encodeMessage('tx', transaction([input('51')], [output('6a'.repeat(253), 'fdfd00')]));
+    const read = annotateMessage(long).slice(4);
+    const length = read.find((segment) => segment.name === 'tx_out0_script_length');
+    expect(length && length.end - length.start).toBe(3);
+    expect(length?.value).toBe('253');
+    const script = read.find((segment) => segment.name === 'tx_out0_script');
+    expect(script && script.end - script.start).toBe(253);
+    expectContiguous(annotateMessage(long), long.length);
+  });
+
+  it('falls back to one payload segment when the bytes are not exactly one transaction', () => {
+    for (const payload of [TX_RAW.subarray(0, 100), hexToBytes(`${bytesToHex(TX_RAW)}00`), hexToBytes('01000000')]) {
+      const cut = encodeMessage('tx', payload);
+      const read = annotateMessage(cut);
+      expect(read).toHaveLength(5);
+      expect(read[4]).toEqual({ name: 'payload', start: 24, end: cut.length, value: bytesToHex(payload) });
+      expectContiguous(read, cut.length);
+    }
+  });
+
+  it('does not read the extended format with witness data: the payload stays one segment', () => {
+    // version, then the marker 00 and the flag 01 that announce a witness
+    const witness = encodeMessage('tx', hexToBytes('02000000' + '0001' + '00'.repeat(40)));
+    const read = annotateMessage(witness);
+    expect(read).toHaveLength(5);
+    expect(read[4].name).toBe('payload');
+  });
+});

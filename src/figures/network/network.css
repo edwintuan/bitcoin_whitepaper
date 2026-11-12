@@ -1,0 +1,637 @@
+/* Fig. 5.1: the network. Plain CSS on the site's tokens. */
+
+.net-cap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2px 10px;
+  margin: 0 0 6px;
+  color: var(--color-ink-3);
+}
+/* Quiet text is set in a quieter colour, never made transparent: its contrast stays what the token gives. */
+.net-dim {
+  color: var(--color-ink-3);
+}
+/* Block and transaction ids are written as the simulation names them: b7, tx3. */
+.net-id {
+  text-transform: none;
+}
+
+/* ---- the graph ---- */
+/* Nodes, links and messages sit straight on the stage: the figure's frame is the only border. */
+.net-graph {
+  position: relative;
+  min-height: 304px;
+}
+.net-links,
+.net-packets {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.net-links line {
+  stroke: var(--color-ink-4);
+  stroke-width: 2;
+}
+.net-links line[data-live="false"] {
+  stroke: var(--color-cream-3);
+  stroke-dasharray: 3 6;
+}
+.net-clock {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  margin: 0;
+  color: var(--color-ink-3);
+  font-size: 11px;
+  pointer-events: none;
+}
+
+/*
+ * A node is a solid tile with no outline. Ink: on the longest chain. Orange:
+ * on another branch. Pale: not yet on the newest block.
+ */
+.net-node {
+  position: absolute;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 2px 3px;
+  border: 0;
+  background: var(--color-ink);
+  color: var(--color-cream);
+  cursor: pointer;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+.net-node[data-branch="side"] {
+  background: var(--color-orange);
+  color: var(--color-ink);
+}
+.net-node[data-behind="true"] {
+  background: var(--color-cream-3);
+  color: var(--color-ink);
+}
+.net-node[data-branch="side"][data-behind="true"] {
+  background: var(--color-orange-soft);
+}
+/* Offline: the dashed edge is the state itself, and the only edge a node ever has. */
+.net-node[data-online="false"] {
+  background: var(--color-cream);
+  color: var(--color-ink-3);
+}
+.net-node[data-online="false"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 2px dashed var(--color-ink-4);
+}
+/* The chosen node stands on a bar: orange, or ink under a tile that is orange itself. */
+.net-node[data-selected="true"]::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 -9px;
+  height: 4px;
+  background: var(--color-orange);
+  pointer-events: none;
+}
+.net-node[data-branch="side"][data-selected="true"]::after {
+  background: var(--color-ink);
+}
+.net-node:focus-visible {
+  z-index: 2;
+}
+.net-node-id,
+.net-node-mp,
+.net-node-mark {
+  position: absolute;
+  font-size: 11px;
+  line-height: 1;
+}
+.net-node-id {
+  top: 3px;
+  left: 4px;
+}
+.net-node-mp {
+  top: 3px;
+  right: 3px;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+.net-node-mp i {
+  width: 6px;
+  height: 6px;
+  background: var(--color-orange);
+}
+.net-node[data-branch="side"] .net-node-mp i,
+.net-node[data-online="false"] .net-node-mp i {
+  background: currentColor;
+}
+.net-node-mark {
+  right: 3px;
+  bottom: 3px;
+  font-weight: 500;
+}
+.net-node-tip {
+  font-family: var(--font-display);
+  font-size: 17px;
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+.net-node-h {
+  font-size: 11px;
+  line-height: 1.1;
+}
+/* A narrow stage has smaller tiles: their three lines of text close up. */
+.net-graph[data-compact="true"] .net-node {
+  padding-bottom: 1px;
+}
+.net-graph[data-compact="true"] .net-node-id,
+.net-graph[data-compact="true"] .net-node-mp {
+  top: 2px;
+}
+.net-graph[data-compact="true"] .net-node-mark {
+  bottom: 1px;
+}
+.net-graph[data-compact="true"] .net-node-tip {
+  font-size: 15px;
+}
+.net-graph[data-compact="true"] .net-node-h {
+  line-height: 1;
+}
+
+/*
+ * Messages in flight: solid marks, told apart by shape and size as well as
+ * colour. The two short ones are grey, a square and a cross; what they are
+ * about travels in orange (a transaction) or ink (a block).
+ */
+.net-pk-inv,
+.net-pk-getdata {
+  fill: var(--color-ink-3);
+}
+.net-pk-tx {
+  fill: var(--color-orange);
+}
+.net-pk-block {
+  fill: var(--color-ink);
+}
+
+/* ---- legend ---- */
+.net-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px 14px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--color-ink-2);
+}
+.net-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.net-legend svg {
+  flex: none;
+  overflow: visible;
+}
+.net-legend code {
+  color: var(--color-ink);
+  font-size: 11.5px;
+}
+.net-swatch {
+  flex: none;
+  width: 14px;
+  height: 13px;
+  background: var(--color-ink);
+}
+.net-swatch[data-look="side"] {
+  background: var(--color-orange);
+}
+.net-swatch[data-look="behind"] {
+  background: var(--color-cream-3);
+}
+.net-swatch[data-look="offline"] {
+  border: 1.5px dashed var(--color-ink-4);
+  background: var(--color-cream);
+}
+.net-swatch[data-look="waiting"] {
+  width: 6px;
+  height: 6px;
+  margin-inline: 4px;
+  background: var(--color-orange);
+}
+.net-glyph {
+  width: 14px;
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* ---- status and controls ---- */
+.net-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 12px;
+  min-height: 3.4em;
+}
+.net-status-live {
+  margin: 0;
+  flex: 1 1 260px;
+}
+.net-status-detail {
+  margin: 0;
+  padding: 1px 6px;
+  background: var(--color-ink);
+  color: var(--color-cream);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  white-space: nowrap;
+}
+.net-transport {
+  padding-top: 12px;
+  border-top: 1px solid var(--color-rule);
+}
+.net-speed {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.net-speed > .label {
+  color: var(--color-ink-3);
+}
+.net-reset {
+  margin-left: auto;
+}
+
+/* ---- one node's view ---- */
+/* A group under a hairline, like the playback controls above it: not a box. */
+.net-panel,
+.net-panel-hint {
+  padding-top: 14px;
+  border-top: 1px solid var(--color-rule);
+}
+.net-panel-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+}
+.net-panel-title {
+  margin: 0 auto 0 0;
+  font-size: 22px;
+}
+:lang(zh-Hant) .net-panel-title {
+  font-size: 19px;
+}
+.net-panel-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 2px solid var(--color-ink);
+  background-color: transparent;
+  cursor: pointer;
+  transition: background-color var(--duration-quick) var(--ease-out);
+}
+.net-panel-close:hover {
+  background-color: var(--color-cream-2);
+}
+.net-facts {
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  justify-content: space-between;
+  gap: 8px 18px;
+  margin: 10px 0 12px;
+}
+.net-facts dt {
+  color: var(--color-ink-3);
+}
+.net-facts dd {
+  margin: 2px 0 0;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.net-chain {
+  gap: 16px;
+}
+.net-chain > .tile + .tile::before {
+  left: -16px;
+  width: 16px;
+}
+.net-kept {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+/* A block kept aside is not being worked on: a pale solid tile, like a node that is not on the newest block. */
+.net-kept > .tile {
+  flex: 0 1 150px;
+  background: var(--color-cream-3);
+}
+.net-panel .net-cap {
+  margin-top: 12px;
+}
+.net-events {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.net-events li {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  gap: 8px;
+  padding: 2px 0;
+  border-bottom: 1px solid var(--color-rule);
+}
+.net-events li[data-type="reorg"] {
+  background: var(--color-orange-soft);
+}
+.net-events time {
+  color: var(--color-ink-3);
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* ---- on the wire ---- */
+.net-seq-ends {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.net-seq-end {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 5px 9px 4px;
+  background: var(--color-ink);
+  color: var(--color-cream);
+}
+.net-seq-end b {
+  font-size: 17px;
+  font-weight: 400;
+}
+:lang(zh-Hant) .net-seq-end b {
+  font-size: 15px;
+  font-weight: 900;
+}
+.net-seq-end .label {
+  color: var(--color-orange);
+  text-transform: none;
+  letter-spacing: 0.03em;
+}
+.net-seq-end[data-side="b"] {
+  align-items: flex-end;
+  text-align: end;
+}
+.net-seq-list {
+  margin: 0 22px;
+  padding: 6px 0;
+  list-style: none;
+  border-inline: 3px solid var(--color-ink);
+}
+.net-seq-msg {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-ink);
+  cursor: pointer;
+}
+.net-seq-arrow {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(50% - 1px);
+  border-top: 2px solid currentColor;
+}
+.net-seq-arrow::after {
+  content: "";
+  position: absolute;
+  top: -6px;
+  border-block: 5px solid transparent;
+}
+.net-seq-msg[data-dir="right"] .net-seq-arrow::after {
+  right: 0;
+  border-left: 9px solid currentColor;
+}
+.net-seq-msg[data-dir="left"] .net-seq-arrow::after {
+  left: 0;
+  border-right: 9px solid currentColor;
+}
+.net-seq-name,
+.net-seq-size {
+  position: relative;
+  font-size: 12px;
+  line-height: 1;
+}
+/* A message is a solid chip: ink once sent, pale while it is still to come, orange for the one on screen. */
+.net-seq-name {
+  padding: 6px 10px 5px;
+  background-color: var(--color-ink);
+  color: var(--color-cream);
+  font-weight: 500;
+  transition: background-color var(--duration-quick) var(--ease-out);
+}
+.net-seq-msg:hover .net-seq-name {
+  background-color: var(--color-ink-2);
+}
+.net-seq-size {
+  padding: 3px 4px;
+  background: var(--color-paper);
+  color: var(--color-ink-3);
+  font-size: 11px;
+}
+.net-seq-msg[data-state="pending"] {
+  color: var(--color-ink-4);
+}
+.net-seq-msg[data-state="pending"] .net-seq-arrow {
+  border-top-style: dashed;
+}
+.net-seq-msg[data-state="pending"] .net-seq-name {
+  background-color: var(--color-cream-3);
+  color: var(--color-ink-2);
+}
+.net-seq-msg[data-state="pending"]:hover .net-seq-name {
+  background-color: var(--color-cream-2);
+}
+.net-seq-msg[data-state="current"] .net-seq-name {
+  background-color: var(--color-orange);
+  color: var(--color-ink);
+}
+.net-seq-msg[data-state="current"] .net-seq-arrow {
+  top: calc(50% - 1.5px);
+  border-top-width: 3px;
+}
+/* The message on its way: a square that crosses once when it is sent. */
+.net-seq-lane {
+  position: absolute;
+  left: 0;
+  right: 12px;
+  top: calc(50% - 5px);
+  height: 10px;
+  overflow: hidden;
+  pointer-events: none;
+}
+.net-seq-msg[data-dir="left"] .net-seq-lane {
+  left: 12px;
+  right: 0;
+}
+.net-seq-lane i {
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+}
+.net-seq-lane i::after {
+  content: "";
+  display: block;
+  width: 10px;
+  height: 10px;
+  margin-left: auto;
+  background: var(--color-orange);
+}
+.net-seq-msg[data-dir="left"] .net-seq-lane i::after {
+  margin-left: 0;
+}
+.net-seq-msg[data-state="current"][data-dir="right"] .net-seq-lane i {
+  animation: net-send-right var(--duration-very-slow) var(--packet-ease);
+}
+.net-seq-msg[data-state="current"][data-dir="left"] .net-seq-lane i {
+  animation: net-send-left var(--duration-very-slow) var(--packet-ease);
+}
+@keyframes net-send-right {
+  from {
+    transform: translateX(-100%);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+@keyframes net-send-left {
+  from {
+    transform: translateX(100%);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+.net-seq-says {
+  min-height: 3.1em;
+  margin: 0;
+}
+.net-seq-says b {
+  margin-right: 6px;
+  padding: 0 4px;
+  background: var(--color-ink);
+  color: var(--color-orange);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+}
+/* The two sizes stay together: on a narrow stage they go under the title as one line. */
+.net-bytes-parts {
+  display: flex;
+  gap: 12px;
+  white-space: nowrap;
+}
+/* The English word given once beside the Chinese one is not a heading: it keeps its lower case. */
+:lang(zh-Hant) .net-bytes-parts {
+  text-transform: none;
+}
+.net-field-note {
+  min-height: 4.6em;
+  margin: 8px 0 0;
+}
+.net-field-value {
+  color: var(--color-ink);
+  overflow-wrap: anywhere;
+}
+.net-check {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding-top: 12px;
+  border-top: 3px solid var(--color-ink);
+}
+.net-check dt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-ink-3);
+}
+.net-check dd {
+  margin: 3px 0 0;
+  font-size: clamp(11.5px, 1.25vw, 13px);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.net-digest-head {
+  padding: 1px 4px;
+  background: var(--color-orange);
+  color: var(--color-ink);
+}
+.net-digest-rest {
+  color: var(--color-ink-3);
+}
+.net-agent {
+  display: grid;
+  gap: 4px;
+}
+.net-agent input {
+  width: 100%;
+  padding: 6px 8px;
+  border: 2px solid var(--color-ink);
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-mono), var(--font-sans);
+  font-size: 13px;
+}
+
+@media (max-width: 640px) {
+  .net-facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .net-seq-list {
+    margin-inline: 10px;
+  }
+  .net-events li {
+    grid-template-columns: 60px minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .net-node,
+  .net-panel-close,
+  .net-seq-name {
+    transition: none;
+  }
+  .net-seq-msg[data-state="current"][data-dir] .net-seq-lane i {
+    animation: none;
+  }
+}

@@ -19,6 +19,10 @@
  *   (src/netaddress.h:563-565);
  * - `inv` / `getdata` entries: src/protocol.h:519 (type, then hash) with the
  *   type numbers of lines 490-510;
+ * - `tx` payload: the basic transaction format of
+ *   src/primitives/transaction.h:185-189, with an outpoint as hash then index
+ *   (line 40), an input as outpoint, script, sequence (line 125) and an output
+ *   as value then script (line 153);
  * - CompactSize: src/serialize.h:302-324.
  *
  * Core v32.1 prefers the encrypted v2 transport of BIP 324 when both peers
@@ -231,11 +235,52 @@ function readInventory(reader: Reader): void {
   }
 }
 
+/**
+ * A transaction in the basic serialization format:
+ *
+ * ```
+ * version                     4   little-endian
+ * input count                 CompactSize
+ * per input:   previous transaction id   32   wire order
+ *              output index               4
+ *              script length              CompactSize
+ *              signature script           that many bytes
+ *              sequence                   4
+ * output count                CompactSize
+ * per output:  value                      8   satoshis, little-endian
+ *              script length              CompactSize
+ *              locking script             that many bytes
+ * lock time                   4
+ * ```
+ *
+ * The extended format, which carries witness data, puts a zero byte where the
+ * input count would be. It is not read here: the layout gives up, and the
+ * payload stays one segment.
+ */
+function readTransaction(reader: Reader): void {
+  reader.take('tx_version', 4, decimal);
+  const inputs = reader.takeCompactSize('tx_in_count');
+  if (inputs === 0) throw new Truncated();
+  for (let i = 0; i < inputs; i++) {
+    reader.take(`tx_in${i}_prev_hash`, 32, wireToHash);
+    reader.take(`tx_in${i}_prev_index`, 4, decimal);
+    reader.take(`tx_in${i}_script`, reader.takeCompactSize(`tx_in${i}_script_length`), bytesToHex);
+    reader.take(`tx_in${i}_sequence`, 4, decimal);
+  }
+  const outputs = reader.takeCompactSize('tx_out_count');
+  for (let i = 0; i < outputs; i++) {
+    reader.take(`tx_out${i}_value`, 8, decimal);
+    reader.take(`tx_out${i}_script`, reader.takeCompactSize(`tx_out${i}_script_length`), bytesToHex);
+  }
+  reader.take('tx_lock_time', 4, decimal);
+}
+
 /** Payloads whose fields `annotateMessage` can label, by command. */
 const PAYLOAD_LAYOUTS = new Map<string, (reader: Reader) => void>([
   ['version', readVersion],
   ['inv', readInventory],
   ['getdata', readInventory],
+  ['tx', readTransaction],
 ]);
 
 /**
@@ -251,17 +296,25 @@ const PAYLOAD_LAYOUTS = new Map<string, (reader: Reader) => void>([
  *   `addr_from_port`, `nonce`, `user_agent_length`, `user_agent`,
  *   `start_height`, `relay`;
  * - `inv` and `getdata`: `count`, then a `type` and a `hash` per entry;
+ * - `tx`, for a transaction without witness data: `tx_version`, `tx_in_count`,
+ *   then per input `tx_in0_prev_hash`, `tx_in0_prev_index`,
+ *   `tx_in0_script_length`, `tx_in0_script`, `tx_in0_sequence` (and `tx_in1_…`
+ *   for the next), `tx_out_count`, then per output `tx_out0_value`,
+ *   `tx_out0_script_length`, `tx_out0_script`, and last `tx_lock_time`;
  * - an empty payload: nothing more;
  * - anything else, and any payload above that does not parse exactly (an older
- *   `version` without the relay flag, a truncated message): one `payload`
- *   segment holding the bytes as hex.
+ *   `version` without the relay flag, a truncated message, a transaction in
+ *   the extended format with witness data): one `payload` segment holding the
+ *   bytes as hex.
  *
  * Values are text for display: counts, heights and times in decimal, service
  * bits and the nonce as `0x…`, addresses as hex, ports in decimal, `relay` as
- * `true` or `false`, inventory types by name (`MSG_TX`, `MSG_BLOCK`, …).
+ * `true` or `false`, inventory types by name (`MSG_TX`, `MSG_BLOCK`, …); in a
+ * transaction, numbers and amounts (in satoshis) in decimal and scripts as hex.
  *
- * Byte order: a `hash` value is in display order, the reverse of the bytes it
- * labels, so it can be compared with the txid or block hash shown elsewhere.
+ * Byte order: a `hash` value, and a transaction's `tx_in0_prev_hash`, is in
+ * display order, the reverse of the bytes it labels, so it can be compared
+ * with the txid or block hash shown elsewhere.
  *
  * @throws RangeError if `bytes` is shorter than the 24-byte header.
  */
