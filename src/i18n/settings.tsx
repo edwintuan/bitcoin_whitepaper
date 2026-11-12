@@ -21,7 +21,11 @@ function parseDepth(value: string | null | undefined): Depth | null {
   return DEPTHS.includes(value as Depth) ? (value as Depth) : null;
 }
 
-/** URL `?lang=` wins, then the stored choice, then the browser's preference list. */
+/**
+ * URL `?lang=` wins, then the stored choice, then the browser's preference
+ * list. What the address asks for holds for that visit and is not stored: a
+ * link someone shared should not change what a reader chose for themselves.
+ */
 export function resolveInitialLang(input: {
   search: string;
   stored: string | null;
@@ -61,6 +65,18 @@ function writeStored(key: string, value: string): void {
   } catch {
     // Nothing to do: the in-memory state already holds the choice.
   }
+}
+
+/**
+ * Takes a parameter out of the address. Once the reader has chosen for
+ * themselves, a `?lang=` or `?depth=` they arrived with must not overrule
+ * that choice on the next reload.
+ */
+function dropParam(name: string): void {
+  const url = new URL(window.location.href);
+  if (!url.searchParams.has(name)) return;
+  url.searchParams.delete(name);
+  window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}${url.hash}`);
 }
 
 export interface Settings {
@@ -108,14 +124,19 @@ export function SettingsProvider({
   }, [lang]);
 
   const setLang = useCallback((next: Lang) => {
+    // Before the page is drawn again: the two languages are set in different
+    // sizes by `:lang()`, and whoever measures the new layout needs them applied.
+    document.documentElement.lang = HTML_LANG[next];
     setLangState(next);
     writeStored(LANG_KEY, next);
+    dropParam('lang');
   }, []);
 
   const setDepth = useCallback((next: Depth) => {
     setDepthState(next);
     setDepthEpoch((epoch) => epoch + 1);
     writeStored(DEPTH_KEY, next);
+    dropParam('depth');
   }, []);
 
   const value = useMemo<Settings>(

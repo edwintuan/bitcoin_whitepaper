@@ -152,10 +152,17 @@
   html {
     background: var(--color-cream);
     color: var(--color-ink);
-    scroll-behavior: smooth;
-    scroll-padding-top: calc(var(--topbar-h) + 16px);
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
+  }
+  /*
+   * Whatever is scrolled to stops clear of the sticky top bar. This is a
+   * margin on the targets, not padding on the page: with padding, the bar
+   * itself counts as out of view, and focusing anything in it scrolls the
+   * page. Jumps are made by script (src/state/navigate.ts) and are instant.
+   */
+  main :where(*) {
+    scroll-margin-top: calc(var(--topbar-h) + 16px);
   }
   body {
     margin: 0;
@@ -520,9 +527,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
   .kw {
     transition: none;
   }

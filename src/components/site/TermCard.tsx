@@ -3,6 +3,7 @@ import { SECTION_IDS } from '@/content/types';
 import { UI } from '@/content/ui';
 import { TERMS, visualFor } from '@/glossary';
 import { useSettings, useT } from '@/i18n/settings';
+import { afterOverlay, followLink } from '@/state/navigate';
 import { CardNavigation, Rich } from './Rich';
 
 export interface TermCardProps {
@@ -70,7 +71,17 @@ export function TermCard({ id, onNavigate, onClose }: TermCardProps) {
           <p>
             <span className="term-foot-key">{t(UI.term.appearsIn)}</span>
             {def.sections.map((number) => (
-              <a key={number} href={`#${SECTION_IDS[number]}`} onClick={onClose}>
+              <a
+                key={number}
+                href={`#${SECTION_IDS[number]}`}
+                onClick={(event) => {
+                  // The card closes and returns the focus to its keyword; the reader
+                  // and the focus go on to the section only after that.
+                  event.preventDefault();
+                  onClose();
+                  afterOverlay(() => followLink(SECTION_IDS[number]));
+                }}
+              >
                 {number === 0 ? t(UI.abstract) : `§${number}`}
               </a>
             ))}

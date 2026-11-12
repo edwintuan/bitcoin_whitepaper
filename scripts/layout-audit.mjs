@@ -16,7 +16,7 @@
  * Exits with 1 if anything was found.
  */
 import { chromium } from 'playwright-core';
-import { auditInPage } from './audit-in-page.mjs';
+import { auditInPage, widestInPage } from './audit-in-page.mjs';
 
 const args = process.argv.slice(2);
 const opt = (name, fallback) => {
@@ -96,7 +96,8 @@ for (const width of widths) {
       }
       const extra = await sideways();
       if (extra > 1) {
-        note(config, id, [{ kind: 'page-scrolls-sideways', container: 'html', text: '', by: `${extra}px`, element: '' }]);
+        const widest = await page.evaluate(widestInPage);
+        note(config, id, [{ kind: 'page-scrolls-sideways', container: 'html', text: widest.join(', '), by: `${extra}px`, element: '' }]);
       }
     }
 

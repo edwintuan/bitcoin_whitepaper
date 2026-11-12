@@ -101,6 +101,64 @@ describe('SettingsProvider', () => {
     expect(screen.getByTestId('text')).toHaveTextContent('區塊');
   });
 
+  it('sets <html lang> before the page is drawn in the new language', async () => {
+    // The Chinese text is set in its own size and leading: what is measured
+    // right after the switch has to be measured in them.
+    const seen: string[] = [];
+    function Watch() {
+      const { lang } = useSettings();
+      seen.push(`${lang}:${document.documentElement.lang}`);
+      return null;
+    }
+    render(
+      <SettingsProvider initialLang="en">
+        <Probe />
+        <Watch />
+      </SettingsProvider>,
+    );
+    await userEvent.click(screen.getByText('zh'));
+    expect(seen[seen.length - 1]).toBe('zh:zh-Hant-HK');
+    expect(seen).not.toContain('zh:en');
+  });
+
+  describe('with a choice in the address', () => {
+    afterEach(() => {
+      window.history.replaceState(null, '', '/');
+    });
+
+    it('opens as the address asks', () => {
+      window.history.replaceState(null, '', '/?lang=zh&depth=developer#spv');
+      render(<SettingsProvider><Probe /></SettingsProvider>);
+      expect(screen.getByTestId('state')).toHaveTextContent('zh/developer/0');
+    });
+
+    it('does not store what only the address asked for', () => {
+      window.history.replaceState(null, '', '/?lang=zh&depth=developer');
+      render(<SettingsProvider><Probe /></SettingsProvider>);
+      expect(window.localStorage.getItem('bwe.lang')).toBeNull();
+      expect(window.localStorage.getItem('bwe.depth')).toBeNull();
+    });
+
+    it('lets a choice made on the page outlive the address it arrived with', async () => {
+      window.localStorage.setItem('bwe.lang', 'en');
+      window.history.replaceState(null, '', '/?lang=en&ref=x&depth=starter#spv');
+      const view = render(<SettingsProvider><Probe /></SettingsProvider>);
+      expect(screen.getByTestId('state')).toHaveTextContent('en/starter/0');
+
+      await userEvent.click(screen.getByText('zh'));
+      await userEvent.click(screen.getByText('dev'));
+
+      // The parameters that would overrule the reader are gone; everything else in the address stays.
+      expect(window.location.search).toBe('?ref=x');
+      expect(window.location.hash).toBe('#spv');
+
+      // A reload now opens as the reader left it.
+      view.unmount();
+      render(<SettingsProvider><Probe /></SettingsProvider>);
+      expect(screen.getByTestId('state')).toHaveTextContent('zh/developer/0');
+    });
+  });
+
   it('refuses to be used outside the provider', () => {
     const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
     expect(() => render(<Probe />)).toThrow(/SettingsProvider/);

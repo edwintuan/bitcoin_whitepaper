@@ -24,7 +24,7 @@
   .skip-link {
     position: absolute;
     left: 8px;
-    top: -100px;
+    top: 8px;
     z-index: 2;
     padding: 8px 12px;
     background: var(--color-orange);
@@ -32,8 +32,14 @@
     font-family: var(--font-mono);
     font-size: 12px;
   }
-  .skip-link:focus {
-    top: 8px;
+  /* Hidden where it stands, not parked off screen: focusing it must not scroll the page to find it. */
+  .skip-link:not(:focus) {
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
   .brand {
     display: inline-flex;
@@ -1522,22 +1528,44 @@
     background: var(--color-ink);
     color: var(--color-cream);
   }
+  .glossary-groups {
+    margin-top: 22px;
+    animation: t-reveal var(--reveal-dur) var(--reveal-ease);
+  }
+  .glossary-group + .glossary-group {
+    margin-top: 30px;
+  }
+  /* A category's name and how many terms it holds, over one heavy line. */
+  .glossary-group-title {
+    display: flex;
+    justify-content: space-between;
+    margin: 0;
+    padding-bottom: 6px;
+    border-bottom: 3px solid var(--color-ink);
+  }
+  .glossary-group-title span:last-child {
+    color: var(--color-ink-3);
+  }
   .glossary-list {
     columns: 2 380px;
     column-gap: 40px;
-    margin: 22px 0 0;
+    margin: 0;
     padding: 0;
     list-style: none;
-    animation: t-reveal var(--reveal-dur) var(--reveal-ease);
   }
   .glossary-item {
     display: grid;
     grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.6fr);
     gap: 14px;
     padding: 9px 0;
-    border-top: 1px solid var(--color-rule);
+    border-bottom: 1px solid var(--color-rule);
     break-inside: avoid;
     scroll-margin-top: calc(var(--topbar-h) + 80px);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .glossary-groups {
+      animation: none;
+    }
   }
   .glossary-term {
     font-family: var(--font-sans);

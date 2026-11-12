@@ -7,6 +7,7 @@ import { DEPTHS, SECTION_IDS } from '@/content/types';
 import type { Depth, Lang } from '@/content/types';
 import { UI } from '@/content/ui';
 import { useSettings, useT } from '@/i18n/settings';
+import { afterOverlay, followLink } from '@/state/navigate';
 import { useProgress } from '@/state/progress';
 import { captureAnchor } from '@/state/scrollAnchor';
 import { ChainNav } from './ChainNav';
@@ -72,7 +73,8 @@ export function TopBar({ onSearch }: { onSearch?: () => void }) {
   const { depth } = useSettings();
   const { current, visited } = useProgress();
   const [menuOpen, setMenuOpen] = useState(false);
-  const progress = current < 0 ? 0 : (current + 1) / SECTION_IDS.length;
+  // Full once the last section is reached; `current` runs one past it in the appendices.
+  const progress = Math.min(1, Math.max(0, (current + 1) / SECTION_IDS.length));
 
   return (
     <header className="topbar on-ink">
@@ -149,7 +151,12 @@ export function TopBar({ onSearch }: { onSearch?: () => void }) {
               <li key={section.id}>
                 <a
                   href={`#${section.id}`}
-                  onClick={() => setMenuOpen(false)}
+                  onClick={(event) => {
+                    // The menu closes and hands the focus back first; then both go to the section.
+                    event.preventDefault();
+                    setMenuOpen(false);
+                    afterOverlay(() => followLink(section.id));
+                  }}
                   data-state={section.number === current ? 'current' : visited.has(section.number) ? 'read' : 'unread'}
                   aria-current={section.number === current ? 'location' : undefined}
                 >

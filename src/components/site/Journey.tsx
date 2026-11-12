@@ -11,7 +11,7 @@ import { mineSync } from '@/lib/miner';
 import { useInView } from '@/state/useInView';
 import { usePageVisible, useReducedMotion } from '@/state/useMediaQuery';
 import { useMiner } from '@/state/useMiner';
-import { formatBtc, formatCount, shortHex } from '@/text/format';
+import { fill, formatBtc, formatCount, shortHex } from '@/text/format';
 import { buildStory } from './journey/story';
 import { Rich } from './Rich';
 import { ActorIcon } from './WhoRuns';
@@ -51,6 +51,8 @@ export function Journey() {
   const story = useMemo(buildStory, []);
   const [active, setActive] = useState(-1);
   const [playing, setPlaying] = useState(false);
+  // Whether the payment has been sent at least once: only then is the button "Send again".
+  const [sent, setSent] = useState(false);
   const [solved, setSolved] = useState<Solved | null>(null);
   const [confirmations, setConfirmations] = useState(0);
 
@@ -121,6 +123,7 @@ export function Journey() {
     setSolved(null);
     setActive(0);
     setPlaying(true);
+    setSent(true);
   };
   const pick = (index: number) => {
     setPlaying(false);
@@ -220,7 +223,7 @@ export function Journey() {
           <p className="ja-head">
             <span className={`tag ${solved ? 'tag-orange' : 'tag-line'}`}>{solved ? t(l.found) : t(l.searching)}</span>
             <span className="ja-dim">
-              {story.zeroBits} zero bits · {formatCount(tried)} {t(l.tries)}
+              {story.zeroBits} {t(l.zeroBits)} · {formatCount(tried)} {t(l.tries)}
             </span>
           </p>
           <p className="ja-row">
@@ -293,15 +296,34 @@ export function Journey() {
           </div>
           <div className="journey-controls">
             <button type="button" className="btn" onClick={send}>
-              {active >= 0 ? t(JOURNEY.again) : t(JOURNEY.send)}
+              {sent ? t(JOURNEY.again) : t(JOURNEY.send)}
             </button>
-            {active >= 0 && active < LAST && !reducedMotion ? (
-              <button type="button" className="btn btn-line btn-sm" onClick={() => setPlaying((value) => !value)}>
+            {/*
+              Both stay on the page at the last stop, switched off with
+              aria-disabled: a button that vanished under the reader's finger
+              would take the keyboard focus with it.
+            */}
+            {active >= 0 && !reducedMotion ? (
+              <button
+                type="button"
+                className="btn btn-line btn-sm"
+                aria-disabled={active === LAST}
+                onClick={() => {
+                  if (active < LAST) setPlaying((value) => !value);
+                }}
+              >
                 {playing ? t(JOURNEY.pause) : t(JOURNEY.resume)}
               </button>
             ) : null}
-            {active >= 0 && active < LAST ? (
-              <button type="button" className="btn btn-line btn-sm" onClick={() => pick(active + 1)}>
+            {active >= 0 ? (
+              <button
+                type="button"
+                className="btn btn-line btn-sm"
+                aria-disabled={active === LAST}
+                onClick={() => {
+                  if (active < LAST) pick(active + 1);
+                }}
+              >
                 {t(JOURNEY.next)}
               </button>
             ) : null}
@@ -337,10 +359,10 @@ export function Journey() {
             <div key={`${station.id}-${lang}`} className="journey-detail t-reveal">
               <div>
                 <p className="label journey-step">
-                  {lang === 'en'
-                    ? `${t(JOURNEY.stop)} ${active + 1} / ${STATIONS.length}`
-                    : `${t(JOURNEY.stop)} ${active + 1} ${t(JOURNEY.stopSuffix)}（共 ${STATIONS.length} 站）`}
-                  <span className="journey-speaks">{station.speaks}</span>
+                  {fill(t(JOURNEY.stopOf), { n: active + 1, total: STATIONS.length })}
+                  <span className="journey-speaks" lang="en">
+                    {station.speaks}
+                  </span>
                 </p>
                 <h3 className="journey-detail-title poster">
                   <span className="poster-scale">{t(station.title)}</span>

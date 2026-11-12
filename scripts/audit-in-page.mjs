@@ -40,6 +40,8 @@ export function auditInPage(rootSelector) {
       const style = styleOf(node);
       if (style.display === 'none' || style.visibility === 'hidden' || parseFloat(style.opacity) === 0) return true;
       if (node.classList.contains('visually-hidden') || node.inert) return true;
+      // Clipped to nothing where it stands, as a skip link is until it has the focus.
+      if (style.clipPath === 'inset(50%)') return true;
     }
     return false;
   };
@@ -139,6 +141,19 @@ export function auditInPage(rootSelector) {
     return (light + 0.05) / (dark + 0.05);
   };
 
+  // Something fading or popping in is measured once it has arrived, not on the way.
+  const moving = new Set(
+    document
+      .getAnimations()
+      .filter((animation) => animation.playState === 'running')
+      .map((animation) => animation.effect?.target)
+      .filter(Boolean),
+  );
+  const inMotion = (element) => {
+    for (let node = element; node; node = node.parentElement) if (moving.has(node)) return true;
+    return false;
+  };
+
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
   for (let node = walker.nextNode(); node; node = walker.nextNode()) {
     const text = node.nodeValue.replace(/\s+/g, ' ').trim();
@@ -160,11 +175,12 @@ export function auditInPage(rootSelector) {
     const style = styleOf(element);
     const scale = element.ownerSVGElement && element.getScreenCTM ? Math.abs(element.getScreenCTM()?.a ?? 1) : 1;
     const size = parseFloat(style.fontSize) * scale;
-    const floor = element.closest('sup, sub') ? 9 : 11;
+    const shifted = element.closest('sup, sub') || (element.tagName === 'tspan' && (element.hasAttribute('dy') || element.hasAttribute('baseline-shift')));
+    const floor = shifted ? 9 : 11;
     if (size < floor - 0.05) report('small', nameOf(element), `${size.toFixed(1)}px`);
 
     // WCAG AA: 4.5 to 1, or 3 to 1 for large text. A control that is switched off is exempt.
-    if (!element.closest('[aria-disabled="true"], :disabled, [data-disabled]')) {
+    if (!element.closest('[aria-disabled="true"], :disabled, [data-disabled]') && !inMotion(element)) {
       const ratio = contrastOf(element, rects[0]);
       const heavy = Number(style.fontWeight) >= 700 || /^"?Anton/.test(style.fontFamily);
       const large = size >= 24 || (size >= 18.66 && heavy);
@@ -174,6 +190,7 @@ export function auditInPage(rootSelector) {
     }
 
     let inScroller = false;
+    let clipped = false;
     for (let box = element; box && box !== document.documentElement; box = box.parentElement) {
       const boxStyle = styleOf(box);
       if (boxStyle.display === 'inline' || boxStyle.display === 'contents') continue;
@@ -190,10 +207,12 @@ export function auditInPage(rootSelector) {
       if (clipsX && outX > 1) {
         const ellipsis = boxStyle.textOverflow === 'ellipsis' || styleOf(element).textOverflow === 'ellipsis';
         report(ellipsis ? 'ellipsis' : 'cut-off', nameOf(box), `${outX.toFixed(0)}px`);
+        clipped = true;
         break;
       }
       if (clipsY && outY > 2) {
         report('cut-off', nameOf(box), `${outY.toFixed(0)}px down`);
+        clipped = true;
         break;
       }
       if (!clipsX && paints(boxStyle) && outX > 1) {
@@ -201,7 +220,39 @@ export function auditInPage(rootSelector) {
         break;
       }
     }
-    if (!inScroller && (right > viewport + 1 || left < -1)) report('off-screen', 'viewport', `${(right - viewport).toFixed(0)}px`);
+    if (!inScroller && !clipped && (right > viewport + 1 || left < -1)) report('off-screen', 'viewport', `${(right - viewport).toFixed(0)}px`);
   }
   return found;
+}
+
+/**
+ * Runs in the page. When the page is wider than the window, names what makes
+ * it so: the innermost elements that reach past the right edge and are not
+ * inside something that scrolls sideways by design.
+ */
+export function widestInPage() {
+  const viewport = document.documentElement.clientWidth;
+  const past = [];
+  for (const element of document.body.querySelectorAll('*')) {
+    const rect = element.getBoundingClientRect();
+    if (rect.width === 0 || rect.right <= viewport + 1) continue;
+    let scrolls = false;
+    for (let box = element.parentElement; box; box = box.parentElement) {
+      const overflow = getComputedStyle(box).overflowX;
+      if (overflow === 'auto' || overflow === 'scroll' || overflow === 'hidden' || overflow === 'clip') {
+        scrolls = box !== document.body && box !== document.documentElement;
+        if (scrolls) break;
+      }
+    }
+    if (scrolls || getComputedStyle(element).position === 'fixed') continue;
+    past.push(element);
+  }
+  // Keep the innermost: an element whose child is also past the edge is only its container.
+  return past
+    .filter((element) => !past.some((other) => other !== element && element.contains(other)))
+    .slice(0, 4)
+    .map((element) => {
+      const classes = typeof element.className === 'string' && element.className.trim() ? `.${element.className.trim().split(/\s+/).slice(0, 3).join('.')}` : '';
+      return `${element.tagName.toLowerCase()}${element.id ? `#${element.id}` : ''}${classes} +${Math.round(element.getBoundingClientRect().right - viewport)}px`;
+    });
 }

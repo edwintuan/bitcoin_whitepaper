@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Pressable } from 'react-aria-components';
 import { Drawer } from '@/components/base/drawer/drawer';
 import { Popover, PopoverTrigger } from '@/components/base/popover/popover';
@@ -16,12 +16,25 @@ import { TermCard } from './TermCard';
  * out as one unbreakable box, so a two-word term could not wrap and a line
  * could break between a term and the comma after it.
  */
-export function Term({ id, label }: { id: string; label?: string }) {
+export function Term({
+  id,
+  label,
+  openRequest,
+}: {
+  id: string;
+  label?: string;
+  /** Opens the card each time this changes: how the search palette shows a term. The caller has focused the trigger. */
+  openRequest?: number;
+}) {
   const t = useT();
   const narrow = useIsNarrow();
   const [open, setOpen] = useState(false);
   // The card can step to a related term; closing it returns to this one.
   const [shown, setShown] = useState(id);
+
+  useEffect(() => {
+    if (openRequest !== undefined) setOpen(true);
+  }, [openRequest]);
 
   const def = TERMS[id];
   if (!def) return <>{label ?? id}</>;

@@ -3,6 +3,8 @@ import { SECTIONS } from '@/content/sections';
 import { UI } from '@/content/ui';
 import { TERMS, TERM_IDS } from '@/glossary';
 import { useT } from '@/i18n/settings';
+import { afterOverlay, followLink } from '@/state/navigate';
+import { requestTerm } from '@/state/termRequest';
 import { searchable } from '@/text/format';
 import { plainRich } from '@/text/richtext';
 
@@ -17,19 +19,12 @@ export function CommandSearch({ isOpen, onOpenChange }: { isOpen: boolean; onOpe
 
   const go = (key: string) => {
     const [kind, id] = key.split(':');
-    // Wait for the palette to close and hand focus back before moving on.
-    window.setTimeout(() => {
-      if (kind === 'section') {
-        document.getElementById(id)?.scrollIntoView({ block: 'start' });
-        return;
-      }
-      const entry = document.getElementById(`term-${id}`);
-      if (!entry) return;
-      // Jump rather than glide: a floating card closes when the page scrolls
-      // under it, so the scrolling has to be over before the card opens.
-      entry.scrollIntoView({ block: 'center', behavior: 'instant' });
-      window.setTimeout(() => entry.querySelector<HTMLElement>('.kw')?.click(), 80);
-    }, 260);
+    // The palette closes and hands the focus back to the search button first;
+    // only then does the focus move on with the reader.
+    afterOverlay(() => {
+      if (kind === 'section') followLink(id);
+      else requestTerm(id);
+    });
   };
 
   return (
