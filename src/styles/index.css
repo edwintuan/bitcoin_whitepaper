@@ -1,4 +1,5 @@
-/* One Tailwind build: BoardUI's stylesheet first, then our theme and motion. */
+/* One Tailwind build: BoardUI's stylesheet first, then our theme, components and motion. */
 @import './globals.css';
 @import './poster.css';
+@import './site.css';
 @import './motion.css';

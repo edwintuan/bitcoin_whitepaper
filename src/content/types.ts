@@ -56,7 +56,7 @@ export type ActorId =
   | 'light-client'
   | 'explorer';
 
-export type ArtifactKind = 'rpc' | 'cli' | 'p2p' | 'file' | 'hardware' | 'bip';
+export type ArtifactKind = 'rpc' | 'cli' | 'p2p' | 'protocol' | 'file' | 'hardware' | 'bip';
 
 export interface WhoRunsItem {
   actor: ActorId;

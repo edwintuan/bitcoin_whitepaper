@@ -1,0 +1,273 @@
+/* Fig. 4.1: proof-of-work. Plain CSS on the site's tokens. */
+
+.pow-cap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 0 6px;
+  color: var(--color-ink-3);
+}
+.pow-dim {
+  opacity: 0.6;
+}
+
+/* ---- header fields ---- */
+.pow-fields {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 3px solid var(--color-ink);
+}
+.pow-field {
+  display: grid;
+  grid-template-columns: minmax(104px, 0.9fr) minmax(0, 1.7fr) 26px;
+  gap: 10px;
+  align-items: baseline;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--color-rule);
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  outline-offset: -3px;
+  transition: background-color var(--duration-quick) var(--ease-out);
+}
+.pow-field:last-child {
+  border-bottom: 0;
+}
+.pow-field[data-focus='true'] {
+  background: var(--color-orange-soft);
+}
+.pow-field[data-key='nonce'] {
+  background: var(--color-ink);
+  color: var(--color-cream);
+}
+.pow-field[data-key='nonce'] .pow-field-value {
+  color: var(--color-orange);
+  font-weight: 500;
+}
+.pow-field-value {
+  overflow: hidden;
+  font-size: 12.5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pow-field-bytes {
+  font-size: 11px;
+  text-align: right;
+  opacity: 0.6;
+}
+.pow-field-note {
+  min-height: 3em;
+  margin: 8px 0 0;
+}
+
+.pow-arrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--color-ink-2);
+}
+.pow-arrow span {
+  flex: 1;
+  height: 3px;
+  background: var(--color-ink);
+}
+
+/* ---- hash readout ---- */
+.pow-result {
+  padding: 10px 12px;
+  border: 3px solid var(--color-ink);
+  background: var(--color-cream);
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+.pow-result[data-status='found'] {
+  background: var(--color-ink);
+  color: var(--color-cream);
+}
+.pow-result[data-status='found'] .zero,
+.pow-field[data-key='nonce'] .zero {
+  background: none;
+  color: var(--color-orange);
+}
+.pow-result[data-status='found'] .pow-cap {
+  color: var(--color-cream);
+}
+.pow-hash {
+  min-height: 2.9em;
+  margin: 0;
+  font-size: clamp(12.5px, 1.35vw, 15.5px);
+  line-height: 1.45;
+  letter-spacing: 0.02em;
+}
+
+/* ---- controls and readouts ---- */
+.pow-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 28px;
+  margin: 10px 0 0;
+}
+.pow-facts dt {
+  color: var(--color-ink-3);
+}
+.pow-facts dd {
+  margin: 2px 0 0;
+}
+.pow-target dd {
+  padding-top: 8px;
+  font-size: 12px;
+}
+.pow-live {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  margin: 0;
+}
+.pow-live dt {
+  font-size: 10.5px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+.pow-live dd {
+  margin: 0;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+.pow-shimmer {
+  --shimmer-base: var(--color-ink-3);
+  --shimmer-highlight: var(--color-orange);
+}
+
+/* The guided steps point at one region at a time. */
+[data-hl='header'] [data-region='header'],
+[data-hl='difficulty'] [data-region='difficulty'],
+[data-hl='mine'] [data-region='mine'] {
+  outline: 3px solid var(--color-orange);
+  outline-offset: 7px;
+}
+
+/* ---- tamper ---- */
+.pow-data input {
+  width: 100%;
+  margin-top: 8px;
+  padding: 5px 7px;
+  border: 2px solid var(--color-ink);
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-mono), var(--font-sans);
+  font-size: 12px;
+}
+.pow-data input:disabled {
+  opacity: 0.6;
+}
+.tile[data-state='invalid'] .pow-data input {
+  border-color: var(--color-invalid);
+}
+
+/* ---- genesis ---- */
+.pow-compare {
+  display: grid;
+  gap: 12px;
+  margin: 20px 0 0;
+  padding-top: 14px;
+  border-top: 3px solid var(--color-ink);
+}
+.pow-compare dt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-ink-3);
+}
+.pow-compare dd {
+  margin: 3px 0 0;
+  font-size: clamp(12px, 1.3vw, 14px);
+  line-height: 1.45;
+}
+
+/* ---- retarget ---- */
+.pow-power {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 18px;
+  align-items: end;
+}
+.pow-periods {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.pow-periods li {
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr) 76px;
+  gap: 12px;
+  align-items: center;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--color-rule);
+}
+.pow-period-value {
+  font-size: 13px;
+  text-align: right;
+}
+.pow-scale {
+  position: relative;
+  height: 18px;
+  background: var(--color-cream-2);
+}
+.pow-scale i {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}
+.pow-scale-goal {
+  left: calc(50% - 1.5px);
+  width: 3px;
+  background: var(--color-ink);
+}
+.pow-scale-bar {
+  background: var(--color-orange);
+  transition:
+    left var(--duration-fast) var(--ease-smooth-out),
+    width var(--duration-fast) var(--ease-smooth-out);
+}
+.pow-scale-dot {
+  width: 8px;
+  margin-left: -4px;
+  background: var(--color-ink);
+  transition: left var(--duration-fast) var(--ease-smooth-out);
+}
+.pow-scale-legend {
+  display: flex;
+  justify-content: space-between;
+  margin: 4px 88px 0;
+  color: var(--color-ink-3);
+}
+
+@media (max-width: 640px) {
+  .pow-chain {
+    flex-direction: column;
+  }
+  .pow-chain > .tile + .tile::before {
+    left: 22px;
+    top: -14px;
+    width: 3px;
+    height: 14px;
+  }
+  .pow-periods li {
+    grid-template-columns: 62px minmax(0, 1fr) 66px;
+  }
+  .pow-scale-legend {
+    margin-inline: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pow-scale-bar,
+  .pow-scale-dot,
+  .pow-field,
+  .pow-result {
+    transition: none;
+  }
+}

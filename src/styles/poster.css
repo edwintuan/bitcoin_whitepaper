@@ -457,14 +457,15 @@
     color: var(--color-paper);
   }
 
+  /* Leading zeros of a hash: a highlighter stroke on light grounds, orange type on dark. */
   .zero {
-    color: var(--color-orange);
-    font-weight: 500;
-  }
-  .on-paper .zero,
-  .zero-mark {
     background: var(--color-orange);
     color: var(--color-ink);
+  }
+  .on-ink .zero {
+    background: none;
+    color: var(--color-orange);
+    font-weight: 500;
   }
 
   .visually-hidden {
