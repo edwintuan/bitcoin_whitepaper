@@ -132,7 +132,10 @@ export function encodeVersion(o: {
  * Byte order: `hash` is given in display order, like every hash in this app,
  * and written to the payload reversed, as the wire carries it.
  *
- * @param items `type` 1 is MSG_TX (a transaction id), 2 is MSG_BLOCK (a block hash)
+ * @param items `type` is the inventory type number of src/protocol.h: 1 is
+ * MSG_TX (a transaction id), 2 is MSG_BLOCK (a block hash), 5 is MSG_WTX (a
+ * transaction's witness id, used once both peers have sent `wtxidrelay`); any
+ * unsigned 32-bit value is encoded as given
  * @throws RangeError if a hash is not 64 hex characters or a type is not an
  * unsigned 32-bit integer.
  */

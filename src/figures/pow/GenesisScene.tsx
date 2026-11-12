@@ -34,6 +34,7 @@ export function GenesisScene() {
   const matches = hash === GENESIS_HASH;
   const zeros = leadingZeroBits(hash);
   const focused = SEGMENTS.find((segment) => segment.name === active);
+  const segments = useMemo(() => SEGMENTS.map((segment) => ({ ...segment, label: t(COPY.fields[segment.name].name) })), [t]);
 
   return (
     <div className="pow-genesis fig-stack">
@@ -41,7 +42,7 @@ export function GenesisScene() {
 
       <div>
         <p className="label pow-cap">{t(COPY.serialized)}</p>
-        <HexView bytes={bytes} segments={SEGMENTS} active={active} onActive={setActive} />
+        <HexView bytes={bytes} segments={segments} unit={t(COPY.bytes)} active={active} onActive={setActive} />
         <p className="fig-note pow-field-note" aria-live="polite">
           {focused ? (
             <>

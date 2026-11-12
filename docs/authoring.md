@@ -31,7 +31,7 @@ without it and say so in your report.
 - `tldr`: one or two sentences, about 40 words at most. The claim of the section in plain words.
 - `analogy`: two to four sentences. One everyday picture, and it must be right about what stands for what.
 - `body`: three to six paragraphs that follow the paper's own argument in the paper's order.
-- `figure.steps`: three to six. A title of at most five words, then one or two sentences telling the reader what to do and what to notice.
+- `figure.steps`: three to six. A title of at most five words, then one to three short sentences telling the reader what to do and what to notice.
 - `whoRuns`: two to four actors. For each: what it does at this step, and one concrete thing to hold on to (an RPC, a message, a file, a device, a standard). `snippet` is something a developer could type or would see.
 - `paperVsToday`: three to six bullets. Each is one checkable fact about how the running system differs from the 2008 text.
 

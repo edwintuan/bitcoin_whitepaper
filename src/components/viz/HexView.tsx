@@ -1,7 +1,10 @@
 import { cx } from '@/utils/cx';
 
 export interface HexSegment {
+  /** Identifies the field: reported through `onActive` and matched against `active`. */
   name: string;
+  /** What to call the field aloud, in the reader's language. Defaults to `name`. */
+  label?: string;
   /** First byte, inclusive. */
   start: number;
   /** Last byte, exclusive. */
@@ -17,6 +20,8 @@ export interface HexViewProps {
   onActive?: (name: string | null) => void;
   /** Bytes per row. Default 16. */
   perRow?: number;
+  /** The word for "bytes" in the reader's language, used in each field's accessible name. */
+  unit?: string;
   className?: string;
 }
 
@@ -28,7 +33,7 @@ const hex = (byte: number) => byte.toString(16).padStart(2, '0');
  * follow along. To assistive technology it is a list of named fields; the
  * bytes themselves are not read out one by one.
  */
-export function HexView({ bytes, segments, active = null, onActive, perRow = 16, className }: HexViewProps) {
+export function HexView({ bytes, segments, active = null, onActive, perRow = 16, unit = 'bytes', className }: HexViewProps) {
   return (
     <div className={cx('hexview mono', className)} style={{ ['--per-row' as string]: perRow }} role="list">
       {segments.map((segment, index) => (
@@ -39,7 +44,7 @@ export function HexView({ bytes, segments, active = null, onActive, perRow = 16,
           data-tint={index % 4}
           data-active={active === segment.name}
           tabIndex={onActive ? 0 : undefined}
-          aria-label={`${segment.name}: ${segment.end - segment.start} bytes`}
+          aria-label={`${segment.label ?? segment.name}: ${segment.end - segment.start} ${unit}`}
           onMouseEnter={onActive ? () => onActive(segment.name) : undefined}
           onMouseLeave={onActive ? () => onActive(null) : undefined}
           onFocus={onActive ? () => onActive(segment.name) : undefined}

@@ -23,6 +23,17 @@ describe('HexView', () => {
     expect(screen.getByRole('listitem', { name: 'count: 2 bytes' })).toBeInTheDocument();
   });
 
+  it('announces a field by the words it is given, in the reader\u2019s language', () => {
+    const labelled = [
+      { name: 'magic', label: '起始位元組', start: 0, end: 4 },
+      { name: 'count', start: 4, end: 6 },
+    ];
+    render(<HexView bytes={bytes} segments={labelled} unit="位元組" />);
+    expect(screen.getByRole('listitem', { name: '起始位元組: 4 位元組' })).toBeInTheDocument();
+    // A field without words of its own falls back to its name.
+    expect(screen.getByRole('listitem', { name: 'count: 2 位元組' })).toBeInTheDocument();
+  });
+
   it('reports the field under the keyboard focus, and none once the focus leaves', async () => {
     const user = userEvent.setup();
     const onActive = vi.fn();
