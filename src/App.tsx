@@ -1,5 +1,4 @@
-import { Fragment, useEffect, useLayoutEffect, useState } from 'react';
-import { CommandSearch } from '@/components/site/CommandSearch';
+import { Fragment, Suspense, lazy, useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import { EngineeringMap } from '@/components/site/EngineeringMap';
 import { GlossaryIndex } from '@/components/site/GlossaryIndex';
 import { Hero } from '@/components/site/Hero';
@@ -14,6 +13,11 @@ import { UI } from '@/content/ui';
 import { SettingsProvider, useSettings, useT } from '@/i18n/settings';
 import { ProgressProvider } from '@/state/progress';
 import { restoreAnchor } from '@/state/scrollAnchor';
+
+// The search palette is fetched the first time the reader asks for it.
+const CommandSearch = lazy(() =>
+  import('@/components/site/CommandSearch').then((module) => ({ default: module.CommandSearch })),
+);
 
 /** Side effects that follow the reader's settings. Renders nothing. */
 function SettingsEffects() {
@@ -34,9 +38,27 @@ function SettingsEffects() {
 
 function Page() {
   const [searchOpen, setSearchOpen] = useState(false);
+  const [searchWanted, setSearchWanted] = useState(false);
+  const openSearch = useCallback(() => {
+    setSearchWanted(true);
+    setSearchOpen(true);
+  }, []);
+
+  // Until the palette is on the page, its shortcut is listened for here. Once mounted it handles ⌘K / Ctrl K itself.
+  useEffect(() => {
+    if (searchWanted) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (!(event.metaKey || event.ctrlKey) || event.key.toLowerCase() !== 'k') return;
+      event.preventDefault();
+      openSearch();
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [searchWanted, openSearch]);
+
   return (
     <>
-      <TopBar onSearch={() => setSearchOpen(true)} />
+      <TopBar onSearch={openSearch} />
       <main id="top">
         <Hero />
         <Journey />
@@ -57,7 +79,11 @@ function Page() {
         <References />
       </main>
       <Footer />
-      <CommandSearch isOpen={searchOpen} onOpenChange={setSearchOpen} />
+      {searchWanted ? (
+        <Suspense fallback={null}>
+          <CommandSearch isOpen={searchOpen} onOpenChange={setSearchOpen} />
+        </Suspense>
+      ) : null}
     </>
   );
 }
