@@ -65,7 +65,7 @@ should read as if written first.
 
 ### Accuracy
 
-- Every engineering fact must be checkable against the source mirrored in `reference/` (Bitcoin Core v32.1 and the 2009 client at v0.1.5; run `npm run fetch-reference` if the folder is missing) or against a BIP. If you cannot check it, leave it out.
+- Every engineering fact must be checkable against the source mirrored in `reference/` (Bitcoin Core v32.1, the 2009 client at v0.1.5 and the Electrum protocol document, each pinned; run `npm run fetch-reference` if the folder is missing) or against a BIP. If you cannot check it, leave it out. A fact that rests on another document needs that document added to `scripts/fetch-reference.mjs`, pinned to a commit.
 - No figures that drift: network hash rate, prices, device specifications, node counts.
 - Where the paper and today's Bitcoin differ, the body follows the paper and `paperVsToday` states today's rule.
 

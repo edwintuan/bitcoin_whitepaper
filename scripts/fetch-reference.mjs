@@ -140,6 +140,16 @@ const FILES = {
   'v0.1.5': ['main.cpp', 'main.h', 'net.cpp', 'net.h'],
 };
 
+/** Documents from other repositories that a chapter cites, each pinned to a commit. */
+const OTHER = [
+  {
+    // The Electrum protocol: what section 8 says a light wallet asks a server for.
+    folder: 'electrum-protocol',
+    raw: 'https://raw.githubusercontent.com/spesmilo/electrum-protocol/c99f5b47534fff08ca273bc2974e58acdc738bb7',
+    files: ['docs/protocol-methods.rst'],
+  },
+];
+
 const missing = [];
 let fetched = 0;
 
@@ -157,6 +167,20 @@ for (const [tag, files] of Object.entries(FILES)) {
       fetched += 1;
     }),
   );
+}
+
+for (const { folder, raw, files } of OTHER) {
+  for (const path of files) {
+    const res = await fetch(`${raw}/${path}`);
+    if (!res.ok) {
+      missing.push(`${folder}/${path} (HTTP ${res.status})`);
+      continue;
+    }
+    const target = join(ROOT, folder, path);
+    await mkdir(dirname(target), { recursive: true });
+    await writeFile(target, Buffer.from(await res.arrayBuffer()));
+    fetched += 1;
+  }
 }
 
 console.log(`Fetched ${fetched} files into ${ROOT}`);
