@@ -627,18 +627,17 @@
       background-color var(--duration-fast) var(--ease-out),
       color var(--duration-fast) var(--ease-out);
   }
+  /* A block is a solid shape in every state: what changes is its fill, never an outline around it. */
   .tile[data-state='candidate'] {
-    background: var(--color-cream);
+    background: var(--color-cream-2);
     color: var(--color-ink);
-    box-shadow: inset 0 0 0 3px var(--color-ink);
   }
   .tile[data-state='found'] {
     color: var(--color-orange);
   }
   .tile[data-state='invalid'] {
-    background: var(--color-paper);
+    background: var(--color-invalid-soft);
     color: var(--color-invalid);
-    box-shadow: inset 0 0 0 3px var(--color-invalid);
   }
   .tile[data-state='ghost'] {
     background: transparent;

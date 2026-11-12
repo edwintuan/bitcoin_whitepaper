@@ -1,39 +1,24 @@
-import { Component, Suspense, createContext, lazy, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { Component, Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ComponentType, LazyExoticComponent, ReactNode } from 'react';
 import type { SectionContent } from '@/content/types';
 import { UI } from '@/content/ui';
 import { useSettings, useT } from '@/i18n/settings';
 import { useInView } from '@/state/useInView';
 import { usePageVisible, useReducedMotion } from '@/state/useMediaQuery';
+import { FigureContext } from './figureContext';
+import type { FigureApi } from './figureContext';
 import { Rich } from './Rich';
 
 /* ------------------------------------------------------------------ context */
 
-export interface FigureApi {
-  /** Index of the guided step being shown, or null once the reader explores freely. */
-  step: number | null;
-  /** Number of guided steps. */
-  total: number;
-  goTo(step: number | null): void;
-  /** False while the figure is off screen or the tab is hidden: pause all work. */
-  active: boolean;
-  reducedMotion: boolean;
-}
-
-const FigureContext = createContext<FigureApi>({
-  step: null,
-  total: 0,
-  goTo: () => {},
-  active: true,
-  reducedMotion: false,
-});
-
 /**
- * Every figure calls this. React to `step` by putting the figure into that
- * step's state; stop timers and animation frames while `active` is false;
- * replace travel with instant changes when `reducedMotion` is true.
+ * Every figure calls `useFigure`. React to `step` by putting the figure into
+ * that step's state; stop timers and animation frames while `active` is
+ * false; replace travel with instant changes when `reducedMotion` is true.
+ * The context itself is in figureContext.ts; see there for why.
  */
-export const useFigure = () => useContext(FigureContext);
+export { useFigure } from './figureContext';
+export type { FigureApi } from './figureContext';
 
 /* ------------------------------------------------------------- lazy loading */
 

@@ -89,7 +89,7 @@ export default function MyFigure() {
 }
 ```
 
-- `step` is the index of the guided step on screen, or `null` once the reader explores freely. React to it by putting the figure in that step's state and pointing at the relevant part (see `data-hl` in `pow.css`). Controls stay usable in every step.
+- `step` is the index of the guided step on screen, or `null` once the reader explores freely. React to it by putting the figure in that step's state and pointing at the relevant part with the class `fig-pointed` (see `pow/MineScene.tsx`). Controls stay usable in every step.
 - If the reader changes scene or state by hand, keep the walkthrough in step with `goTo`.
 - Stop all timers, animation frames and computation while `active` is false.
 - With `reducedMotion`, replace travel with instant changes and offer a button for anything that would otherwise play by itself.
@@ -118,7 +118,10 @@ figure's only border. Inside the stage:
   shape, filled, with no outline, and it never contains another bordered box.
   Fields inside it are lines of text separated by hairlines.
 - The walkthrough points at a part with `fig-pointed`, an orange bar in the
-  gutter beside it. Never an outline around it.
+  gutter beside it. Never an outline around it. The bar is the element's
+  `::before`, so it cannot go on an element that has one of its own, and a
+  parent with `overflow: hidden` (a tile's rows) clips it: point at the row's
+  container instead.
 - A state such as "not checked" is words (`tag-line`), not a boxed pill. Only
   results that matter get a filled tag (`tag-valid`, `tag-invalid`, `tag`).
 - No element whose only job is to wrap one other element. If a `div` has no
@@ -155,7 +158,7 @@ Three things the reviews of the first chapters kept finding:
 - Do not set `outline` on anything that can take the focus. Figure styles are
   not in a cascade layer and the site's focus ring is, so your outline wins
   and the focused button looks like any other. To point at a control during a
-  walkthrough, highlight a wrapper around it (`data-region` in `pow/`).
+  walkthrough, put `fig-pointed` on the row or group it sits in.
 - A button that changes state when pressed must not use the `disabled`
   attribute: the browser takes the focus away and a keyboard reader is back at
   the top of the page. Use `aria-disabled="true"` and a handler that does
