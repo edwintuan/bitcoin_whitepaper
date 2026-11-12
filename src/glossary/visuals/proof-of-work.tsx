@@ -41,7 +41,7 @@ export default function ProofOfWorkVisual() {
         <rect x="0" y="20" width={WIDTH} height="6" fill="#3a3a3a" />
         <rect x="0" y="20" width={TARGET_X} height="6" fill="var(--color-orange)" />
         <path d={`M${TARGET_X} 10V36`} stroke="var(--color-cream)" strokeWidth="2" />
-        <text x={TARGET_X + 5} y="42" fill="currentColor" fontSize="10">
+        <text x={TARGET_X + 5} y="42" fill="currentColor" fontSize="11">
           {t(COPY.target)}
         </text>
         {shown.map((attempt, age) => {

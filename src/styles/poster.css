@@ -296,7 +296,7 @@
   .prose code,
   .inline-code {
     font-family: var(--font-mono);
-    font-size: 0.82em;
+    font-size: max(0.82em, 11px);
     background: var(--color-cream-2);
     padding: 0.1em 0.35em;
   }
@@ -470,7 +470,7 @@
     background: var(--color-ink);
     color: var(--color-orange);
     font-family: var(--font-mono);
-    font-size: 10.5px;
+    font-size: 11px;
     font-weight: 500;
     letter-spacing: 0.06em;
     text-transform: uppercase;

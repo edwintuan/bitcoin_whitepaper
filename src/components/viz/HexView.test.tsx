@@ -34,6 +34,16 @@ describe('HexView', () => {
     expect(screen.getByRole('listitem', { name: 'count: 2 位元組' })).toBeInTheDocument();
   });
 
+  it('lets the unit follow the count, so one byte is not "1 bytes"', () => {
+    const one = [
+      { name: 'relay', start: 0, end: 1 },
+      { name: 'rest', start: 1, end: 6 },
+    ];
+    render(<HexView bytes={bytes} segments={one} unit={(count) => (count === 1 ? 'byte' : 'bytes')} />);
+    expect(screen.getByRole('listitem', { name: 'relay: 1 byte' })).toBeInTheDocument();
+    expect(screen.getByRole('listitem', { name: 'rest: 5 bytes' })).toBeInTheDocument();
+  });
+
   it('reports the field under the keyboard focus, and none once the focus leaves', async () => {
     const user = userEvent.setup();
     const onActive = vi.fn();
