@@ -54,9 +54,16 @@ function SliderBase<T extends SliderValue>({
   thumbLabels,
   ...props
 }: SliderBaseInternalProps<T>) {
+  // Without a visible label the group would be anonymous. A single-thumb
+  // slider then gives its thumb's name to the group, and the thumb, which is
+  // announced with its group's name, does not repeat it.
+  const groupTakesThumbName =
+    label == null && props["aria-label"] == null && props["aria-labelledby"] == null && thumbLabels.length === 1;
+
   return (
     <AriaSlider
       {...props}
+      aria-label={props["aria-label"] ?? (groupTakesThumbName ? thumbLabels[0] : undefined)}
       orientation="horizontal"
       className={({ isDisabled }) =>
         cx(
@@ -115,8 +122,9 @@ function SliderBase<T extends SliderValue>({
                         key={index}
                         index={index}
                         aria-label={
-                          thumbLabels[index] ??
-                          (isRange ? `Value ${index + 1}` : "Value")
+                          groupTakesThumbName
+                            ? undefined
+                            : (thumbLabels[index] ?? (isRange ? `Value ${index + 1}` : "Value"))
                         }
                         className={({
                           isDragging,

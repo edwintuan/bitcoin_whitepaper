@@ -20,15 +20,19 @@ export interface CollapsibleProps {
 /**
  * A block of a section that opens or closes with the reading depth.
  *
- * It is never removed: closed, it is a one-line heading the reader can open.
- * A manual choice holds until the reader picks a depth again, at which point
- * every block goes back to that depth's default.
+ * The heading is always there: closed, it is one line the reader can open.
+ * The content is built the first time the block opens and kept from then on,
+ * so a page of closed blocks does not carry their markup, and whatever the
+ * reader did inside a block is still there when they open it again. A manual
+ * choice holds until the reader picks a depth again, at which point every
+ * block goes back to that depth's default.
  */
 export function Collapsible({ title, minDepth, aside, className, children }: CollapsibleProps) {
   const { depth, depthEpoch } = useSettings();
   const defaultOpen = rank(depth) >= rank(minDepth);
 
   const [open, setOpen] = useState(defaultOpen);
+  const [built, setBuilt] = useState(defaultOpen);
   const [epoch, setEpoch] = useState(depthEpoch);
   if (epoch !== depthEpoch) {
     // The reader picked a depth: forget the manual state. (Adjusting state
@@ -36,6 +40,7 @@ export function Collapsible({ title, minDepth, aside, className, children }: Col
     setEpoch(depthEpoch);
     setOpen(defaultOpen);
   }
+  if (open && !built) setBuilt(true);
 
   const id = useId();
   const headId = `${id}-head`;
@@ -63,7 +68,7 @@ export function Collapsible({ title, minDepth, aside, className, children }: Col
       </h3>
       <div className="t-acc-panel" id={panelId} role="region" aria-labelledby={headId} inert={!open}>
         <div className="t-acc-panel-inner">
-          <div className="collapsible-body">{children}</div>
+          <div className="collapsible-body">{built ? children : null}</div>
         </div>
       </div>
     </div>

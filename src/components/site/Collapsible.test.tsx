@@ -40,11 +40,29 @@ describe('Collapsible', () => {
     expect(setup('developer')).toHaveAttribute('aria-expanded', 'true');
   });
 
-  it('never removes its content: closed content stays in the document, inert', () => {
-    setup('starter');
+  it('does not build its content until it is first opened', async () => {
+    // A page of closed blocks should not carry all their markup: at the
+    // starter depth that is most of every chapter.
+    const head = setup('starter');
+    expect(screen.queryByText('Body copy')).toBeNull();
+    await userEvent.click(head);
+    expect(screen.getByText('Body copy')).toBeInTheDocument();
+  });
+
+  it('keeps its content once opened: closed again, it stays in the document, inert', async () => {
+    const head = setup('starter');
+    await userEvent.click(head);
+    await userEvent.click(head);
     const body = screen.getByText('Body copy');
     expect(body).toBeInTheDocument();
     expect(body.closest('[inert]')).not.toBeNull();
+  });
+
+  it('builds its content when a change of depth opens it', async () => {
+    setup('starter');
+    expect(screen.queryByText('Body copy')).toBeNull();
+    await userEvent.click(screen.getByText('to developer'));
+    expect(screen.getByText('Body copy')).toBeInTheDocument();
   });
 
   it('toggles by hand', async () => {
