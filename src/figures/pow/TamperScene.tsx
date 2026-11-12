@@ -14,7 +14,6 @@ import { useMiner } from '@/state/useMiner';
 /** Slow the repair down so its cost can be watched. */
 const REPAIR_RATE = 700;
 
-
 /** Edit an old block and see what it costs to make the chain whole again. */
 export function TamperScene() {
   const t = useT();
@@ -27,8 +26,6 @@ export function TamperScene() {
   const [repairing, setRepairing] = useState<number | null>(null);
   const [cost, setCost] = useState(0);
   const [redone, setRedone] = useState(0);
-  // Bumped when an edit first breaks the chain, to replay the cascade.
-  const [breakTick, setBreakTick] = useState(0);
 
   const { view, start, reset } = useMiner({ active, maxRate: REPAIR_RATE, calm: reducedMotion });
   const chainRef = useRef(chain);
@@ -50,7 +47,6 @@ export function TamperScene() {
     if (wasWhole) {
       setCost(0);
       setRedone(0);
-      setBreakTick((tick) => tick + 1);
     }
   };
 
@@ -115,8 +111,11 @@ export function TamperScene() {
           const shownNonce = mining ? view.nonce : block.nonce;
           const prev = mining ? (index === 0 ? GENESIS_HASH : chain[index - 1].hash) : block.prev;
           return (
+            // The key never changes: a tile holds the input being typed in, and
+            // remounting it would drop the focus. Gaining the class is what
+            // starts the cascade, so it replays whenever a whole chain breaks.
             <BlockTile
-              key={`${index}-${issue ? breakTick : 'ok'}`}
+              key={index}
               className={issue && !mining ? 't-cascade' : undefined}
               style={{ ['--i' as string]: Math.max(0, index - firstBroken) }}
               title={`${t(COPY.blockN)} ${index + 1}`}
