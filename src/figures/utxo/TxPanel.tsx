@@ -28,7 +28,7 @@ export function TxPanel({ plan, pointed }: { plan: Plan; pointed: 'tx' | 'fee' |
     return (
       <div className={cx(pointed && 'fig-pointed')}>
         <p className="utxo-short-title label">
-          <span className="tag tag-invalid">✕</span>
+          <span className="tag tag-invalid">×</span>
           {t(COPY.shortTitle)}
         </p>
         <dl className="utxo-short-sums">

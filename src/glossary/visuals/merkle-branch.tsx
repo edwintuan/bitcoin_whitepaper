@@ -48,7 +48,7 @@ export default function MerkleBranchVisual() {
       />
       <div className="tv-row" style={{ marginTop: 6 }}>
         <span>{fill(t(COPY.result), { n: picked, count: proof.length })}</span>
-        <span className="tv-hit">{holds ? '✓' : '✕'}</span>
+        <span className="tv-hit">{holds ? '✓' : '×'}</span>
       </div>
       <p className="tv-cap">{t(COPY.caption)}</p>
     </div>

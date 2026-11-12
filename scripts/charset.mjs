@@ -12,6 +12,9 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 /** Folders under src whose text never reaches the page. */
 const SKIP_DIRS = new Set(['__fixtures__', 'assets']);
 
+/** Files that hold characters only to test for them: the list of renderings the Chinese copy must not use. */
+const SKIP_FILES = new Set(['zhChecks.ts']);
+
 /** Punctuation and marks kept available whether or not the copy uses them yet. */
 const ALWAYS = '、。，；：？！「」『』（）《》〈〉…—·％／～＋－＝';
 
@@ -20,7 +23,7 @@ function* sourceFiles(dir) {
     const path = join(dir, entry.name);
     if (entry.isDirectory()) {
       if (!SKIP_DIRS.has(entry.name)) yield* sourceFiles(path);
-    } else if (/\.(ts|tsx)$/.test(entry.name) && !/\.test\.tsx?$/.test(entry.name)) {
+    } else if (/\.(ts|tsx)$/.test(entry.name) && !/\.test\.tsx?$/.test(entry.name) && !SKIP_FILES.has(entry.name)) {
       yield path;
     }
   }

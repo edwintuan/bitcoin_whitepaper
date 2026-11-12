@@ -50,7 +50,7 @@ const INFINITE_SUM = [
   '<math display="block">',
   sum('<mi mathvariant="normal">∞</mi>'),
   POISSON,
-  '<mo>⋅</mo>',
+  '<mo>·</mo>',
   '<mrow><mo>{</mo><mtable>',
   `<mtr><mtd>${CATCH_UP}</mtd><mtd>${IF}<mi>k</mi><mo>≤</mo><mi>z</mi></mtd></mtr>`,
   `<mtr><mtd><mn>1</mn></mtd><mtd>${IF}<mi>k</mi><mo>&gt;</mo><mi>z</mi></mtd></mtr>`,

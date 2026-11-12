@@ -61,7 +61,7 @@ export function SizeScene({ visible, highlight }: { visible: boolean; highlight:
         <p className="label spv-ladder-cap">
           <span>{fill(t(COPY.ladderLabel), { index: block.index })}</span>
           <span className={`tag ${holds ? 'tag-valid' : 'tag-invalid'}`}>
-            {holds ? '✓' : '✕'} {t(COPY.verified)}
+            {holds ? '✓' : '×'} {t(COPY.verified)}
           </span>
         </p>
         <ol className="spv-ladder mono">

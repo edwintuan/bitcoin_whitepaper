@@ -7,6 +7,19 @@
    tokens below re-skin its components.
    ========================================================================== */
 
+/*
+ * What stands in for Anton in the instant before it arrives: Impact, which
+ * most desktops have, set a little smaller so that it runs exactly as wide.
+ * The hero title then breaks where it will break, and nothing below it jumps
+ * when the real face is swapped in. (Measured: the title is 6.7% wider in
+ * Impact at the same size.)
+ */
+@font-face {
+  font-family: 'Anton Fallback';
+  src: local('Impact');
+  size-adjust: 93.7%;
+}
+
 @theme {
   /* ---- palette -------------------------------------------------------- */
   --color-orange: #f7931a;
@@ -40,7 +53,7 @@
   --color-accent-950: #3f2005;
 
   /* ---- type ----------------------------------------------------------- */
-  --font-display: 'Anton', 'Noto Sans HK', 'Arial Narrow', sans-serif;
+  --font-display: 'Anton', 'Anton Fallback', 'Noto Sans HK', 'Arial Narrow', sans-serif;
   --font-serif: 'Newsreader Variable', 'Noto Serif HK', Georgia, 'Times New Roman', serif;
   --font-sans: 'Public Sans Variable', 'Noto Sans HK', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'DM Mono', 'Noto Sans HK', ui-monospace, 'SFMono-Regular', Menlo, monospace;

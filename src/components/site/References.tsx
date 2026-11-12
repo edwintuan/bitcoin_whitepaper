@@ -1,3 +1,4 @@
+import { BrandMark } from './BrandMark';
 import { REFERENCES, WHITEPAPER_META } from '@/content/references';
 import { UI } from '@/content/ui';
 import { useT } from '@/i18n/settings';
@@ -60,7 +61,7 @@ export function Footer() {
     <footer className="footer on-ink">
       <div className="wrap footer-in">
         <p className="label">
-          <b aria-hidden="true">₿</b> {t(UI.brand)}
+          <BrandMark /> {t(UI.brand)}
         </p>
         <p className="label footer-credit">{t(UI.credit)}</p>
         <a className="label footer-top" href="#top">

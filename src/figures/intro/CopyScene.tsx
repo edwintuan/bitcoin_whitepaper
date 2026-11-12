@@ -93,7 +93,7 @@ export function CopyScene({ coin, pointed, onGive, onMint, onReset }: CopySceneP
                   <i className="itr-file itr-file-none" aria-hidden="true" />
                 )}
                 <span className={cx('tag', result === 'none' && 'tag-line', result === 'accepted' && 'tag-valid', result === 'refused' && 'tag-invalid')}>
-                  {result === 'accepted' ? '✓ ' : result === 'refused' ? '✗ ' : ''}
+                  {result === 'accepted' ? '✓ ' : result === 'refused' ? '× ' : ''}
                   {t(COPY.result[result])}
                 </span>
               </div>

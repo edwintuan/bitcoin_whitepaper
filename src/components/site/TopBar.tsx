@@ -9,6 +9,7 @@ import { useSettings, useT } from '@/i18n/settings';
 import { afterOverlay, followLink } from '@/state/navigate';
 import { useProgress } from '@/state/progress';
 import { captureAnchor } from '@/state/scrollAnchor';
+import { BrandMark } from './BrandMark';
 import { ChainNav } from './ChainNav';
 
 function LanguageSwitch() {
@@ -84,7 +85,7 @@ export function TopBar({ onSearch }: { onSearch?: () => void }) {
       </a>
       <div className="wrap topbar-in">
         <a className="brand label" href="#top">
-          <b aria-hidden="true">₿</b>
+          <BrandMark />
           <span>{t(UI.brand)}</span>
           <span className="brand-by">Animus Laboratories</span>
         </a>

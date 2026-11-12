@@ -1,4 +1,6 @@
 import { Fragment, Suspense, lazy, useCallback, useEffect, useLayoutEffect, useState } from 'react';
+import type { ReactNode } from 'react';
+import { I18nProvider } from 'react-aria-components';
 import { EngineeringMap } from '@/components/site/EngineeringMap';
 import { GlossaryIndex } from '@/components/site/GlossaryIndex';
 import { Hero } from '@/components/site/Hero';
@@ -14,10 +16,20 @@ import { SettingsProvider, useSettings, useT } from '@/i18n/settings';
 import { ProgressProvider } from '@/state/progress';
 import { restoreAnchor } from '@/state/scrollAnchor';
 
-// The search palette is fetched the first time the reader asks for it.
-const CommandSearch = lazy(() =>
-  import('@/components/site/CommandSearch').then((module) => ({ default: module.CommandSearch })),
-);
+// The search palette is a chunk of its own: fetched when the page has gone
+// quiet, so that it opens at once when asked for, and at the latest when asked.
+const loadSearch = () => import('@/components/site/CommandSearch');
+const CommandSearch = lazy(() => loadSearch().then((module) => ({ default: module.CommandSearch })));
+
+/**
+ * The controls built on React Aria carry a few words of their own ("Dismiss",
+ * "Clear search"). Left alone they follow the browser's language, not the
+ * page's: English in the Chinese page, Simplified Chinese in the English one.
+ */
+function ControlsLocale({ children }: { children: ReactNode }) {
+  const { lang } = useSettings();
+  return <I18nProvider locale={lang === 'zh' ? 'zh-TW' : 'en-GB'}>{children}</I18nProvider>;
+}
 
 /** Side effects that follow the reader's settings. Renders nothing. */
 function SettingsEffects() {
@@ -42,6 +54,16 @@ function Page() {
   const openSearch = useCallback(() => {
     setSearchWanted(true);
     setSearchOpen(true);
+  }, []);
+
+  useEffect(() => {
+    const fetchIt = () => void loadSearch().catch(() => {});
+    if (typeof requestIdleCallback === 'function') {
+      const id = requestIdleCallback(fetchIt, { timeout: 4000 });
+      return () => cancelIdleCallback(id);
+    }
+    const timer = window.setTimeout(fetchIt, 2500);
+    return () => window.clearTimeout(timer);
   }, []);
 
   // Until the palette is on the page, its shortcut is listened for here. Once mounted it handles ⌘K / Ctrl K itself.
@@ -92,9 +114,11 @@ export default function App() {
   return (
     <SettingsProvider>
       <SettingsEffects />
-      <ProgressProvider>
-        <Page />
-      </ProgressProvider>
+      <ControlsLocale>
+        <ProgressProvider>
+          <Page />
+        </ProgressProvider>
+      </ControlsLocale>
     </SettingsProvider>
   );
 }

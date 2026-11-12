@@ -45,7 +45,7 @@ export function GapScene({ coin, second, pointed, onSign, onUndo }: GapSceneProp
         used={second ? ['prev'] : []}
         tag={
           <span className={cx('tag', holds ? 'tag-valid' : 'tag-invalid')}>
-            {holds ? '✓ ' : '✗ '}
+            {holds ? '✓ ' : '× '}
             {t(holds ? COPY.tag.valid : COPY.tag.signature)}
           </span>
         }

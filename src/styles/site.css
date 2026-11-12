@@ -48,8 +48,9 @@
     text-decoration: none;
     white-space: nowrap;
   }
-  .brand b {
-    color: var(--color-orange);
+  .brand-mark {
+    flex: none;
+    align-self: center;
   }
   .brand-by {
     opacity: 0.5;
@@ -87,6 +88,11 @@
     background: var(--color-orange);
     transform-origin: left center;
     transition: transform var(--duration-fast) var(--ease-smooth-out);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .topbar-progress {
+      transition: none;
+    }
   }
 
   /* ----------------------------------------------------------- chain nav */

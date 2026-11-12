@@ -8,6 +8,16 @@ import { between, place, pointOn, stageHeightFor, tileFor } from './layout';
 import { packetProgress } from './view';
 import type { ChainView } from './view';
 
+/** A turn back on itself: the mark of a node that has just left one branch for another. */
+function SwitchMark({ className }: { className: string }) {
+  return (
+    <svg className={className} viewBox="0 0 12 12" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+      <path d="M0.8 2v3h3" />
+      <path d="M1.9 7.5a4.4 4.4 0 1 0 1.05-4.6L0.8 5" />
+    </svg>
+  );
+}
+
 type Kind = SimMessage['kind'];
 
 /** Pixels a message keeps to one side of its link, so traffic both ways can be told apart. */
@@ -141,9 +151,7 @@ export function NetGraph({ snap, view, selected, onSelect, still, switched }: Ne
                   {node.online ? `h${block.height}` : t(COPY.offShort)}
                 </span>
                 {switched.includes(node.id) ? (
-                  <span className="net-node-mark mono" aria-hidden="true">
-                    ↺
-                  </span>
+                  <SwitchMark className="net-node-mark" />
                 ) : null}
               </button>
             );
@@ -198,9 +206,7 @@ export function NetLegend() {
         {t(COPY.looks.waiting)}
       </li>
       <li>
-        <span className="net-glyph" aria-hidden="true">
-          ↺
-        </span>
+        <SwitchMark className="net-glyph" />
         {t(COPY.looks.reorg)}
       </li>
     </ul>

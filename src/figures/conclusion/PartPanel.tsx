@@ -20,7 +20,7 @@ export function PartPanel({ id, run }: { id: PartId; run: MachineRun }) {
   /** The outcome of a check the engine ran on this page: a mark and a word, never colour alone. */
   const outcome = (passed: boolean, yes: L<string>, no: L<string>) => (
     <span className={`tag ${passed ? 'tag-valid' : 'tag-invalid'}`}>
-      {passed ? '✓' : '✗'} {t(passed ? yes : no)}
+      {passed ? '✓' : '×'} {t(passed ? yes : no)}
     </span>
   );
 

@@ -120,7 +120,7 @@ export function ChainScene({ coin, inspection, firstSigner, ownerKeys, fresh, po
                       (kind === 'signature' || kind === 'link') && 'tag-invalid',
                     )}
                   >
-                    {kind === 'valid' ? '✓ ' : kind === 'unchecked' ? '' : '✗ '}
+                    {kind === 'valid' ? '✓ ' : kind === 'unchecked' ? '' : '× '}
                     {t(COPY.tag[kind])}
                   </span>
                 }
@@ -223,7 +223,7 @@ function Verdict({ coin, hashes, problem, index }: { coin: Transfer[]; hashes: s
   return (
     <>
       <span key={`${index}-${problem}`} className={cx('tag txs-verdict', problem === null ? 'tag-valid t-pop' : 'tag-invalid')}>
-        {problem === null ? '✓ ' : '✗ '}
+        {problem === null ? '✓ ' : '× '}
         {t(COPY.tag[problem ?? 'valid'])}
       </span>{' '}
       {sentence}

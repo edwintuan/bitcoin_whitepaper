@@ -59,7 +59,7 @@ const FIGURES: [id: PaperFigureId, section: SectionId, follows: string][] = [
 const FORMULAS: [reads: string, needs: string[]][] = [
   ['qz={1ifp≤q(q/p)zifp>q}', ['msub', 'msup', 'mtable']],
   ['λ=zqp', ['mfrac']],
-  ['∑k=0∞λke−λk!⋅{(q/p)(z−k)ifk≤z1ifk>z}', ['munderover', 'mfrac', 'msup', 'mtable']],
+  ['∑k=0∞λke−λk!·{(q/p)(z−k)ifk≤z1ifk>z}', ['munderover', 'mfrac', 'msup', 'mtable']],
   ['1−∑k=0zλke−λk!(1−(q/p)(z−k))', ['munderover', 'mfrac', 'msup']],
 ];
 

@@ -91,7 +91,7 @@ export default function DoubleSpendingVisual() {
             <div className="tv-row" key={row} style={{ alignItems: 'center', height: LINE }}>
               <span style={{ ...shape, flex: 'none', minWidth: 50, background: 'var(--color-cream)' }}>{t(COPY.payees[row])}</span>
               <span>
-                {spend.signature.slice(0, 8)}… {spend.valid ? '✓' : '✗'}
+                {spend.signature.slice(0, 8)}… {spend.valid ? '✓' : '×'}
               </span>
               <span
                 className="tv-hit"

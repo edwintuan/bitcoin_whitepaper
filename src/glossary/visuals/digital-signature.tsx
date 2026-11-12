@@ -62,7 +62,7 @@ export default function DigitalSignatureVisual() {
           {t(COPY.check)}
         </span>
         <span key={String(fits)} className={fits ? 'tv-hit t-swap-soft' : 't-shake'} style={{ display: 'inline-block' }}>
-          {fits ? '✓' : '✗'} {t(fits ? COPY.fits : COPY.fails)}
+          {fits ? '✓' : '×'} {t(fits ? COPY.fits : COPY.fails)}
         </span>
       </div>
       <button

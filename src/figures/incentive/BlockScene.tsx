@@ -73,7 +73,7 @@ export function BlockScene({ height, onHeight, txs, onTxs, claim, onClaim, highl
         key={verdict.ok ? 'ok' : 'bad'}
         className={cx('inc-block', !verdict.ok && 't-shake', highlight === 'txs' && 'fig-pointed')}
         title={`${t(COPY.block)} ${formatCount(height)}`}
-        status={verdict.ok ? `${t(COPY.valid)} ✓` : `${t(COPY.rejected)} ✗`}
+        status={verdict.ok ? `${t(COPY.valid)} ✓` : `${t(COPY.rejected)} ×`}
         state={verdict.ok ? 'candidate' : 'invalid'}
       >
         <ol className="inc-txs" ref={list}>

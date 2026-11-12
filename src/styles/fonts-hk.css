@@ -1,8 +1,11 @@
 /*
- * Noto Sans HK and Noto Serif HK, cut down to the characters this site uses.
- * The files are built by scripts/subset-fonts.mjs (`npm run fonts`) and
- * checked by fonts.test.ts. Both families are licensed under the SIL Open
- * Font License 1.1.
+ * Written by scripts/subset-fonts.mjs (`npm run fonts`). Do not edit by hand.
+ *
+ * Noto Sans HK and Noto Serif HK, cut down to the characters this site uses
+ * and split by unicode-range: the Chinese text, the symbols the Latin fonts
+ * lack, and the few characters an English page shows at first paint. Checked
+ * by fonts.test.ts. Both families are licensed under the SIL Open Font
+ * License 1.1.
  */
 @font-face {
   font-family: 'Noto Sans HK';
@@ -10,6 +13,25 @@
   font-weight: 400;
   font-display: swap;
   src: url('../assets/fonts/noto-sans-hk-400.woff2') format('woff2');
+  unicode-range: U+2E80-2FDF, U+3000-303F, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FE30-FE4F, U+FF00-FFEF;
+}
+
+@font-face {
+  font-family: 'Noto Sans HK';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../assets/fonts/noto-sans-hk-400-symbols.woff2') format('woff2');
+  unicode-range: U+00A7, U+00B0, U+00B2, U+00B7, U+00D7, U+00E9, U+00F7, U+03BB, U+2013-2014, U+2016, U+2019, U+201C-201D, U+2022, U+2026, U+2190-2193, U+2197, U+2211-2212, U+221E, U+2248, U+2260, U+2264-2265, U+2318, U+2713;
+}
+
+@font-face {
+  font-family: 'Noto Sans HK';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../assets/fonts/noto-sans-hk-400-first.woff2') format('woff2');
+  unicode-range: U+4E00, U+5B50, U+5C0D, U+5E63, U+6BD4, U+7279, U+73FE, U+7684, U+7A2E, U+7CFB, U+7D71, U+7E41, U+91D1, U+96FB, U+9EDE, U+FF1A;
 }
 
 @font-face {
@@ -18,6 +40,25 @@
   font-weight: 500;
   font-display: swap;
   src: url('../assets/fonts/noto-sans-hk-500.woff2') format('woff2');
+  unicode-range: U+2E80-2FDF, U+3000-303F, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FE30-FE4F, U+FF00-FFEF;
+}
+
+@font-face {
+  font-family: 'Noto Sans HK';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('../assets/fonts/noto-sans-hk-500-symbols.woff2') format('woff2');
+  unicode-range: U+00A7, U+00B0, U+00B2, U+00B7, U+00D7, U+00E9, U+00F7, U+03BB, U+2013-2014, U+2016, U+2019, U+201C-201D, U+2022, U+2026, U+2190-2193, U+2197, U+2211-2212, U+221E, U+2248, U+2260, U+2264-2265, U+2318, U+2713;
+}
+
+@font-face {
+  font-family: 'Noto Sans HK';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('../assets/fonts/noto-sans-hk-500-first.woff2') format('woff2');
+  unicode-range: U+4E00, U+5B50, U+5C0D, U+5E63, U+6BD4, U+7279, U+73FE, U+7684, U+7A2E, U+7CFB, U+7D71, U+7E41, U+91D1, U+96FB, U+9EDE, U+FF1A;
 }
 
 @font-face {
@@ -26,6 +67,25 @@
   font-weight: 900;
   font-display: swap;
   src: url('../assets/fonts/noto-sans-hk-900.woff2') format('woff2');
+  unicode-range: U+2E80-2FDF, U+3000-303F, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FE30-FE4F, U+FF00-FFEF;
+}
+
+@font-face {
+  font-family: 'Noto Sans HK';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url('../assets/fonts/noto-sans-hk-900-symbols.woff2') format('woff2');
+  unicode-range: U+00A7, U+00B0, U+00B2, U+00B7, U+00D7, U+00E9, U+00F7, U+03BB, U+2013-2014, U+2016, U+2019, U+201C-201D, U+2022, U+2026, U+2190-2193, U+2197, U+2211-2212, U+221E, U+2248, U+2260, U+2264-2265, U+2318, U+2713;
+}
+
+@font-face {
+  font-family: 'Noto Sans HK';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url('../assets/fonts/noto-sans-hk-900-first.woff2') format('woff2');
+  unicode-range: U+4E00, U+5B50, U+5C0D, U+5E63, U+6BD4, U+7279, U+73FE, U+7684, U+7A2E, U+7CFB, U+7D71, U+7E41, U+91D1, U+96FB, U+9EDE, U+FF1A;
 }
 
 @font-face {
@@ -34,6 +94,16 @@
   font-weight: 400;
   font-display: swap;
   src: url('../assets/fonts/noto-serif-hk-400.woff2') format('woff2');
+  unicode-range: U+2E80-2FDF, U+3000-303F, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FE30-FE4F, U+FF00-FFEF;
+}
+
+@font-face {
+  font-family: 'Noto Serif HK';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../assets/fonts/noto-serif-hk-400-symbols.woff2') format('woff2');
+  unicode-range: U+00A7, U+00B0, U+00B2, U+00B7, U+00D7, U+00E9, U+00F7, U+03BB, U+2013-2014, U+2016, U+2019, U+201C-201D, U+2022, U+2026, U+2190-2193, U+2197, U+2211-2212, U+221E, U+2248, U+2260, U+2264-2265, U+2318, U+2713;
 }
 
 @font-face {
@@ -42,4 +112,14 @@
   font-weight: 700;
   font-display: swap;
   src: url('../assets/fonts/noto-serif-hk-700.woff2') format('woff2');
+  unicode-range: U+2E80-2FDF, U+3000-303F, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FE30-FE4F, U+FF00-FFEF;
+}
+
+@font-face {
+  font-family: 'Noto Serif HK';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../assets/fonts/noto-serif-hk-700-symbols.woff2') format('woff2');
+  unicode-range: U+00A7, U+00B0, U+00B2, U+00B7, U+00D7, U+00E9, U+00F7, U+03BB, U+2013-2014, U+2016, U+2019, U+201C-201D, U+2022, U+2026, U+2190-2193, U+2197, U+2211-2212, U+221E, U+2248, U+2260, U+2264-2265, U+2318, U+2713;
 }
