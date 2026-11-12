@@ -250,7 +250,8 @@
     text-underline-offset: 4px;
     transition:
       background-color var(--duration-quick) var(--ease-out),
-      color var(--duration-quick) var(--ease-out);
+      color var(--duration-quick) var(--ease-out),
+      text-decoration-color var(--duration-quick) var(--ease-out);
   }
   .part-chip .mono {
     font-size: 11px;
@@ -413,6 +414,7 @@
     color: var(--color-orange-ink);
     font-family: var(--font-display);
     font-weight: 400;
+    transition: color var(--duration-quick) var(--ease-out);
   }
 
   /* ----------------------------------------------------------- collapsible */

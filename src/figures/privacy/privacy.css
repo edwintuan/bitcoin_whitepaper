@@ -1,5 +1,8 @@
 /* Fig. 10.1: privacy. Plain CSS on the site's tokens. */
 
+.prv {
+  container-type: inline-size;
+}
 .prv-cap {
   display: flex;
   align-items: center;
@@ -375,7 +378,12 @@
   margin: 8px 0 0;
 }
 
-@media (max-width: 640px) {
+/*
+ * Decided by the width of the stage, not of the window: beside the text on a
+ * laptop the stage is narrower (about 430 px) than it is on a tablet, and the
+ * row of five boxes and the two-column grid need 520.
+ */
+@container (max-width: 519px) {
   .prv-flow {
     flex-direction: column;
     align-items: stretch;

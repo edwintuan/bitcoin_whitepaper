@@ -11,7 +11,8 @@
  *
  * For every chapter it walks the figure's guided steps and checks each one.
  * With --cards it also opens every glossary card. Truncation with an ellipsis
- * is deliberate where it happens (hashes), so it is only listed with --verbose.
+ * is deliberate where it happens (hashes), so it is only listed with --verbose,
+ * and so are the two contrast exceptions the design accepts (see EXCEPTIONS).
  *
  * Exits with 1 if anything was found.
  */
@@ -33,12 +34,24 @@ const only = opt('only', null);
 const cards = flag('cards');
 const verbose = flag('verbose');
 
+/**
+ * Contrast the design knowingly accepts, recorded in section 16 of the design
+ * spec. Both are display type at 60 px and more whose content is also there
+ * as ordinary text: the title's full wording is the heading's accessible
+ * name, and the section's number is in the navigation and the address.
+ */
+const EXCEPTIONS = [
+  { kind: 'contrast', element: /^span\.hero-em\b/ }, // two words of the hero title, cream on orange
+  { kind: 'contrast', element: /^span\.section-no\b/ }, // the large numeral beside each section title
+];
+const accepted = (finding) => EXCEPTIONS.some((entry) => entry.kind === finding.kind && entry.element.test(finding.element ?? ''));
+
 const browser = await chromium.launch({ channel: 'chrome', headless: true });
 /** key -> { finding, where: Set<string> } */
 const all = new Map();
 const note = (config, place, findings) => {
   for (const finding of findings) {
-    if (finding.kind === 'ellipsis' && !verbose) continue;
+    if ((finding.kind === 'ellipsis' || accepted(finding)) && !verbose) continue;
     // Sixty line numbers in the same faint grey are one finding, not sixty.
     const sameLook = finding.kind === 'contrast' || finding.kind === 'small';
     const key = [finding.kind, place.split(' ')[0], finding.container, sameLook ? finding.by : finding.text, finding.element].join('|');

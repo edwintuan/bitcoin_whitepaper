@@ -205,6 +205,13 @@ export function auditInPage(rootSelector) {
       const outY = Math.max(bottom - rect.bottom, rect.top - top);
       const clipsX = overflowX === 'hidden' || overflowX === 'clip';
       const clipsY = boxStyle.overflowY === 'hidden' || boxStyle.overflowY === 'clip';
+      // Wholly outside the box: beside it or dropped out of it on purpose, not cut by it.
+      const apart = right <= rect.left + 1 || left >= rect.right - 1 || bottom <= rect.top + 1 || top >= rect.bottom - 1;
+      if ((clipsX || clipsY) && apart) {
+        // A label that wraps out of a one-line bar when it does not fit is hidden whole. Nothing to report.
+        clipped = true;
+        break;
+      }
       if (clipsX && outX > 1) {
         const ellipsis = boxStyle.textOverflow === 'ellipsis' || styleOf(element).textOverflow === 'ellipsis';
         report(ellipsis ? 'ellipsis' : 'cut-off', nameOf(box), `${outX.toFixed(0)}px`);
@@ -217,7 +224,8 @@ export function auditInPage(rootSelector) {
         break;
       }
       if (!clipsX && paints(boxStyle) && outX > 1) {
-        report('sticks-out', nameOf(box), `${outX.toFixed(0)}px`);
+        // A caption set beside a shape (the name above a thin wall) is not sticking out of it.
+        if (!apart) report('sticks-out', nameOf(box), `${outX.toFixed(0)}px`);
         break;
       }
     }

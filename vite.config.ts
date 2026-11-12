@@ -35,6 +35,9 @@ export default defineConfig({
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },
+  // The port the screenshot and audit scripts look at unless told otherwise.
+  server: { port: 5199 },
+  preview: { port: 5198 },
   build: {
     rolldownOptions: {
       output: {
