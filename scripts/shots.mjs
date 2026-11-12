@@ -19,10 +19,12 @@
  *   full:<name>                  full-page screenshot
  *   el:<selector>|<name>         screenshot of one element
  *   eval:<expression>            print the value of a page expression
+ *   audit:<selector>             list text that is cut off, sticks out of its box or is under 11 px
  */
 import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { chromium } from 'playwright-core';
+import { auditInPage } from './audit-in-page.mjs';
 
 const args = process.argv.slice(2);
 const opt = (name, fallback) => {
@@ -87,6 +89,13 @@ for (const action of actions.length ? actions : ['shot:shot']) {
       await page.locator(first).first().screenshot({ path: file });
       console.log(file);
     } else if (verb === 'eval') console.log(`eval ${first} →`, JSON.stringify(await page.evaluate(first)));
+    else if (verb === 'audit') {
+      const findings = (await page.evaluate(auditInPage, rest)).filter((finding) => finding.kind !== 'ellipsis');
+      console.log(`audit ${rest}: ${findings.length ? '' : 'nothing found'}`);
+      for (const finding of findings) {
+        console.log(`  ${finding.kind} "${finding.text}" by ${finding.by} in ${finding.container} (${finding.element})`);
+      }
+    }
     else console.log(`unknown action: ${action}`);
   } catch (error) {
     console.log(`FAILED ${action}: ${String(error.message).split('\n')[0]}`);
