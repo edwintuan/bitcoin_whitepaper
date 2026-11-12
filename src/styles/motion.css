@@ -62,12 +62,6 @@
   --tt-scale: 0.98;
   --tt-delay: 80ms;
 
-  --panel-open-dur: 400ms;
-  --panel-close-dur: 350ms;
-  --panel-translate-y: 100px;
-  --panel-blur: 2px;
-  --panel-ease: var(--ease-smooth-out);
-
   --text-swap-dur: 150ms;
   --text-swap-translate-y: 4px;
   --text-swap-blur: 2px;
@@ -223,37 +217,6 @@
   to {
     opacity: 0;
   }
-}
-
-/* --------------------------------------------------------------------------
-   Panel reveal: a sheet rising into place (mobile term drawer, nav drawer).
-   -------------------------------------------------------------------------- */
-.t-panel[data-entering] {
-  animation: t-panel-in var(--panel-open-dur) var(--panel-ease);
-}
-.t-panel[data-exiting] {
-  animation: t-panel-out var(--panel-close-dur) var(--panel-ease) forwards;
-}
-@keyframes t-panel-in {
-  from {
-    transform: translateY(var(--panel-translate-y));
-    opacity: 0;
-    filter: blur(var(--panel-blur));
-  }
-}
-@keyframes t-panel-out {
-  to {
-    transform: translateY(var(--panel-translate-y));
-    opacity: 0;
-    filter: blur(var(--panel-blur));
-  }
-}
-/* The backdrop is quicker than the panel it sits behind: it should be there before the panel lands and gone first. */
-.t-scrim[data-entering] {
-  animation: t-fade-in var(--duration-fast) var(--panel-ease);
-}
-.t-scrim[data-exiting] {
-  animation: t-fade-out var(--duration-quick) var(--panel-ease) forwards;
 }
 
 /* --------------------------------------------------------------------------
@@ -461,12 +424,6 @@
     opacity: 0;
   }
 }
-@keyframes t-fade-out {
-  to {
-    opacity: 0;
-  }
-}
-
 /* ==========================================================================
    Blockchain motion
    ========================================================================== */
@@ -537,8 +494,6 @@
   }
   .t-dropdown,
   .t-tt,
-  .t-panel,
-  .t-scrim,
   .t-swap-soft,
   .t-shake,
   .t-shimmer::before,

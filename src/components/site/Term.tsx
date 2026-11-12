@@ -54,7 +54,7 @@ export function Term({ id, label }: { id: string; label?: string }) {
       <span role="button" className="kw">
         {text}
       </span>
-      <Popover placement="bottom start" offset={6} aria-label={shownName} className="term-pop t-dropdown" dialogClassName="term-dialog">
+      <Popover placement="bottom start" offset={6} aria-label={shownName} className="term-pop" dialogClassName="term-dialog">
         {card}
       </Popover>
     </PopoverTrigger>

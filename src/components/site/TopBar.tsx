@@ -53,7 +53,7 @@ function DepthSwitch({ hints = true }: { hints?: boolean }) {
         hints ? (
           <TooltipTrigger key={value} delay={80} closeDelay={0}>
             <SegmentedControlItem id={value}>{t(UI.depth[value])}</SegmentedControlItem>
-            <Tooltip placement="bottom" className="t-tt chain-tip" showArrow={false} offset={8}>
+            <Tooltip placement="bottom" className="chain-tip" showArrow={false} offset={8}>
               {t(UI.depthHint[value])}
             </Tooltip>
           </TooltipTrigger>

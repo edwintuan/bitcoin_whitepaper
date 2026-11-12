@@ -37,9 +37,9 @@ import { useDismissOnOutsidePress, useTriggerToggle } from "@/utils/use-dismiss-
  *
  * Surface: the composer permission popover's recipe, radius 20 with p-1.5,
  * 1px border/button/default, background/primary, shadow/dropdown. The
- * optional arrow is Tooltip's caret in the same colours. Motion is the menu
- * family's: 150ms fade, scale 0.95 and 2px blur in and out, grown from the
- * point nearest the trigger. Reduced motion keeps only the fade.
+ * optional arrow is Tooltip's caret in the same colours. Motion is the
+ * `t-dropdown` recipe of styles/motion.css; under reduced motion the surface
+ * appears and disappears at once.
  */
 
 interface PopoverContextValue {
@@ -127,10 +127,9 @@ export function Popover({
       className={cx(
         "z-110 w-80 max-w-[calc(100vw-32px)]",
         "rounded-[20px] border border-border-button-default bg-background-primary-default p-1.5 shadow-dropdown",
-        "origin-(--trigger-anchor-point) transition-[opacity,scale,filter] duration-150 ease-out",
-        "data-[entering]:opacity-0 data-[exiting]:opacity-0",
-        "motion-safe:data-[entering]:scale-95 motion-safe:data-[entering]:blur-[2px]",
-        "motion-safe:data-[exiting]:scale-95 motion-safe:data-[exiting]:blur-[2px]",
+        // Motion is the transitions.dev menu-dropdown recipe in styles/motion.css:
+        // 250ms in, 150ms out, grown from the point nearest the trigger.
+        "t-dropdown",
         className,
       )}
     >

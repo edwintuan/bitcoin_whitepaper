@@ -33,7 +33,7 @@ export function ChainNav() {
                     <i className={state === 'current' ? 't-slam' : undefined} />
                   </a>
                 </Focusable>
-                <Tooltip placement="bottom" className="t-tt chain-tip" showArrow={false} offset={6}>
+                <Tooltip placement="bottom" className="chain-tip" showArrow={false} offset={6}>
                   {name}
                 </Tooltip>
               </TooltipTrigger>
