@@ -40,7 +40,7 @@ const section: SectionContent = {
       en: [
         {
           title: 'Meet the block header',
-          text: 'These six fields, 80 bytes in all, are what gets hashed. Point at a field to see what it holds.',
+          text: 'These six fields, 80 bytes in all, are what gets hashed. Point at a field, or tap it, to see what it holds.',
         },
         {
           title: 'Set the difficulty',
@@ -62,7 +62,7 @@ const section: SectionContent = {
       zh: [
         {
           title: '認識區塊頭',
-          text: '這六個欄位合共 80 位元組，被拿去計算哈希的就是它們。把指標移到欄位上，看看各自存放甚麼。',
+          text: '這六個欄位合共 80 位元組，被拿去計算哈希的就是它們。把指標移到欄位上或輕觸欄位，看看各自存放甚麼。',
         },
         {
           title: '設定難度',

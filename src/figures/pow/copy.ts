@@ -53,8 +53,8 @@ export const COPY = {
     },
   },
   fieldHint: {
-    en: 'Point at a field, or move to it with Tab.',
-    zh: '把指標移到欄位上，或按 Tab 逐一查看。',
+    en: 'Point at a field, tap it, or move to it with Tab.',
+    zh: '把指標移到欄位上、輕觸欄位，或按 Tab 逐一查看。',
   },
   realBlock: {
     en: 'This is the real header of block 1. Bitcoin asked for 32 zero bits there. Here you decide.',
