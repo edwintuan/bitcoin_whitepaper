@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Pressable } from 'react-aria-components';
 import { Drawer } from '@/components/base/drawer/drawer';
 import { Popover, PopoverTrigger } from '@/components/base/popover/popover';
 import { TERMS } from '@/glossary';
@@ -7,9 +8,13 @@ import { useIsNarrow } from '@/state/useMediaQuery';
 import { TermCard } from './TermCard';
 
 /**
- * A glossary term in running text: a button that opens its card. On wide
- * screens the card floats beside the word; on phones it rises from the bottom
- * so it never covers the sentence being read.
+ * A glossary term in running text: press it to open its card. On wide screens
+ * the card floats beside the word; on phones it rises from the bottom so it
+ * never covers the sentence being read.
+ *
+ * The trigger is a span with the button role, not a <button>: a button is laid
+ * out as one unbreakable box, so a two-word term could not wrap and a line
+ * could break between a term and the comma after it.
  */
 export function Term({ id, label }: { id: string; label?: string }) {
   const t = useT();
@@ -32,9 +37,11 @@ export function Term({ id, label }: { id: string; label?: string }) {
   if (narrow) {
     return (
       <>
-        <button type="button" className="kw" aria-haspopup="dialog" aria-expanded={open} onClick={() => setOpen(true)}>
-          {text}
-        </button>
+        <Pressable onPress={() => setOpen(true)}>
+          <span role="button" className="kw" aria-haspopup="dialog" aria-expanded={open}>
+            {text}
+          </span>
+        </Pressable>
         <Drawer isOpen={open} onOpenChange={onOpenChange} placement="bottom" aria-label={shownName} className="term-sheet">
           {card}
         </Drawer>
@@ -44,9 +51,9 @@ export function Term({ id, label }: { id: string; label?: string }) {
 
   return (
     <PopoverTrigger isOpen={open} onOpenChange={onOpenChange}>
-      <button type="button" className="kw">
+      <span role="button" className="kw">
         {text}
-      </button>
+      </span>
       <Popover placement="bottom start" offset={6} aria-label={shownName} className="term-pop t-dropdown" dialogClassName="term-dialog">
         {card}
       </Popover>

@@ -1,4 +1,5 @@
 import { createContext, useContext, useMemo } from 'react';
+import { Pressable } from 'react-aria-components';
 import { SECTION_IDS } from '@/content/types';
 import { UI } from '@/content/ui';
 import { TERMS } from '@/glossary';
@@ -49,10 +50,13 @@ export function Rich({ text }: { text: string }) {
           case 'term': {
             const def = TERMS[token.id];
             if (navigate && def) {
+              // A span, for the same reason as in Term: it must wrap and punctuate like the text around it.
               return (
-                <button key={index} type="button" className="kw-in" onClick={() => navigate(token.id)}>
-                  {token.label ?? t(def.name)}
-                </button>
+                <Pressable key={index} onPress={() => navigate(token.id)}>
+                  <span role="button" className="kw-in">
+                    {token.label ?? t(def.name)}
+                  </span>
+                </Pressable>
               );
             }
             return <Term key={index} id={token.id} label={token.label} />;

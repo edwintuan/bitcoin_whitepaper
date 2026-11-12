@@ -33,13 +33,14 @@
   width: 26px;
   height: 26px;
   border: 2px solid var(--color-cream);
-  background: transparent;
+  background-color: transparent;
   color: inherit;
   font: 500 14px/1 var(--font-mono);
   cursor: pointer;
+  transition: background-color var(--duration-quick) var(--ease-out);
 }
 .tv-btn:hover:not(:disabled) {
-  background: var(--color-ink-2);
+  background-color: var(--color-ink-2);
 }
 .tv-btn:disabled {
   opacity: 0.35;

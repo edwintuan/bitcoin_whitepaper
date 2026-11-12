@@ -5,7 +5,7 @@
    (https://transitions.dev), used under its licence. Its rules, which this
    file keeps to:
      - animate only transform, opacity and (small) filter
-     - name every transitioned property, never `transition: all`
+     - name every transitioned property, never the catch-all keyword
      - read every duration and easing from a token
      - give every recipe a prefers-reduced-motion branch
    The last block, "Blockchain motion", is ours.
@@ -248,11 +248,12 @@
     filter: blur(var(--panel-blur));
   }
 }
+/* The backdrop is quicker than the panel it sits behind: it should be there before the panel lands and gone first. */
 .t-scrim[data-entering] {
-  animation: t-fade-in var(--panel-open-dur) var(--panel-ease);
+  animation: t-fade-in var(--duration-fast) var(--panel-ease);
 }
 .t-scrim[data-exiting] {
-  animation: t-fade-out var(--panel-close-dur) var(--panel-ease) forwards;
+  animation: t-fade-out var(--duration-quick) var(--panel-ease) forwards;
 }
 
 /* --------------------------------------------------------------------------

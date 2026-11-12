@@ -288,6 +288,7 @@
     text-decoration-thickness: 2px;
     text-underline-offset: 3px;
     text-decoration-color: var(--color-orange);
+    transition: text-decoration-color var(--duration-quick) var(--ease-out);
   }
   .prose a:hover,
   .link:hover {
@@ -303,23 +304,36 @@
     font: inherit;
     color: inherit;
     text-align: inherit;
-    background: linear-gradient(transparent 52%, var(--color-orange) 52%, var(--color-orange) 88%, transparent 88%);
+    /*
+     * A marker stroke along the foot of the word, which rises to cover the
+     * word on hover. The trigger is an inline span, so the stroke is measured
+     * from the bottom of the text's own box and wraps with it.
+     */
+    --kw-ink: var(--color-orange);
+    background-color: transparent;
+    background-image: linear-gradient(var(--kw-ink), var(--kw-ink));
+    background-repeat: no-repeat;
+    background-position: left 0 bottom 0;
+    background-size: 100% 0.4em;
+    transition: background-size var(--duration-quick) var(--ease-out);
   }
   .kw:hover {
-    background: linear-gradient(transparent 14%, var(--color-orange) 14%, var(--color-orange) 88%, transparent 88%);
+    background-size: 100% 100%;
   }
   .kw[aria-expanded='true'] {
-    background: var(--color-ink);
+    background-image: none;
+    background-color: var(--color-ink);
     color: var(--color-cream);
     box-shadow:
       -4px 0 0 var(--color-ink),
       4px 0 0 var(--color-ink);
   }
   .on-ink .kw {
-    background: linear-gradient(transparent 52%, var(--color-orange-ink) 52%, var(--color-orange-ink) 88%, transparent 88%);
+    --kw-ink: var(--color-orange-ink);
   }
   .on-ink .kw[aria-expanded='true'] {
-    background: var(--color-orange);
+    background-image: none;
+    background-color: var(--color-orange);
     color: var(--color-ink);
     box-shadow:
       -4px 0 0 var(--color-orange),
@@ -484,5 +498,8 @@
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+  .kw {
+    transition: none;
   }
 }

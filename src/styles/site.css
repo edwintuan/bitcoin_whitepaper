@@ -494,7 +494,7 @@
     max-width: 44em;
   }
   .figure-step-body .kw {
-    background: none;
+    background-image: none;
     text-decoration: underline;
     text-decoration-thickness: 2px;
     text-underline-offset: 3px;
@@ -1066,11 +1066,12 @@
     width: 30px;
     height: 30px;
     border: 0;
-    background: transparent;
+    background-color: transparent;
     cursor: pointer;
+    transition: background-color var(--duration-quick) var(--ease-out);
   }
   .term-close:hover {
-    background: var(--color-ink-2);
+    background-color: var(--color-ink-2);
   }
   .term-short {
     margin: 9px 0 0;
@@ -1137,6 +1138,7 @@
     text-decoration: underline;
     text-underline-offset: 2px;
     cursor: pointer;
+    transition: color var(--duration-quick) var(--ease-out);
   }
   .term-foot a:hover,
   .term-rel:hover {

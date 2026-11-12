@@ -28,7 +28,7 @@ export function CommandSearch({ isOpen, onOpenChange }: { isOpen: boolean; onOpe
       // Jump rather than glide: a floating card closes when the page scrolls
       // under it, so the scrolling has to be over before the card opens.
       entry.scrollIntoView({ block: 'center', behavior: 'instant' });
-      window.setTimeout(() => entry.querySelector('button')?.click(), 80);
+      window.setTimeout(() => entry.querySelector<HTMLElement>('.kw')?.click(), 80);
     }, 260);
   };
 
