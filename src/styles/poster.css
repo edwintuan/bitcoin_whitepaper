@@ -282,6 +282,11 @@
     background: var(--color-cream-2);
     padding: 0.1em 0.35em;
   }
+  /* On black the chip must darken with its surroundings, or cream type sits on a cream chip. */
+  .on-ink .inline-code {
+    background: var(--color-ink-2);
+    color: var(--color-cream);
+  }
   .prose a,
   .link {
     text-decoration: underline;
