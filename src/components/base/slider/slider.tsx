@@ -49,7 +49,7 @@ type SliderBaseInternalProps<T extends SliderValue> = SliderBaseProps<T> & {
 function SliderBase<T extends SliderValue>({
   className,
   label,
-  showTooltip = true,
+  showTooltip = false,
   formatValue,
   thumbLabels,
   ...props
@@ -74,7 +74,7 @@ function SliderBase<T extends SliderValue>({
         return (
           <>
             {label != null && (
-              <AriaLabel className="text-body-medium text-text-primary">
+              <AriaLabel className="label">
                 {label}
               </AriaLabel>
             )}
@@ -90,18 +90,14 @@ function SliderBase<T extends SliderValue>({
                   <span
                     aria-hidden
                     className={cx(
-                      "absolute top-1/2 end-0 start-0 h-1.5 -translate-y-1/2 rounded-full",
-                      "bg-background-tertiary-default shadow-[inset_0_1px_1px_rgb(0_0_0/0.06)]",
-                      "transition-colors duration-150 ease",
-                      isHovered && "bg-background-tertiary-hover",
+                      "absolute top-1/2 end-0 start-0 h-[3px] -translate-y-1/2 bg-ink",
+                      isHovered && "bg-ink",
                     )}
                   />
                   <span
                     aria-hidden
                     className={cx(
-                      "absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full",
-                      "bg-linear-to-r from-accent-500 to-accent-600",
-                      "shadow-[inset_0_1px_0_rgb(255_255_255/0.24),0_1px_2px_rgb(4_80_226/0.16)]",
+                      "absolute top-1/2 h-[9px] -translate-y-1/2 bg-orange",
                     )}
                     style={{
                       insetInlineStart: `${startPercent * 100}%`,
@@ -129,12 +125,11 @@ function SliderBase<T extends SliderValue>({
                           isDisabled,
                         }) =>
                           cx(
-                            "top-1/2 size-5 rounded-full border border-border-button-default outline-none",
-                            "flex items-center justify-center bg-control-indicator-background",
-                            "shadow-[0_2px_4px_rgb(0_0_0/0.10),inset_0_1px_0_rgb(255_255_255/0.8)]",
-                            "transition-[scale,box-shadow,border-color] duration-150 ease",
-                            isThumbHovered && !isDragging && "scale-105 border-border-button-hover",
-                            isDragging && "z-20 scale-110 border-accent-500 shadow-[0_3px_8px_color-mix(in_srgb,var(--color-accent-600)_22%,transparent)]",
+                            "top-1/2 h-6 w-3 bg-ink outline-none",
+                            "flex items-center justify-center",
+                            "transition-[scale] duration-150 ease-out",
+                            isThumbHovered && !isDragging && "scale-110",
+                            isDragging && "z-20 scale-125",
                             isFocusVisible && "ring-2 ring-border-focus-ring ring-offset-2",
                             isDisabled ? "cursor-not-allowed" : "cursor-grab active:cursor-grabbing",
                           )
@@ -147,25 +142,22 @@ function SliderBase<T extends SliderValue>({
                                 aria-hidden
                                 className={cx(
                                   "pointer-events-none absolute bottom-[calc(100%+9px)] left-1/2 -translate-x-1/2",
-                                  "flex h-7 min-w-8 items-center justify-center rounded-lg border border-border-button-default",
-                                  "bg-background-primary-default px-2 text-caption-1-medium whitespace-nowrap text-text-primary shadow-xs",
-                                  "transition-[translate,box-shadow] duration-150 ease",
-                                  (isDragging || isFocused) && "-translate-y-0.5 shadow-dropdown",
+                                  "flex h-6 min-w-8 items-center justify-center bg-ink px-2 font-mono text-[11px] whitespace-nowrap text-cream",
+                                  "transition-[translate] duration-150 ease-out",
+                                  (isDragging || isFocused) && "-translate-y-0.5",
                                 )}
                               >
                                 {valueLabel}
                                 <span
                                   aria-hidden
-                                  className="absolute -bottom-[4.5px] left-1/2 size-2 -translate-x-1/2 rotate-45 border-r border-b border-border-button-default bg-background-primary-default"
+                                  className="absolute -bottom-[3px] left-1/2 size-1.5 -translate-x-1/2 rotate-45 bg-ink"
                                 />
                               </span>
                             )}
                             <span
                               aria-hidden
                               className={cx(
-                                "size-2 rounded-full bg-linear-to-b from-accent-500 to-accent-600",
-                                "shadow-[inset_0_1px_0_rgb(255_255_255/0.24)] transition-[filter] duration-150 ease",
-                                (isDragging || isFocused) && "brightness-110",
+                                "hidden",
                               )}
                             />
                           </>

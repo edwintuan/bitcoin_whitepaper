@@ -1,0 +1,550 @@
+/* ==========================================================================
+   Motion tokens and recipes
+
+   The shared scale and the recipes prefixed `t-` follow transitions.dev
+   (https://transitions.dev), used under its licence. Its rules, which this
+   file keeps to:
+     - animate only transform, opacity and (small) filter
+     - name every transitioned property, never `transition: all`
+     - read every duration and easing from a token
+     - give every recipe a prefers-reduced-motion branch
+   The last block, "Blockchain motion", is ours.
+   ========================================================================== */
+
+:root {
+  /* ---- shared scale -------------------------------------------------- */
+  --duration-stagger: 40ms; /* per-item stagger offset */
+  --duration-micro: 80ms; /* tooltip delay, shake segment, cascade step */
+  --duration-quick: 150ms; /* closes, text swap, tooltip appear */
+  --duration-fast: 250ms; /* opens, sliding tabs, accordion */
+  --duration-medium: 350ms; /* panel close */
+  --duration-slow: 400ms; /* panel open, content reveal */
+  --duration-very-slow: 500ms; /* emphasis: text reveal, success */
+
+  --ease-smooth-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: ease-in-out;
+  --ease-out: ease-out;
+  --ease-linear: linear;
+  --ease-bounce: cubic-bezier(0.34, 1.36, 0.64, 1);
+
+  --distance-micro: 4px;
+  --distance-small: 6px;
+  --distance-base: 8px;
+  --distance-medium: 12px;
+  --distance-large: 30px;
+
+  --scale-large: 0.96;
+  --scale-medium: 0.97;
+  --scale-small: 0.98;
+  --scale-tiny: 0.99;
+
+  --blur-small: 2px;
+  --blur-medium: 3px;
+  --blur-large: 8px;
+
+  /* ---- per-recipe ---------------------------------------------------- */
+  --acc-expand: 250ms;
+  --acc-collapse: 250ms;
+  --acc-chevron: 250ms;
+  --acc-ease: var(--ease-smooth-out);
+
+  --tabs-dur: 250ms;
+  --tabs-ease: var(--ease-smooth-out);
+
+  --dropdown-open-dur: 250ms;
+  --dropdown-close-dur: 150ms;
+  --dropdown-pre-scale: 0.97;
+  --dropdown-closing-scale: 0.99;
+  --dropdown-ease: var(--ease-smooth-out);
+
+  --tt-in-dur: 150ms;
+  --tt-out-dur: 50ms;
+  --tt-scale: 0.98;
+  --tt-delay: 80ms;
+
+  --panel-open-dur: 400ms;
+  --panel-close-dur: 350ms;
+  --panel-translate-y: 100px;
+  --panel-blur: 2px;
+  --panel-ease: var(--ease-smooth-out);
+
+  --text-swap-dur: 150ms;
+  --text-swap-translate-y: 4px;
+  --text-swap-blur: 2px;
+  --text-swap-ease: ease-in-out;
+
+  --stagger-dur: 500ms;
+  --stagger-distance: 12px;
+  --stagger-stagger: 40ms;
+  --stagger-blur: 3px;
+  --stagger-ease: var(--ease-smooth-out);
+
+  --shake-distance: 6px;
+  --shake-overshoot: 4px;
+  --shake-dur-a: 80ms;
+  --shake-dur-b: 60ms;
+  --shake-ease: var(--ease-smooth-out);
+
+  --shimmer-dur: 2000ms;
+  --shimmer-band: 400%;
+  --shimmer-ease: linear;
+
+  --subtle-dur: 455ms;
+  --subtle-distance: 0.14em;
+  --subtle-blur: 0.042em;
+  --subtle-ease: var(--ease-smooth-out);
+
+  --toggle-dur: 350ms;
+  --toggle-ease: cubic-bezier(0.34, 1.35, 0.64, 1);
+
+  --pop-dur: 600ms;
+  --pop-start-scale: 0.7;
+  --pop-lift: 0.125em;
+
+  --reveal-dur: 400ms;
+  --reveal-blur: 2px;
+  --reveal-ease: ease-in-out;
+
+  /* ---- blockchain motion (ours) -------------------------------------- */
+  --slam-dur: 450ms;
+  --slam-scale: 1.16;
+  --shift-dur: 500ms;
+  --cascade-step: var(--duration-micro);
+  --packet-ease: linear;
+}
+
+/* --------------------------------------------------------------------------
+   Accordion expand: grid-rows 0fr → 1fr, content cross-blurs in.
+   Padding goes on the inner element, never on the grid track.
+   -------------------------------------------------------------------------- */
+.t-acc-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--acc-collapse) var(--acc-ease);
+}
+.t-acc[data-open='true'] > .t-acc-panel {
+  grid-template-rows: 1fr;
+  transition: grid-template-rows var(--acc-expand) var(--acc-ease);
+}
+.t-acc-panel-inner {
+  overflow: hidden;
+  min-height: 0;
+  opacity: 0;
+  filter: blur(2px);
+  transition:
+    opacity var(--acc-collapse) var(--acc-ease),
+    filter var(--acc-collapse) var(--acc-ease);
+}
+.t-acc[data-open='true'] > .t-acc-panel > .t-acc-panel-inner {
+  opacity: 1;
+  filter: blur(0);
+  transition:
+    opacity var(--acc-expand) var(--acc-ease),
+    filter var(--acc-expand) var(--acc-ease);
+}
+.t-acc-chevron {
+  display: inline-flex;
+  transform: scaleY(1);
+  transform-origin: center;
+  transition: transform var(--acc-chevron) var(--acc-ease);
+}
+.t-acc-chevron path {
+  vector-effect: non-scaling-stroke;
+}
+.t-acc[data-open='true'] > * .t-acc-chevron,
+.t-acc[data-open='true'] > .t-acc-head .t-acc-chevron {
+  transform: scaleY(-1);
+}
+
+/* --------------------------------------------------------------------------
+   Tabs sliding: the pill's transform and width are written by script.
+   -------------------------------------------------------------------------- */
+.t-tabs-pill {
+  position: absolute;
+  left: 0;
+  transform: translateX(0);
+  transition:
+    transform var(--tabs-dur) var(--tabs-ease),
+    width var(--tabs-dur) var(--tabs-ease),
+    height var(--tabs-dur) var(--tabs-ease);
+  will-change: transform, width;
+  pointer-events: none;
+}
+.t-tab {
+  transition: color var(--tabs-dur) var(--tabs-ease);
+}
+
+/* Toggle: the thumb travels with a small overshoot. */
+.t-toggle-thumb {
+  transition: transform var(--toggle-dur) var(--toggle-ease);
+}
+
+/* --------------------------------------------------------------------------
+   Menu dropdown, for React Aria overlays: grows from its trigger.
+   React Aria sets data-entering / data-exiting and --trigger-anchor-point.
+   -------------------------------------------------------------------------- */
+.t-dropdown {
+  transform-origin: var(--trigger-anchor-point, top center);
+  will-change: transform, opacity;
+}
+.t-dropdown[data-entering] {
+  animation: t-dropdown-in var(--dropdown-open-dur) var(--dropdown-ease);
+}
+.t-dropdown[data-exiting] {
+  animation: t-dropdown-out var(--dropdown-close-dur) var(--dropdown-ease) forwards;
+}
+@keyframes t-dropdown-in {
+  from {
+    transform: scale(var(--dropdown-pre-scale));
+    opacity: 0;
+  }
+}
+@keyframes t-dropdown-out {
+  to {
+    transform: scale(var(--dropdown-closing-scale));
+    opacity: 0;
+  }
+}
+
+/* Tooltip: delayed fade + scale in, near-instant out. */
+.t-tt[data-entering] {
+  animation: t-tt-in var(--tt-in-dur) var(--ease-out) var(--tt-delay) backwards;
+}
+.t-tt[data-exiting] {
+  animation: t-tt-out var(--tt-out-dur) var(--ease-out) forwards;
+}
+@keyframes t-tt-in {
+  from {
+    transform: scale(var(--tt-scale));
+    opacity: 0;
+  }
+}
+@keyframes t-tt-out {
+  to {
+    opacity: 0;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Panel reveal: a sheet rising into place (mobile term drawer, nav drawer).
+   -------------------------------------------------------------------------- */
+.t-panel[data-entering] {
+  animation: t-panel-in var(--panel-open-dur) var(--panel-ease);
+}
+.t-panel[data-exiting] {
+  animation: t-panel-out var(--panel-close-dur) var(--panel-ease) forwards;
+}
+@keyframes t-panel-in {
+  from {
+    transform: translateY(var(--panel-translate-y));
+    opacity: 0;
+    filter: blur(var(--panel-blur));
+  }
+}
+@keyframes t-panel-out {
+  to {
+    transform: translateY(var(--panel-translate-y));
+    opacity: 0;
+    filter: blur(var(--panel-blur));
+  }
+}
+.t-scrim[data-entering] {
+  animation: t-fade-in var(--panel-open-dur) var(--panel-ease);
+}
+.t-scrim[data-exiting] {
+  animation: t-fade-out var(--panel-close-dur) var(--panel-ease) forwards;
+}
+
+/* --------------------------------------------------------------------------
+   Text states swap: old text exits up, new text enters from below.
+   Script toggles .is-exit, swaps the text, then .is-enter-start.
+   -------------------------------------------------------------------------- */
+.t-text-swap {
+  display: inline-block;
+  transform: translateY(0);
+  filter: blur(0);
+  opacity: 1;
+  transition:
+    transform var(--text-swap-dur) var(--text-swap-ease),
+    filter var(--text-swap-dur) var(--text-swap-ease),
+    opacity var(--text-swap-dur) var(--text-swap-ease);
+}
+.t-text-swap.is-exit {
+  transform: translateY(calc(var(--text-swap-translate-y) * -1));
+  filter: blur(var(--text-swap-blur));
+  opacity: 0;
+}
+.t-text-swap.is-enter-start {
+  transform: translateY(var(--text-swap-translate-y));
+  filter: blur(var(--text-swap-blur));
+  opacity: 0;
+  transition: none;
+}
+
+/* Text swap soft: a value replaced in place, no travel. Keyed remount. */
+.t-swap-soft {
+  animation: t-swap-soft var(--duration-fast) var(--ease-in-out);
+}
+@keyframes t-swap-soft {
+  from {
+    opacity: 0;
+    filter: blur(var(--blur-small));
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Texts reveal: stacked lines rise in with a stagger. Set --i per line.
+   -------------------------------------------------------------------------- */
+.t-stagger-line {
+  opacity: 0;
+  transform: translateY(var(--stagger-distance));
+  filter: blur(var(--stagger-blur));
+  transition:
+    opacity var(--stagger-dur) var(--stagger-ease),
+    transform var(--stagger-dur) var(--stagger-ease),
+    filter var(--stagger-dur) var(--stagger-ease);
+  transition-delay: calc(var(--i, 0) * var(--stagger-stagger));
+}
+.t-stagger.is-shown .t-stagger-line {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+/* --------------------------------------------------------------------------
+   Error state shake: four legs, each with its own easing.
+   -------------------------------------------------------------------------- */
+.t-shake {
+  animation: t-shake calc(var(--shake-dur-a) * 2 + var(--shake-dur-b) * 2) linear;
+}
+@keyframes t-shake {
+  0% {
+    transform: translateX(0);
+    animation-timing-function: var(--shake-ease);
+  }
+  28.57% {
+    transform: translateX(var(--shake-distance));
+    animation-timing-function: var(--shake-ease);
+  }
+  57.14% {
+    transform: translateX(calc(var(--shake-distance) * -1));
+    animation-timing-function: var(--shake-ease);
+  }
+  78.57% {
+    transform: translateX(var(--shake-overshoot));
+    animation-timing-function: var(--shake-ease);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Shimmer text: a highlight band sweeps across muted text. Needs data-text.
+   -------------------------------------------------------------------------- */
+.t-shimmer {
+  position: relative;
+  display: inline-block;
+  color: var(--shimmer-base, currentColor);
+}
+.t-shimmer::before {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    transparent 40%,
+    var(--shimmer-highlight, #fff) 50%,
+    transparent 60%,
+    transparent 100%
+  );
+  background-size: var(--shimmer-band) 100%;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: t-shimmer var(--shimmer-dur) var(--shimmer-ease) infinite;
+}
+@keyframes t-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: 0% 0;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Numbers. Subtle change for values that tick often; pop-in for events.
+   -------------------------------------------------------------------------- */
+.t-subtle-number {
+  display: inline-flex;
+  align-items: baseline;
+  font-variant-numeric: tabular-nums;
+}
+.t-subtle-slot {
+  position: relative;
+  display: inline-block;
+}
+.t-subtle-new {
+  display: inline-block;
+}
+.t-subtle-old {
+  position: absolute;
+  inset: 0;
+  text-align: center;
+  pointer-events: none;
+}
+.t-subtle-number.is-animating .t-subtle-new {
+  animation: t-subtle-in var(--subtle-dur) var(--subtle-ease) both;
+}
+.t-subtle-number.is-animating .t-subtle-old {
+  animation: t-subtle-out var(--subtle-dur) var(--subtle-ease) both;
+}
+@keyframes t-subtle-in {
+  from {
+    transform: translateY(calc(var(--subtle-distance) * var(--subtle-dir, 1)));
+    opacity: 0;
+    filter: blur(var(--subtle-blur));
+  }
+}
+@keyframes t-subtle-out {
+  to {
+    transform: translateY(calc(var(--subtle-distance) * var(--subtle-dir, 1) * -1));
+    opacity: 0;
+    filter: blur(var(--subtle-blur));
+  }
+}
+
+.t-pop {
+  display: inline-block;
+  animation: t-pop var(--pop-dur) var(--ease-bounce) both;
+}
+@keyframes t-pop {
+  from {
+    transform: translateY(var(--pop-lift)) scale(var(--pop-start-scale));
+    opacity: 0;
+    filter: blur(var(--blur-small));
+  }
+}
+
+/* Skeleton reveal: loaded content cross-fades in. */
+.t-reveal {
+  animation: t-reveal var(--reveal-dur) var(--reveal-ease);
+}
+@keyframes t-reveal {
+  from {
+    opacity: 0;
+    filter: blur(var(--reveal-blur));
+  }
+}
+
+@keyframes t-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes t-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+/* ==========================================================================
+   Blockchain motion
+   ========================================================================== */
+
+/* A block that has just met its target lands with weight. */
+.t-slam {
+  animation: t-slam var(--slam-dur) var(--ease-bounce);
+}
+@keyframes t-slam {
+  from {
+    transform: scale(var(--slam-scale));
+  }
+}
+
+/* The chain advances one slot: every tile starts one slot to the right. */
+.t-shift {
+  animation: t-shift var(--shift-dur) var(--ease-smooth-out);
+}
+.t-shift-new {
+  animation:
+    t-shift var(--shift-dur) var(--ease-smooth-out),
+    t-fade-in var(--duration-slow) var(--ease-out);
+}
+@keyframes t-shift {
+  from {
+    transform: translateX(var(--shift-from, 100%));
+  }
+}
+
+/* A broken link travels down the chain: set --i to the tile's distance. */
+.t-cascade {
+  animation: t-shake calc(var(--shake-dur-a) * 2 + var(--shake-dur-b) * 2) linear
+    calc(var(--i, 0) * var(--cascade-step)) backwards;
+}
+
+/* A stroke that draws itself: set --len to the path length. */
+.t-draw {
+  stroke-dasharray: var(--len, 100);
+  stroke-dashoffset: var(--len, 100);
+  animation: t-draw var(--duration-very-slow) var(--ease-smooth-out) forwards;
+  animation-delay: calc(var(--i, 0) * var(--duration-stagger));
+}
+@keyframes t-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ==========================================================================
+   Reduced motion: everything settles at once. Simulations keep running;
+   only the travel between states is removed.
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .t-acc-panel,
+  .t-acc-panel-inner,
+  .t-acc-chevron,
+  .t-tabs-pill,
+  .t-tab,
+  .t-toggle-thumb,
+  .t-text-swap,
+  .t-stagger-line {
+    transition: none !important;
+  }
+  .t-stagger-line {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+  .t-dropdown,
+  .t-tt,
+  .t-panel,
+  .t-scrim,
+  .t-swap-soft,
+  .t-shake,
+  .t-shimmer::before,
+  .t-subtle-number .t-subtle-new,
+  .t-pop,
+  .t-reveal,
+  .t-slam,
+  .t-shift,
+  .t-shift-new,
+  .t-cascade {
+    animation: none !important;
+  }
+  .t-subtle-number .t-subtle-old {
+    display: none;
+  }
+  .t-draw {
+    animation: none !important;
+    stroke-dashoffset: 0;
+  }
+  html {
+    scroll-behavior: auto !important;
+  }
+}

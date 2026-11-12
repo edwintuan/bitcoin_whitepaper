@@ -97,12 +97,12 @@ export function SwitchTrack({
     <span
       aria-hidden
       className={cx(
-        "relative shrink-0 transition-colors duration-200 ease",
+        "relative shrink-0 shadow-[inset_0_0_0_2px_var(--color-ink)] transition-colors duration-150 ease-out",
         s.track,
         s.trackRadius[shape],
         state.isSelected
-          ? cx("bg-linear-to-b from-accent-500 to-accent-600", s.onShadow)
-          : "bg-background-tertiary-default",
+          ? "bg-orange"
+          : "bg-paper",
         state.isDisabled && "opacity-50",
         state.isFocusVisible && "ring-2 ring-border-focus-ring ring-offset-2",
       )}
@@ -111,9 +111,7 @@ export function SwitchTrack({
       <span
         className={cx(
           "absolute flex items-center justify-center",
-          "bg-linear-to-b from-control-indicator-background from-[43.837%] to-control-indicator-background-subtle",
-          "shadow-[0_3px_3px_0_rgb(0_0_0/0.03),0_0.75px_0_0_rgb(0_0_0/0.05)]",
-          "transition-transform duration-200 ease",
+          "t-toggle-thumb bg-ink",
           s.thumb,
           s.thumbRadius[shape],
           s.offset,
@@ -126,7 +124,7 @@ export function SwitchTrack({
             sizes) and its drop shadow points down instead of up. */}
         <span
           className={cx(
-            "border-solid bg-linear-to-t from-[43.837%]",
+            "hidden border-solid bg-linear-to-t from-[43.837%]",
             s.chip,
             s.chipRadius[shape],
             state.isSelected
@@ -163,7 +161,7 @@ export function Switch({ className, children, size = "md", shape = "pill", ref, 
         <>
           <SwitchTrack state={state} size={size} shape={shape} />
           {children != null && children !== false && (
-            <span className="text-body-medium text-text-primary">{children}</span>
+            <span className="ui">{children}</span>
           )}
         </>
       )}

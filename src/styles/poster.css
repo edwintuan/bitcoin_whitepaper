@@ -1,0 +1,487 @@
+/* ==========================================================================
+   C1 "poster" theme
+
+   Bitcoin orange, ink black, cream. Heavy condensed display type over a
+   serif reading face. Square corners, thick rules, no soft shadows.
+   Loaded after BoardUI's stylesheet, in the same Tailwind build, so the
+   tokens below re-skin its components.
+   ========================================================================== */
+
+@theme {
+  /* ---- palette -------------------------------------------------------- */
+  --color-orange: #f7931a;
+  --color-orange-ink: #b45f06; /* orange text on light grounds */
+  --color-orange-soft: #fde3bd;
+  --color-ink: #0b0b0b;
+  --color-ink-2: #3a342c;
+  --color-ink-3: #6a6257;
+  --color-ink-4: #9a9285;
+  --color-cream: #f6f3ec;
+  --color-cream-2: #ece6d8;
+  --color-cream-3: #ded6c4;
+  --color-paper: #ffffff;
+  --color-rule: #d8cfbf;
+  --color-valid: #1e7a46;
+  --color-valid-soft: #dcefe2;
+  --color-invalid: #c22d1f;
+  --color-invalid-soft: #f7ded9;
+
+  /* BoardUI re-tints from this ramp. */
+  --color-accent-50: #fff6e8;
+  --color-accent-100: #feeacb;
+  --color-accent-200: #fdd496;
+  --color-accent-300: #fbbb5c;
+  --color-accent-400: #f9a433;
+  --color-accent-500: #f7931a;
+  --color-accent-600: #d97b0c;
+  --color-accent-700: #b45f06;
+  --color-accent-800: #8e4a08;
+  --color-accent-900: #6f3a0a;
+  --color-accent-950: #3f2005;
+
+  /* ---- type ----------------------------------------------------------- */
+  --font-display: 'Anton', 'Noto Sans HK', 'Arial Narrow', sans-serif;
+  --font-serif: 'Newsreader Variable', 'Noto Serif HK', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Public Sans Variable', 'Noto Sans HK', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'DM Mono', 'Noto Sans HK', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  /* ---- no soft shadows ------------------------------------------------ */
+  --shadow-2xs: 0 0 #0000;
+  --shadow-xs: 0 0 #0000;
+  --shadow-sm: 0 0 #0000;
+  --shadow-md: 0 0 #0000;
+  --shadow-lg: 0 0 #0000;
+  --shadow-xl: 0 0 #0000;
+  --shadow-card: 0 0 #0000;
+  --shadow-dropdown: 0 0 #0000;
+  --shadow-sidebar: 0 0 #0000;
+
+  --breakpoint-wide: 62.5rem; /* 1000px: two-column sections */
+}
+
+/* BoardUI semantic tokens, mapped to the poster palette. */
+:root {
+  --color-text-primary: var(--color-ink);
+  --color-text-secondary: var(--color-ink-2);
+  --color-text-tertiary: var(--color-ink-3);
+  --color-text-placeholder: var(--color-ink-4);
+  --color-text-disabled: var(--color-ink-4);
+  --color-text-white: var(--color-cream);
+
+  --color-foreground-full: var(--color-cream);
+  --color-foreground-icon-primary: var(--color-ink);
+  --color-foreground-icon-hover: var(--color-ink);
+  --color-foreground-icon-secondary: var(--color-ink-2);
+  --color-foreground-icon-tertiary: var(--color-ink-3);
+  --color-foreground-icon-quaternary: var(--color-ink-4);
+  --color-foreground-icon-disabled: var(--color-ink-4);
+  --color-foreground-disabled: var(--color-ink-4);
+
+  --color-background-full: var(--color-cream);
+  --color-background-primary-default: var(--color-paper);
+  --color-background-inner-default: var(--color-paper);
+  --color-background-primary-hover: #f3efe6;
+  --color-background-primary-active: var(--color-cream-2);
+  --color-background-primary-disabled: #efeadf;
+  --color-background-secondary-default: var(--color-cream);
+  --color-background-secondary-hover: var(--color-cream-2);
+  --color-background-tertiary-default: var(--color-cream-2);
+  --color-background-tertiary-hover: var(--color-cream-3);
+  --color-background-quaternary-default: var(--color-cream-3);
+  --color-background-quaternary-hover: #cfc6b2;
+
+  --color-border-button-default: var(--color-ink);
+  --color-border-button-hover: var(--color-ink);
+  --color-border-button-active: var(--color-ink);
+  --color-border-button-group: var(--color-ink);
+  --color-border-table: var(--color-ink);
+  --color-separator-border: var(--color-ink);
+  --color-separator-border-strong: var(--color-ink);
+  --color-border-focus-ring: var(--color-ink);
+
+  --color-control-indicator-background: var(--color-ink);
+  --color-control-indicator-background-subtle: var(--color-ink);
+  --color-segmented-control-background: var(--color-paper);
+  --color-segmented-control-selected-background: var(--color-ink);
+  --color-dropdown-item-hover-background: var(--color-cream-2);
+  --color-kbd-background: var(--color-ink);
+  --color-kbd-foreground: var(--color-cream);
+  --color-badge-neutral-background: var(--color-cream-2);
+
+  --color-button-ghost-background: transparent;
+  --color-button-ghost-hover: var(--color-cream-2);
+  --color-button-ghost-active: var(--color-cream-3);
+  --color-button-ghost-foreground: var(--color-ink);
+  --color-button-primary-disabled-foreground: var(--color-ink-4);
+  --gradient-button-primary-default: linear-gradient(var(--color-orange), var(--color-orange));
+  --gradient-button-primary-hover: linear-gradient(#ffa63a, #ffa63a);
+  --gradient-button-primary-active: linear-gradient(#e0820f, #e0820f);
+  --gradient-button-primary-disabled: linear-gradient(var(--color-cream-2), var(--color-cream-2));
+
+  /* BoardUI reads its typefaces from these two. */
+  --font-inter: 'Public Sans Variable', 'Noto Sans HK';
+  --font-mono-source: 'DM Mono', 'Noto Sans HK';
+
+  /* Segmented control: line colour, and text on / off the moving pill. */
+  --seg-line: var(--color-ink);
+  --seg-on: var(--color-cream);
+  --seg-off: var(--color-ink);
+
+  --topbar-h: 52px;
+  --wrap: 1240px;
+  --gutter: clamp(16px, 3vw, 28px);
+}
+
+.on-ink {
+  --seg-line: var(--color-cream);
+  --seg-on: var(--color-ink);
+  --seg-off: var(--color-cream);
+}
+
+@layer base {
+  /* The whole identity is square. Circles are opted into with .is-round. */
+  *,
+  ::before,
+  ::after {
+    border-radius: 0 !important;
+  }
+  .is-round {
+    border-radius: 9999px !important;
+  }
+
+  html {
+    background: var(--color-cream);
+    color: var(--color-ink);
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--topbar-h) + 16px);
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    background: var(--color-cream);
+    font-family: var(--font-serif);
+    font-size: 18px;
+    line-height: 1.55;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+  }
+  ::selection {
+    background: var(--color-orange);
+    color: var(--color-ink);
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+  .on-ink :focus-visible,
+  .on-ink:focus-visible {
+    outline-color: var(--color-orange);
+  }
+  button {
+    font: inherit;
+    color: inherit;
+  }
+  a {
+    color: inherit;
+  }
+  code,
+  kbd,
+  samp,
+  pre {
+    font-family: var(--font-mono);
+  }
+  math {
+    font-family: 'Newsreader Variable', 'STIX Two Math', 'Cambria Math', serif;
+    font-size: 1.08em;
+  }
+
+  /* Traditional Chinese: looser leading, slightly smaller body. */
+  :lang(zh-Hant) body,
+  body:lang(zh-Hant) {
+    font-size: 16.5px;
+    line-height: 1.9;
+  }
+}
+
+@layer components {
+  /* ---- layout --------------------------------------------------------- */
+  .wrap {
+    width: 100%;
+    max-width: var(--wrap);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  /* ---- display type --------------------------------------------------- */
+  .poster {
+    font-family: var(--font-display);
+    font-weight: 400;
+    text-transform: uppercase;
+    line-height: 0.95;
+    letter-spacing: 0.005em;
+  }
+  :lang(zh-Hant) .poster {
+    font-weight: 900;
+    line-height: 1.16;
+    letter-spacing: 0.04em;
+  }
+  /* Anton's caps are short; Chinese fills the em box. Level them. */
+  :lang(zh-Hant) .poster-scale {
+    font-size: 0.8em;
+  }
+
+  .label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.3;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+  :lang(zh-Hant) .label {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+  }
+
+  .ui {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  :lang(zh-Hant) .ui {
+    line-height: 1.7;
+  }
+
+  .mono {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---- reading text ---------------------------------------------------- */
+  .prose > * + * {
+    margin-top: 0.85em;
+  }
+  .prose {
+    max-width: 34em;
+  }
+  :lang(zh-Hant) .prose {
+    max-width: 32em;
+    text-align: justify;
+  }
+  .prose strong {
+    font-weight: 700;
+  }
+  .prose code,
+  .inline-code {
+    font-family: var(--font-mono);
+    font-size: 0.82em;
+    background: var(--color-cream-2);
+    padding: 0.1em 0.35em;
+  }
+  .prose a,
+  .link {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+    text-decoration-color: var(--color-orange);
+  }
+  .prose a:hover,
+  .link:hover {
+    text-decoration-color: var(--color-ink);
+  }
+
+  /* ---- keyword trigger -------------------------------------------------- */
+  .kw {
+    display: inline;
+    padding: 0;
+    border: 0;
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
+    text-align: inherit;
+    background: linear-gradient(transparent 52%, var(--color-orange) 52%, var(--color-orange) 88%, transparent 88%);
+  }
+  .kw:hover {
+    background: linear-gradient(transparent 14%, var(--color-orange) 14%, var(--color-orange) 88%, transparent 88%);
+  }
+  .kw[aria-expanded='true'] {
+    background: var(--color-ink);
+    color: var(--color-cream);
+    box-shadow:
+      -4px 0 0 var(--color-ink),
+      4px 0 0 var(--color-ink);
+  }
+  .on-ink .kw {
+    background: linear-gradient(transparent 52%, var(--color-orange-ink) 52%, var(--color-orange-ink) 88%, transparent 88%);
+  }
+  .on-ink .kw[aria-expanded='true'] {
+    background: var(--color-orange);
+    color: var(--color-ink);
+    box-shadow:
+      -4px 0 0 var(--color-orange),
+      4px 0 0 var(--color-orange);
+  }
+
+  /* ---- surfaces --------------------------------------------------------- */
+  .panel {
+    background: var(--color-paper);
+    border: 3px solid var(--color-ink);
+  }
+  .panel-ink {
+    background: var(--color-ink);
+    color: var(--color-cream);
+  }
+  .rule-3 {
+    border-bottom: 3px solid var(--color-ink);
+  }
+  .rule-2 {
+    border-bottom: 2px solid var(--color-ink);
+  }
+  .rule-1 {
+    border-bottom: 1px solid var(--color-rule);
+  }
+
+  /* ---- buttons ---------------------------------------------------------- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 6px 16px 5px;
+    border: 3px solid var(--color-ink);
+    background: var(--color-orange);
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    transition:
+      background-color var(--duration-quick) var(--ease-out),
+      color var(--duration-quick) var(--ease-out),
+      transform var(--duration-quick) var(--ease-out);
+  }
+  :lang(zh-Hant) .btn {
+    font-weight: 900;
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    padding-block: 6px;
+  }
+  .btn:hover:not(:disabled) {
+    background: #ffa63a;
+  }
+  .btn:active:not(:disabled) {
+    transform: scale(var(--scale-small));
+  }
+  .btn:disabled,
+  .btn[aria-disabled='true'] {
+    background: var(--color-cream-2);
+    color: var(--color-ink-4);
+    border-color: var(--color-ink-4);
+    cursor: not-allowed;
+  }
+  .btn-dark {
+    background: var(--color-ink);
+    color: var(--color-cream);
+  }
+  .btn-dark:hover:not(:disabled) {
+    background: var(--color-ink-2);
+  }
+  .btn-line {
+    background: transparent;
+  }
+  .btn-line:hover:not(:disabled) {
+    background: var(--color-cream-2);
+  }
+  .btn-sm {
+    min-height: 30px;
+    padding: 3px 10px 2px;
+    font-size: 13px;
+    border-width: 2px;
+  }
+  :lang(zh-Hant) .btn-sm {
+    font-size: 12.5px;
+    padding-block: 3px;
+  }
+  .on-ink .btn {
+    border-color: var(--color-cream);
+  }
+  .on-ink .btn-line {
+    color: var(--color-cream);
+  }
+  .on-ink .btn-line:hover:not(:disabled) {
+    background: var(--color-ink-2);
+  }
+
+  /* ---- small pieces ----------------------------------------------------- */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 7px 2px;
+    background: var(--color-ink);
+    color: var(--color-orange);
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .tag-orange {
+    background: var(--color-orange);
+    color: var(--color-ink);
+  }
+  .tag-line {
+    background: transparent;
+    color: var(--color-ink);
+    outline: 2px solid var(--color-ink);
+    outline-offset: -2px;
+  }
+  .tag-valid {
+    background: var(--color-valid);
+    color: var(--color-paper);
+  }
+  .tag-invalid {
+    background: var(--color-invalid);
+    color: var(--color-paper);
+  }
+
+  .zero {
+    color: var(--color-orange);
+    font-weight: 500;
+  }
+  .on-paper .zero,
+  .zero-mark {
+    background: var(--color-orange);
+    color: var(--color-ink);
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}

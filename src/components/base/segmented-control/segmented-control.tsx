@@ -92,8 +92,8 @@ export function SegmentedControl({ className, children, variant = "solid", ref, 
       {...props}
       className={(state) =>
         cx(
-          "relative inline-flex items-start gap-0.5 rounded-2lg",
-          variant === "solid" && "bg-segmented-control-background p-1",
+          "relative inline-flex items-stretch border-2 border-(--seg-line)",
+          variant === "solid" && "bg-transparent",
           typeof className === "function" ? className(state) : className,
         )
       }
@@ -101,7 +101,7 @@ export function SegmentedControl({ className, children, variant = "solid", ref, 
       {variant === "solid" && thumb && (
         <span
           aria-hidden
-          className="pointer-events-none absolute left-0 top-0 rounded-md bg-segmented-control-selected-background shadow-2xs transition-[transform,width,height] duration-200 ease"
+          className="t-tabs-pill top-0 bg-(--seg-line)"
           style={{
             transform: `translate(${thumb.left}px, ${thumb.top}px)`,
             width: thumb.width,
@@ -131,12 +131,11 @@ export function SegmentedControlItem({
       {...props}
       className={(state) =>
         cx(
-          "relative z-10 inline-flex cursor-pointer items-center justify-center rounded-md px-2.5 py-1 text-center whitespace-nowrap",
-          "transition-colors duration-200 ease",
+          "t-tab label relative z-10 inline-flex cursor-pointer items-center justify-center px-2.5 py-1.5 text-center whitespace-nowrap",
           "outline-none focus-visible:ring-2 focus-visible:ring-border-focus-ring",
           state.isSelected
-            ? "text-body-medium text-text-primary"
-            : "text-body-regular text-text-secondary hover:text-text-primary",
+            ? "text-(color:--seg-on)"
+            : "text-(color:--seg-off)",
           state.isDisabled && "cursor-not-allowed opacity-50",
           typeof className === "function" ? className(state) : className,
         )
