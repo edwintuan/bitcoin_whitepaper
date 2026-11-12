@@ -27,3 +27,23 @@ export function toyTarget(zeroBits: number): { bits: number; target: bigint } {
 export function expectedTries(zeroBits: number): number {
   return 2 ** zeroBits;
 }
+
+/** The six fields of the 80-byte header, in the order they are serialised, with their size in bytes. */
+export const HEADER_FIELDS = [
+  { key: 'version', bytes: 4 },
+  { key: 'prevHash', bytes: 32 },
+  { key: 'merkleRoot', bytes: 32 },
+  { key: 'time', bytes: 4 },
+  { key: 'bits', bytes: 4 },
+  { key: 'nonce', bytes: 4 },
+] as const;
+
+export type HeaderField = (typeof HEADER_FIELDS)[number]['key'];
+
+/** Where each field lies in the serialised header: `start` inclusive, `end` exclusive. */
+export const HEADER_SEGMENTS: readonly { name: HeaderField; start: number; end: number }[] = HEADER_FIELDS.reduce<
+  { name: HeaderField; start: number; end: number }[]
+>((segments, field) => {
+  const start = segments.length ? segments[segments.length - 1].end : 0;
+  return [...segments, { name: field.key, start, end: start + field.bytes }];
+}, []);

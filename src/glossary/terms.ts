@@ -638,7 +638,7 @@ const CHAIN: Entry[] = [
     aka: { en: 'leading zeros', zh: '又稱前導零' },
     short: {
       en: "The zeros a [[hash]] must begin with in the paper’s description of [[proof-of-work]]; each extra zero bit doubles the expected number of tries.",
-      zh: '白皮書描述[[proof-of-work|工作量證明]]時，要求[[hash|哈希]]開頭必須出現的零；每多一個零位元，預計嘗試次數便加倍。',
+      zh: '白皮書描述[[proof-of-work|工作量證明]]時，要求[[hash|哈希]]開頭必須出現的零；每多一個零位元，預期嘗試次數便加倍。',
     },
     precise: {
       en: 'The real rule is finer: the hash must not exceed a numeric [[target]], which need not be a power of two, so the difficulty can change by any ratio.',

@@ -109,8 +109,8 @@ bool CheckProofOfWorkImpl(uint256 hash, unsigned int nBits, const Consensus::Par
         {
           lines: [56, 60],
           note: {
-            en: "How long the last 2,016 blocks really took, held between a quarter of and four times the two-week goal.",
-            zh: "最近 2,016 個區塊實際花了多少時間；數值被限制在兩星期目標的四分之一至四倍之間。",
+            en: "The time from the first of the last 2,016 blocks to the last, held between a quarter of and four times the two-week goal.",
+            zh: "由最近 2,016 個區塊的第一個到最後一個所經過的時間；數值被限制在兩星期目標的四分之一至四倍之間。",
           },
         },
         {

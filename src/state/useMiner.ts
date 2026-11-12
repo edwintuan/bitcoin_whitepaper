@@ -11,7 +11,7 @@ export interface MinerView {
   hash: string;
   /** Attempts made in this run. */
   tried: number;
-  /** Attempts per second over this run. */
+  /** Attempts per second over this run, or 0 while the run is too short to tell. */
   rate: number;
 }
 
@@ -19,6 +19,13 @@ const IDLE: MinerView = { status: 'idle', nonce: 0, hash: '', tried: 0, rate: 0 
 
 /** Milliseconds of each animation frame given to hashing. Leaves the rest for painting. */
 const FRAME_BUDGET_MS = 6;
+
+/**
+ * A rate is only stated once this much mining has been timed. An easy block is
+ * found within a frame or two, and a handful of tries over a few milliseconds
+ * says nothing about the machine.
+ */
+const MIN_MEASURE_MS = 250;
 
 interface Run {
   miner: Miner;
@@ -73,7 +80,7 @@ export function useMiner({ active, maxRate, calm = false }: { active: boolean; m
       nonce: result.nonce,
       hash: result.hash,
       tried: current.tried,
-      rate: current.tried / Math.max(current.elapsedMs / 1000, 0.05),
+      rate: current.elapsedMs >= MIN_MEASURE_MS ? current.tried / (current.elapsedMs / 1000) : 0,
     };
 
     if (result.found) {

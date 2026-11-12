@@ -6,7 +6,7 @@ import './visuals.css';
 
 const COPY = {
   caption: {
-    en: 'Every try lands somewhere at random along the line. Only the orange stretch, below the target, counts.',
+    en: 'Every try lands somewhere at random along the line, and only the orange stretch below the target counts.',
     zh: '每次嘗試都隨機落在這條線上的某處，只有落在目標值以下的橙色一段才算數。',
   },
   target: { en: 'target', zh: '目標值' },
@@ -38,7 +38,7 @@ export default function ProofOfWorkVisual() {
   return (
     <div className="tv">
       <svg viewBox={`0 0 ${WIDTH} 46`} role="img" aria-label={t(COPY.caption)}>
-        <rect x="0" y="20" width={WIDTH} height="6" fill="#3a3a3a" />
+        <rect x="0" y="20" width={WIDTH} height="6" fill="var(--color-ink-2)" />
         <rect x="0" y="20" width={TARGET_X} height="6" fill="var(--color-orange)" />
         <path d={`M${TARGET_X} 10V36`} stroke="var(--color-cream)" strokeWidth="2" />
         <text x={TARGET_X + 5} y="42" fill="currentColor" fontSize="11">

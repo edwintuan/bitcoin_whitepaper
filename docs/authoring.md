@@ -15,8 +15,10 @@ before writing anything, and copy its patterns rather than inventing new ones.
 | `src/glossary/visuals/<term-id>.tsx` | The small live figure inside a term's card. The file name is the term id | `nonce.tsx`, `difficulty.tsx` |
 | `src/components/site/paper-figures/<id>.tsx` | A static redraw of one of the paper's own diagrams | `pow-blocks.tsx`, `kit.tsx` |
 
-Everything is picked up by file name. There is no index to edit. Types are in
-`src/content/types.ts`.
+Everything is picked up by file name. There is no index to edit, with one
+exception: the tests hold the visuals folder against the list
+`TERMS_WITH_VISUALS` in `src/glossary/terms.ts`, so a new term visual is added
+there as well. Types are in `src/content/types.ts`.
 
 Shared code is not yours to change while several people are writing chapters
 at once: `src/lib`, `src/components/site`, `src/components/viz`,
@@ -89,7 +91,7 @@ export default function MyFigure() {
 }
 ```
 
-- `step` is the index of the guided step on screen, or `null` once the reader explores freely. React to it by putting the figure in that step's state and pointing at the relevant part with the class `fig-pointed` (see `pow/MineScene.tsx`). Controls stay usable in every step.
+- `step` is the index of the guided step on screen, or `null` once the reader explores freely. React to it by putting the figure in that step's state and pointing at the relevant part with the class `fig-pointed` (see `pow/steps.ts` and `pow/MineScene.tsx`). Every step points at something: when the reader presses Next, the frame scrolls the pointed part into view, and on a phone that is often the only way they find it. Controls stay usable in every step.
 - If the reader changes scene or state by hand, keep the walkthrough in step with `goTo`.
 - Stop all timers, animation frames and computation while `active` is false.
 - With `reducedMotion`, replace travel with instant changes and offer a button for anything that would otherwise play by itself.
@@ -127,13 +129,15 @@ figure's only border. Inside the stage:
 - No element whose only job is to wrap one other element. If a `div` has no
   class that changes how something looks or works, delete it.
 
-Section 4 after this rule is the model: a ruled list under one heavy line, a
-tinted band for the hash, and a list of actors with hairlines between them.
+Section 4 after this rule is the model: a ruled list under one heavy line, the
+one band (`fig-band`) for the hash, solid blocks whose state is their fill,
+and a list of actors with hairlines between them.
 
 - Use the shared parts: `BlockTile`, `ChainRow`, `HashText`, `Counter`, `HexView` from `src/components/viz`.
 - Use the shared classes from `src/styles`: `fig-stack`, `fig-row`, `fig-group`, `fig-band`, `fig-pointed`, `fig-note`, `fig-status`, `stat`, `label`, `mono`, `ui`, `poster`, `tag`, `tag-orange`, `tag-line`, `tag-valid`, `tag-invalid`, `btn`, `btn-dark`, `btn-line`, `btn-sm`.
 - Controls: `Slider`, `SegmentedControl`, `Switch` from `src/components/base`; plain `<button className="btn …">` for actions; every input has a visible label.
-- Colours only through the tokens: `--color-orange`, `--color-orange-ink`, `--color-orange-soft`, `--color-ink`, `--color-ink-2`, `--color-ink-3`, `--color-ink-4`, `--color-cream`, `--color-cream-2`, `--color-cream-3`, `--color-paper`, `--color-rule`, `--color-valid`, `--color-invalid`. No new colours, no gradients, no rounded corners, no soft shadows.
+- Colours only through the tokens: `--color-orange`, `--color-orange-ink`, `--color-orange-soft`, `--color-ink`, `--color-ink-2`, `--color-ink-3`, `--color-ink-4`, `--color-cream`, `--color-cream-2`, `--color-cream-3`, `--color-paper`, `--color-rule`, `--color-valid`, `--color-valid-soft`, `--color-invalid`, `--color-invalid-soft`. No new colours, no gradients, no rounded corners, no soft shadows.
+- Text needs 4.5 to 1 against its ground (3 to 1 from 24 px, or 18.66 px in the display face). Orange type on a light ground is `--color-orange-ink`, never `--color-orange`; `--color-ink-4` is for marks, not words; dimming with `opacity` counts against the ratio. The audit below measures it.
 - Orange is the one accent: what is live, selected or newly valid. Green and red are only for the outcome of a check, and never the only signal: pair them with a word or a mark.
 - Rules, not boxes: a 3 px ink line above a list or a result, 1 px `--color-rule` between rows and groups. Borders on all four sides belong to the figure's frame and to form controls only.
 - Figure styles go in a plain CSS file beside the figure, with a class prefix of its own.
@@ -197,3 +201,5 @@ Draw arrows after boxes so their heads are not painted over.
   A keyword is a `span` with the class `kw` and the button role. To look at a term's card and its visual: `--do 'goto:#term-nonce' --do 'wait:500' --do 'click:#term-nonce .kw' --do 'wait:700' --do 'shot:card-nonce'`. Go to the entry and let the page come to rest first: a card closes if the page scrolls under it.
 
   Open the images and fix what is wrong: overflow, overlap, clipped text, poor contrast, misalignment, a walkthrough step that does not show what it says. Check both languages, all three reading depths (`--depth starter|curious|developer`), and `--reduced`.
+
+- Let the page be measured. `node scripts/layout-audit.mjs` walks every chapter and every step of its figure at several widths in both languages, and lists text that is cut off, sticks out of the shape it sits in, is under 11 px or falls short on contrast, and any width at which the page scrolls sideways. `--only <section-id>` keeps it to one chapter, `--cards` opens every glossary card. It only reaches the states a walkthrough reaches; for any other state, drive the page there with `scripts/shots.mjs` and add `--do 'audit:#network figure.figure'`.

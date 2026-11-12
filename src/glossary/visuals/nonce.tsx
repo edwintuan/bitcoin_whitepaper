@@ -6,8 +6,8 @@ import './visuals.css';
 
 const COPY = {
   caption: {
-    en: 'Same block, next nonce, completely different hash. Here a hash starting with 0 counts as a hit.',
-    zh: '同一個區塊，換下一個隨機數，哈希便面目全非。這裏以 0 開頭的哈希當作命中。',
+    en: 'Same block, next nonce, completely different hash; here one that starts with 0 counts as a hit.',
+    zh: '同一個區塊，換下一個隨機數，哈希便面目全非；這裏以 0 開頭的哈希當作命中。',
   },
 };
 
@@ -17,19 +17,25 @@ const isHit = (nonce: number) => hashOf(nonce).startsWith('0');
 /** Frames to rest on a hit before counting on. */
 const HOLD = 6;
 
+/** The first nonce that qualifies, and a start a few tries short of it, so a card just opened shows a hit soon. */
+const FIRST_HIT = (() => {
+  let nonce = 2;
+  while (!isHit(nonce)) nonce += 1;
+  return nonce;
+})();
+const START = Math.max(2, FIRST_HIT - 3);
+
 /** Real hashes of one block under successive nonces, counting up until one qualifies. */
 export default function NonceVisual() {
   const t = useT();
   const reducedMotion = useReducedMotion();
   // The newest of the three rows shown is `top`.
-  const [state, setState] = useState({ top: 2, held: 0 });
+  const [state, setState] = useState({ top: START, held: 0 });
 
   useEffect(() => {
     if (reducedMotion) {
       // Show a still frame that ends on a hit.
-      let top = 2;
-      while (!isHit(top)) top += 1;
-      setState({ top, held: 0 });
+      setState({ top: FIRST_HIT, held: 0 });
       return;
     }
     const timer = window.setInterval(() => {
@@ -46,7 +52,7 @@ export default function NonceVisual() {
         return (
           <div className={`tv-row ${hit ? 'tv-hit' : ''}`} key={nonce}>
             <span style={{ width: 34, textAlign: 'right' }}>{nonce}</span>
-            <span className="tv-dim">→</span>
+            <span aria-hidden="true">→</span>
             <span>
               {hash.slice(0, 20)}… {hit ? '✓' : ''}
             </span>

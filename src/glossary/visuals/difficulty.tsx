@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import type { CSSProperties } from 'react';
 import { useT } from '@/i18n/settings';
 import './visuals.css';
 
@@ -21,30 +22,25 @@ export default function DifficultyVisual() {
   const t = useT();
   const [bits, setBits] = useState(12);
   const tries = 2 ** bits;
+  const step = (by: number) => setBits((n) => Math.max(MIN, Math.min(MAX, n + by)));
 
   return (
     <div className="tv">
       <div className="tv-row" style={{ alignItems: 'center', gap: 10 }}>
-        <button type="button" className="tv-btn" aria-label={t(COPY.less)} disabled={bits <= MIN} onClick={() => setBits((n) => n - 1)}>
+        {/* aria-disabled, not disabled: at the limit the button would drop the focus it has just been pressed with. */}
+        <button type="button" className="tv-btn" aria-label={t(COPY.less)} aria-disabled={bits <= MIN} onClick={() => step(-1)}>
           −
         </button>
         <span className="tv-big" aria-live="polite" style={{ minWidth: 30, textAlign: 'center' }}>
           {bits}
         </span>
-        <button type="button" className="tv-btn" aria-label={t(COPY.more)} disabled={bits >= MAX} onClick={() => setBits((n) => n + 1)}>
+        <button type="button" className="tv-btn" aria-label={t(COPY.more)} aria-disabled={bits >= MAX} onClick={() => step(1)}>
           +
         </button>
         <span className="tv-dim">{t(COPY.bits)}</span>
       </div>
-      <div style={{ height: 8, marginTop: 10, background: '#3a3a3a' }}>
-        <div
-          style={{
-            height: '100%',
-            width: `${(bits / MAX) * 100}%`,
-            background: 'var(--color-orange)',
-            transition: 'width var(--duration-fast) var(--ease-smooth-out)',
-          }}
-        />
+      <div className="tv-meter" style={{ marginTop: 10, '--level': bits / MAX } as CSSProperties}>
+        <i />
       </div>
       <div className="tv-row" style={{ marginTop: 8 }}>
         <span className="tv-hit">≈ {tries.toLocaleString('en-US')}</span>

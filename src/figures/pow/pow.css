@@ -1,12 +1,17 @@
 /* Fig. 4.1: proof-of-work. Plain CSS on the site's tokens. */
 
+/* A small caption over a part of the scene, with room for a second label at its right end. */
 .pow-cap {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  margin: 0 0 6px;
+  margin-bottom: 6px;
   color: var(--color-ink-3);
+}
+/* What a caption names follows it closely. */
+.fig-stack > .pow-cap + * {
+  margin-top: 0;
 }
 .pow-dim {
   opacity: 0.6;
@@ -38,9 +43,13 @@
 .pow-field[data-focus='true'] {
   background: var(--color-orange-soft);
 }
+/* The one field a miner changes is set apart in ink; `on-ink` gives it the orange focus ring. */
 .pow-field[data-key='nonce'] {
   background: var(--color-ink);
   color: var(--color-cream);
+}
+.pow-field[data-key='nonce'][data-focus='true'] {
+  background: var(--color-ink-2);
 }
 .pow-field[data-key='nonce'] .pow-field-value {
   color: var(--color-orange);
@@ -55,7 +64,9 @@
 .pow-field-bytes {
   font-size: 11px;
   text-align: right;
-  opacity: 0.6;
+}
+.pow-field:not([data-key='nonce']) .pow-field-bytes {
+  color: var(--color-ink-3);
 }
 .pow-field-note {
   min-height: 3em;
@@ -74,10 +85,8 @@
   background: var(--color-ink);
 }
 
-/* ---- hash readout ---- */
+/* ---- hash readout: the figure's one band, which turns to ink when a block is found ---- */
 .pow-result {
-  padding: 10px 12px;
-  background: var(--color-cream);
   transition:
     background-color var(--duration-fast) var(--ease-out),
     color var(--duration-fast) var(--ease-out);
@@ -86,8 +95,7 @@
   background: var(--color-ink);
   color: var(--color-cream);
 }
-.pow-result[data-status='found'] .zero,
-.pow-field[data-key='nonce'] .zero {
+.pow-result[data-status='found'] .zero {
   background: none;
   color: var(--color-orange);
 }
@@ -123,18 +131,20 @@
   display: flex;
   flex-wrap: wrap;
   gap: 6px 20px;
-  margin: 0;
 }
 .pow-live dt {
+  color: var(--color-ink-3);
   font-size: 11px;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  opacity: 0.6;
 }
 .pow-live dd {
   margin: 0;
   font-size: 15px;
   font-variant-numeric: tabular-nums;
+}
+.pow-run > .fig-status {
+  margin-top: 14px;
 }
 .pow-shimmer {
   --shimmer-base: var(--color-ink-3);
@@ -142,10 +152,27 @@
 }
 
 /* ---- tamper ---- */
-/* A field cut into the block, without a border of its own. */
+.pow-tamper {
+  container-type: inline-size;
+}
+/* Side by side a block is about 170 px wide: its state goes under its name, never beside it. */
+.pow-chain .tile-top {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+}
+/* A field cut into the block, without a border of its own, under a label like the rows above it. */
+.pow-data {
+  display: block;
+  margin-top: 6px;
+}
+.pow-data .tile-label {
+  display: block;
+  width: auto;
+}
 .pow-data input {
   width: 100%;
-  margin-top: 8px;
+  margin-top: 2px;
   padding: 6px 8px;
   border: 0;
   background: var(--color-paper);
@@ -156,8 +183,25 @@
 .pow-data input:disabled {
   opacity: 0.6;
 }
-.tile[data-state='invalid'] .pow-data input {
-  background: var(--color-invalid-soft);
+/* A stage too narrow for three blocks in a row stacks them, whatever the window's width. */
+@container (max-width: 519px) {
+  .pow-chain {
+    flex-direction: column;
+  }
+  .pow-chain > .tile + .tile::before {
+    left: 22px;
+    top: -14px;
+    width: 3px;
+    height: 14px;
+  }
+  .pow-chain > .tile[data-state='invalid']::before {
+    background: repeating-linear-gradient(180deg, var(--color-invalid) 0 4px, transparent 4px 8px);
+  }
+  .pow-chain .tile-top {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 8px;
+  }
 }
 
 /* ---- genesis ---- */
@@ -179,22 +223,29 @@
   font-size: clamp(12px, 1.3vw, 14px);
   line-height: 1.45;
 }
+.pow-computed {
+  display: inline-block;
+}
 
 /* ---- retarget ---- */
 .pow-power {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 18px;
-  align-items: end;
+  gap: 4px 18px;
+  align-items: center;
+}
+.pow-power > .label {
+  grid-column: 1 / -1;
+  color: var(--color-ink-3);
 }
 .pow-periods {
-  margin: 0;
   padding: 0;
   list-style: none;
+  border-top: 3px solid var(--color-ink);
 }
 .pow-periods li {
   display: grid;
-  grid-template-columns: 76px minmax(0, 1fr) 76px;
+  grid-template-columns: 22px minmax(0, 1fr) 76px;
   gap: 12px;
   align-items: center;
   padding: 7px 0;
@@ -204,10 +255,16 @@
   font-size: 13px;
   text-align: right;
 }
+/*
+ * A block time on a scale of three doublings either side of ten minutes.
+ * `--at` runs from −1 (too fast) to 1 (too slow); the bar and the mark move by
+ * transform alone, measured against the scale's own width.
+ */
 .pow-scale {
   position: relative;
   height: 18px;
   background: var(--color-cream-2);
+  container-type: inline-size;
 }
 .pow-scale i {
   position: absolute;
@@ -220,36 +277,36 @@
   background: var(--color-ink);
 }
 .pow-scale-bar {
+  left: 50%;
+  width: 50%;
   background: var(--color-orange);
-  transition:
-    left var(--duration-fast) var(--ease-smooth-out),
-    width var(--duration-fast) var(--ease-smooth-out);
+  transform: scaleX(var(--at));
+  transform-origin: 0 50%;
+  transition: transform var(--duration-fast) var(--ease-smooth-out);
 }
 .pow-scale-dot {
+  left: calc(50% - 4px);
   width: 8px;
-  margin-left: -4px;
   background: var(--color-ink);
-  transition: left var(--duration-fast) var(--ease-smooth-out);
+  /* Stops 4 px short of either end, so the mark is never half off the scale. */
+  transform: translateX(calc(var(--at) * (50cqw - 4px)));
+  transition: transform var(--duration-fast) var(--ease-smooth-out);
 }
 .pow-scale-legend {
   display: flex;
   justify-content: space-between;
-  margin: 4px 88px 0;
+  /* Under the scale: past the period's number on the left, short of the time on the right. */
+  margin: 4px 88px 0 34px;
   color: var(--color-ink-3);
+}
+.fig-stack > .pow-scale-legend {
+  margin-top: 4px;
 }
 
 @media (max-width: 640px) {
-  .pow-chain {
-    flex-direction: column;
-  }
-  .pow-chain > .tile + .tile::before {
-    left: 22px;
-    top: -14px;
-    width: 3px;
-    height: 14px;
-  }
   .pow-periods li {
-    grid-template-columns: 62px minmax(0, 1fr) 66px;
+    grid-template-columns: 18px minmax(0, 1fr) 70px;
+    gap: 10px;
   }
   .pow-scale-legend {
     margin-inline: 0;

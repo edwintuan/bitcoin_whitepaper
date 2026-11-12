@@ -5,54 +5,55 @@ import type { BlockState } from '@/components/viz/BlockTile';
 import { HashText } from '@/components/viz/HashText';
 import { useSettings, useT } from '@/i18n/settings';
 import { GENESIS_HASH } from '@/lib/header';
-import { fill, formatCount } from '@/text/format';
-import { COPY } from './copy';
-import { TOY_TARGET, buildChain, chainProblems, editBlock, headerOf } from './toyChain';
-import type { ToyBlock } from './toyChain';
 import { useMiner } from '@/state/useMiner';
+import { fill, formatCount } from '@/text/format';
+import { cx } from '@/utils/cx';
+import { COPY } from './copy';
+import type { Point } from './steps';
+import { TOY_TARGET, TOY_ZERO_BITS, buildChain, chainProblems, describeDamage, editBlock, headerOf } from './toyChain';
+import type { ToyBlock } from './toyChain';
 
 /** Slow the repair down so its cost can be watched. */
 const REPAIR_RATE = 700;
 
 /** Edit an old block and see what it costs to make the chain whole again. */
-export function TamperScene() {
+export function TamperScene({ point }: { point: Point | null }) {
   const t = useT();
   const { lang } = useSettings();
   const { active, reducedMotion } = useFigure();
 
+  // Until the reader edits something, the chain is the sample text in their language.
   const samples = COPY.samples[lang];
-  const [chain, setChain] = useState<ToyBlock[]>(() => buildChain(samples));
-  const [touched, setTouched] = useState(false);
+  const pristine = useMemo(() => buildChain(samples), [samples]);
+  const [edited, setEdited] = useState<ToyBlock[] | null>(null);
+  const chain = edited ?? pristine;
+
   const [repairing, setRepairing] = useState<number | null>(null);
   const [cost, setCost] = useState(0);
   const [redone, setRedone] = useState(0);
 
   const { view, start, reset } = useMiner({ active, maxRate: REPAIR_RATE, calm: reducedMotion });
-  const chainRef = useRef(chain);
-  chainRef.current = chain;
-
-  // Until the reader edits something, the sample text follows the language.
+  // The repair runs block after block from a callback, which needs the chain as it is by then.
+  const latest = useRef(chain);
   useEffect(() => {
-    if (!touched) setChain(buildChain(samples));
-  }, [samples, touched]);
+    latest.current = chain;
+  }, [chain]);
 
   const issues = useMemo(() => chainProblems(chain), [chain]);
-  const broken = issues.filter(Boolean).length;
+  const damage = describeDamage(issues);
   const firstBroken = issues.findIndex(Boolean);
 
   const edit = (index: number, text: string) => {
-    const wasWhole = broken === 0;
-    setTouched(true);
-    setChain((blocks) => editBlock(blocks, index, text));
-    if (wasWhole) {
+    if (damage.kind === 'whole') {
       setCost(0);
       setRedone(0);
     }
+    setEdited(editBlock(chain, index, text));
   };
 
   const repairFrom = useCallback(
     (index: number) => {
-      const blocks = chainRef.current;
+      const blocks = latest.current;
       if (index >= blocks.length) {
         setRepairing(null);
         return;
@@ -60,11 +61,11 @@ export function TamperScene() {
       const prev = index === 0 ? GENESIS_HASH : blocks[index - 1].hash;
       setRepairing(index);
       start(headerOf({ data: blocks[index].data, prev, nonce: 0 }, index), TOY_TARGET, (found) => {
-        const next = chainRef.current.map((block, i) =>
+        const next = latest.current.map((block, i) =>
           i === index ? { ...block, prev, nonce: found.nonce, hash: found.hash } : block,
         );
-        chainRef.current = next;
-        setChain(next);
+        latest.current = next;
+        setEdited(next);
         setCost((total) => total + found.tried);
         setRedone((n) => n + 1);
         repairFrom(index + 1);
@@ -76,29 +77,30 @@ export function TamperScene() {
   const startOver = () => {
     reset();
     setRepairing(null);
-    setTouched(false);
+    setEdited(null);
     setCost(0);
     setRedone(0);
-    setChain(buildChain(samples));
   };
 
-  const canRepair = broken > 0 && repairing === null;
-  const canStartOver = touched || repairing !== null;
+  const canRepair = damage.kind !== 'whole' && repairing === null;
+  const canStartOver = edited !== null || repairing !== null;
 
   const message =
-    repairing !== null
-      ? null
-      : broken > 0
-        ? fill(t(COPY.tamperBroken), { count: broken })
-        : redone > 0
-          ? t(COPY.tamperRepaired)
-          : t(COPY.tamperUntouched);
+    damage.kind === 'broken'
+      ? fill(t(COPY.tamperBroken), { count: damage.count })
+      : damage.kind === 'alone'
+        ? t(COPY.tamperAlone)
+        : damage.kind === 'lucky'
+          ? fill(t(COPY.tamperLucky), { odds: formatCount(2 ** TOY_ZERO_BITS) })
+          : redone > 0
+            ? t(COPY.tamperRepaired)
+            : t(COPY.tamperUntouched);
 
   return (
-    <div className="pow-tamper fig-stack">
+    <div className="pow-tamper fig-stack t-reveal">
       <p className="fig-note">{t(COPY.tamperIntro)}</p>
 
-      <ChainRow className="pow-chain">
+      <ChainRow className={cx('pow-chain', point === 'chain' && 'fig-pointed')}>
         {chain.map((block, index) => {
           const mining = repairing === index;
           const issue = issues[index];
@@ -131,6 +133,10 @@ export function TamperScene() {
               ]}
             >
               <label className="pow-data">
+                {/* Named like the rows above it; the full name is for readers who cannot see where it sits. */}
+                <span className="tile-label" aria-hidden="true">
+                  data
+                </span>
                 <span className="visually-hidden">
                   {t(COPY.dataLabel)} {index + 1}
                 </span>

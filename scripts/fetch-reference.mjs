@@ -115,6 +115,7 @@ const FILES = {
     'src/txdb.cpp',
     'src/txdb.h',
     'src/txmempool.h',
+    'src/uint256.cpp',
     'src/undo.h',
     'src/util/hasher.h',
     'src/util/moneystr.cpp',

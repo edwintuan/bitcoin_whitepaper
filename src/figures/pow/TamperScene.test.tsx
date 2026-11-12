@@ -7,7 +7,7 @@ import { TamperScene } from './TamperScene';
 function setup() {
   render(
     <SettingsProvider initialLang="en" initialDepth="curious">
-      <TamperScene />
+      <TamperScene point={null} />
     </SettingsProvider>,
   );
   return screen.getAllByRole('textbox') as HTMLInputElement[];
@@ -52,5 +52,51 @@ describe('TamperScene', () => {
 
     const tiles = [...document.querySelectorAll('.tile')];
     expect(tiles.map((tile) => tile.getAttribute('data-state'))).toEqual(['confirmed', 'invalid', 'invalid']);
+  });
+});
+
+describe('TamperScene, what it says about the damage', () => {
+  const status = () => screen.getByRole('status').textContent ?? '';
+
+  it('counts every broken block when the first one is edited', async () => {
+    const user = userEvent.setup();
+    const [first] = setup();
+    await user.click(first);
+    await user.keyboard('{End}0');
+    expect(status()).toMatch(/^3 blocks are broken\./);
+  });
+
+  it('does not speak of blocks after the last one', async () => {
+    const user = userEvent.setup();
+    const [, , last] = setup();
+    await user.click(last);
+    await user.keyboard('{End}0');
+    expect(status()).toMatch(/^One block is broken/);
+    expect(status()).not.toMatch(/every block after it/);
+  });
+
+  it('does not call two edits one', async () => {
+    const user = userEvent.setup();
+    const [first, , last] = setup();
+    await user.click(last);
+    await user.keyboard('{End}0');
+    await user.click(first);
+    await user.keyboard('{End}0');
+    expect(status()).toMatch(/^3 blocks are broken\./);
+    expect(status()).not.toMatch(/One edit/);
+  });
+
+  it('names each block state in two words at most, so it fits the tile', async () => {
+    const user = userEvent.setup();
+    const [first] = setup();
+    await user.click(first);
+    await user.keyboard('{End}0');
+    const states = [...document.querySelectorAll('.tile-status')].map((node) => node.textContent);
+    expect(states).toEqual(['hash too high', 'cut off', 'cut off']);
+  });
+
+  it('gives every data field a visible label', () => {
+    setup();
+    expect(document.querySelectorAll('.pow-data .tile-label')).toHaveLength(3);
   });
 });

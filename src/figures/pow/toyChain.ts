@@ -73,3 +73,25 @@ export function chainProblems(chain: readonly ToyBlock[]): ChainProblem[] {
   });
   return found;
 }
+
+/** What an edit did to the chain, in the terms the figure explains it in. */
+export type Damage =
+  | { kind: 'whole' }
+  /** An edited block fails, and `count` blocks in all no longer hold. */
+  | { kind: 'broken'; count: number }
+  /** The last block was edited: it fails, and nothing stood on it. */
+  | { kind: 'alone' }
+  /**
+   * An edited block still meets the target by chance, about once in
+   * 2^TOY_ZERO_BITS edits. Its hash changed all the same, so the `count`
+   * blocks built on the old one are cut off.
+   */
+  | { kind: 'lucky'; count: number };
+
+export function describeDamage(problems: readonly ChainProblem[]): Damage {
+  const count = problems.filter(Boolean).length;
+  if (count === 0) return { kind: 'whole' };
+  if (!problems.includes('hash')) return { kind: 'lucky', count };
+  if (count === 1) return { kind: 'alone' };
+  return { kind: 'broken', count };
+}
