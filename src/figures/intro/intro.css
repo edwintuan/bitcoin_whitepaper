@@ -1,0 +1,312 @@
+/*
+ * Fig. 1.1: what trust costs. Plain CSS on the site's tokens.
+ *
+ * The figure's frame is the only box. Inside it the two routes are groups
+ * under a title, the bank and the coin are solid shapes, and the ledger is a
+ * ruled list.
+ */
+
+.itr {
+  container-type: inline-size;
+}
+
+/* ---- scene 1: one payment, two routes ---- */
+.itr-lane {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  grid-template-areas:
+    'title title'
+    'track book'
+    'goods book'
+    'controls book'
+    'status status';
+  column-gap: 24px;
+  align-items: start;
+}
+.itr-lane-title {
+  grid-area: title;
+  margin: 0 0 10px;
+  font-size: 19px;
+}
+:lang(zh-Hant) .itr-lane-title {
+  font-size: 16px;
+}
+.itr-lane > .fig-row {
+  grid-area: controls;
+}
+.itr-lane .itr-status {
+  grid-area: status;
+  min-height: 3em;
+  margin: 10px 0 0;
+}
+
+/* Customer and merchant at the two ends of a wire; the bank, if there is one, sits on it. */
+.itr-track {
+  grid-area: track;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+.itr-track::before {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  left: 0;
+  right: 0;
+  /* Through the middle of the 26px figures, which stand 6px above the foot of each party. */
+  bottom: 17.5px;
+  height: 3px;
+  background: var(--color-ink);
+}
+/* A party is its name and what it holds. Its ground is the stage's, so the wire stops at it. */
+.itr-party {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 62px;
+  padding: 0 0 6px;
+  background: var(--color-paper);
+}
+.itr-party:last-of-type {
+  align-items: flex-end;
+}
+.itr-party .label {
+  color: var(--color-ink-3);
+  white-space: nowrap;
+}
+/* The one solid shape on the wire: whoever stands in the middle. */
+.itr-bank {
+  align-items: center;
+  width: 92px;
+  padding: 7px 4px 6px;
+  background: var(--color-ink);
+  color: var(--color-cream);
+}
+.itr-bank .label {
+  color: var(--color-cream);
+}
+.itr-num {
+  font-family: var(--font-display);
+  font-size: 26px;
+  line-height: 1;
+  letter-spacing: 0.01em;
+}
+/* The money: an orange square that rides the wire to whoever holds it. */
+.itr-token {
+  position: absolute;
+  z-index: 1;
+  left: 68px;
+  right: 68px;
+  bottom: 12px;
+  height: 14px;
+  pointer-events: none;
+  transform: translateX(calc(var(--at, 0) * (100% - 14px)));
+  transition: transform var(--duration-slow) var(--ease-smooth-out);
+}
+.itr-token::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 14px;
+  height: 14px;
+  background: var(--color-orange);
+}
+.itr-goods {
+  grid-area: goods;
+  display: flex;
+  justify-content: flex-end;
+  margin: 6px 0 10px;
+}
+
+/* What is written down, and by whom: a ruled list under one heavy line. */
+.itr-book {
+  grid-area: book;
+}
+.itr-book-title {
+  margin: 0;
+  color: var(--color-ink-3);
+}
+.itr-book-kept {
+  padding-bottom: 5px;
+  border-bottom: 3px solid var(--color-ink);
+}
+.itr-book .fig-note {
+  margin: 5px 0 0;
+}
+.itr-entries {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-mono), var(--font-sans);
+  font-size: 11.5px;
+  line-height: 1.45;
+}
+.itr-entries li {
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr) auto;
+  gap: 6px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--color-rule);
+}
+.itr-entries li:last-child {
+  border-bottom: 0;
+}
+.itr-entries li[data-undone='true'] {
+  color: var(--color-ink-3);
+  text-decoration: line-through;
+}
+.itr-entries li[data-kind='reversal'] {
+  font-weight: 500;
+}
+
+/* ---- scene 2: one coin, offered twice ---- */
+.itr-flow {
+  display: grid;
+  justify-items: center;
+}
+.itr-holder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  text-align: center;
+}
+.itr-holder .label {
+  color: var(--color-ink-3);
+}
+.itr-keeps {
+  margin: 0;
+}
+/* A digital coin drawn as what it is: a small file. */
+.itr-file {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: 78px;
+  height: 50px;
+  background: var(--color-orange);
+  color: var(--color-ink);
+}
+/* The place where a payee's coin would be. */
+.itr-file-none {
+  background: var(--color-cream-2);
+}
+.itr-file-name {
+  font-family: var(--font-display);
+  font-size: 15px;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+:lang(zh-Hant) .itr-file-name {
+  font-weight: 900;
+  font-size: 14px;
+}
+.itr-file-serial {
+  font-size: 11px;
+}
+/* One stem down from the payer, splitting towards the two payees. */
+.itr-fork {
+  position: relative;
+  /* From the middle of one payee to the middle of the other: half the row, half the 12px gap, and one line's width. */
+  width: calc(50% + 9px);
+  height: 26px;
+  margin-top: 22px;
+  border: 3px solid var(--color-ink);
+  border-bottom: 0;
+}
+.itr-fork::before {
+  content: '';
+  position: absolute;
+  left: calc(50% - 1.5px);
+  top: -17px;
+  width: 3px;
+  height: 14px;
+  background: var(--color-ink);
+}
+.itr-mint {
+  width: 100%;
+  padding: 9px 12px 10px;
+  background: var(--color-ink);
+  color: var(--color-cream);
+}
+.itr-mint p {
+  margin: 0;
+}
+.itr-mint-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+}
+.itr-mint-head .poster {
+  font-size: 19px;
+  color: var(--color-orange);
+}
+:lang(zh-Hant) .itr-mint-head .poster {
+  font-size: 16px;
+}
+.itr-mint .itr-mint-record {
+  margin-top: 5px;
+  font-size: 12px;
+}
+.itr-mint-count {
+  font-size: 11px;
+  opacity: 0.75;
+}
+.itr-payees {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 12px;
+  width: 100%;
+}
+.itr-payee {
+  position: relative;
+  padding-top: 8px;
+  margin-top: 14px;
+}
+/* The last stretch of the stem, from the fork or the mint down to the payee. */
+.itr-payee::before {
+  content: '';
+  position: absolute;
+  left: calc(50% - 1.5px);
+  top: -14px;
+  width: 3px;
+  height: 14px;
+  background: var(--color-ink);
+}
+.itr-payee[data-result='accepted']::before {
+  background: var(--color-orange);
+}
+.itr-payee[data-result='refused']::before {
+  background: repeating-linear-gradient(180deg, var(--color-invalid) 0 4px, transparent 4px 8px);
+}
+
+/* Below this the wire between the parties gets too short to carry the money: the ledger goes under it. */
+@container (max-width: 529px) {
+  .itr-lane {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'title'
+      'track'
+      'goods'
+      'controls'
+      'book'
+      'status';
+  }
+  .itr-book {
+    margin-top: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .itr-token {
+    transition: none;
+  }
+}

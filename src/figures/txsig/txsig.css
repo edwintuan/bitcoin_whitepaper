@@ -1,0 +1,363 @@
+/*
+ * Fig. 2.1: a coin as a chain of signatures. Plain CSS on the site's tokens.
+ *
+ * The figure's frame is the only box. A transaction is one solid shape whose
+ * fields are lines of text; the owners are a list; the check is a tinted band.
+ */
+
+.txs {
+  container-type: inline-size;
+}
+
+/* ---- the owners: who holds which key. One column for each transaction below ---- */
+.txs-owners {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0 18px;
+  margin: 0 0 10px;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-mono), var(--font-sans);
+  font-size: 11px;
+  line-height: 1.5;
+}
+.txs-owner {
+  display: grid;
+  align-content: start;
+  gap: 1px;
+  min-width: 0;
+}
+.txs-owner-name {
+  margin-bottom: 3px;
+  font-size: 15px;
+  letter-spacing: 0.03em;
+}
+:lang(zh-Hant) .txs-owner-name {
+  font-size: 13.5px;
+}
+.txs-owner-key {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr);
+  gap: 6px;
+  white-space: nowrap;
+}
+.txs-owner-note {
+  margin-top: 2px;
+  color: var(--color-ink-2);
+}
+.txs-dim {
+  color: var(--color-ink-3);
+}
+/* The last owner signs nothing: the coin is theirs. */
+.txs-holds {
+  justify-self: start;
+  margin-top: 3px;
+}
+
+/* ---- the chain: three transactions, each carrying the hash of the one before ---- */
+.txs-cols {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0 18px;
+  padding: 0;
+  list-style: none;
+}
+.txs-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+/* A transaction: one solid shape. What it holds are lines of text with a hairline above each. */
+.txs-card {
+  --txs-line: var(--color-ink-2);
+  --txs-read: var(--color-ink-2);
+  position: relative;
+  flex: 1 0 auto;
+  min-width: 0;
+  padding: 9px 10px 8px;
+  background: var(--color-ink);
+  color: var(--color-cream);
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+.txs-card[data-tone='invalid'] {
+  --txs-line: var(--color-paper);
+  --txs-read: var(--color-paper);
+  background: var(--color-invalid-soft);
+  color: var(--color-ink);
+}
+.txs-card-title {
+  margin: 0 0 7px;
+  font-size: 16px;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+:lang(zh-Hant) .txs-card-title {
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.txs-fields {
+  margin: 0;
+}
+.txs-field {
+  position: relative;
+  min-width: 0;
+  margin: 0 -10px;
+  padding: 4px 10px 5px;
+  border-top: 1px solid var(--txs-line);
+  transition: background-color var(--duration-quick) var(--ease-out);
+}
+.txs-field dt {
+  font-family: var(--font-sans);
+  font-size: 11.5px;
+  line-height: 1.4;
+  opacity: 0.68;
+}
+:lang(zh-Hant) .txs-field dt {
+  font-size: 12px;
+}
+.txs-field dd {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 8px;
+  margin: 1px 0 0;
+  font-family: var(--font-mono), var(--font-sans);
+  font-size: 11.5px;
+  line-height: 1.45;
+}
+/* Always on a line of its own, so the rows of neighbouring transactions stay level. */
+.txs-field-note {
+  flex-basis: 100%;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  opacity: 0.68;
+}
+/* A previous hash that is no longer the hash of the transaction before. */
+.txs-card[data-link='broken'] .txs-field[data-field='prev'] .txs-field-note {
+  color: var(--color-invalid);
+  opacity: 1;
+}
+/* A value the reader has just swapped. */
+.txs-field[data-fresh='true'] .txs-value {
+  padding: 0 3px;
+  background: var(--color-orange);
+  color: var(--color-ink);
+}
+/* What the check on show is reading. */
+.txs-field[data-used='true'] {
+  background: var(--txs-read);
+}
+
+/* Each transaction carries the hash of the one before: the link runs into that field. */
+.txs-col + .txs-col .txs-field[data-field='prev']::before {
+  content: '';
+  position: absolute;
+  left: -18px;
+  top: calc(50% - 1.5px);
+  width: 18px;
+  height: 3px;
+  background: var(--color-ink);
+}
+.txs-col + .txs-col .txs-card[data-link='broken'] .txs-field[data-field='prev']::before {
+  background: repeating-linear-gradient(90deg, var(--color-invalid) 0 4px, transparent 4px 8px);
+}
+
+.txs-status {
+  min-height: 27px;
+  margin: 0 -10px;
+  padding: 7px 10px 0;
+  border-top: 1px solid var(--txs-line);
+}
+/* "Not checked" is words. On the dark shape they take its own colour. */
+.txs-card .tag-line {
+  color: inherit;
+  opacity: 0.68;
+}
+.txs-actions {
+  display: flex;
+  gap: 6px;
+}
+.txs-actions .btn {
+  flex: 1 1 0;
+  min-width: 0;
+  padding-inline: 4px;
+}
+
+/* ---- the check, spelled out: the one tinted band ---- */
+.txs-check-title {
+  margin: 0 0 5px;
+  color: var(--color-ink-3);
+}
+.txs-check-rows {
+  display: grid;
+  gap: 3px;
+  margin: 0;
+}
+.txs-check-rows > div {
+  display: grid;
+  grid-template-columns: 82px 112px minmax(0, 1fr);
+  gap: 0 10px;
+  align-items: baseline;
+}
+.txs-check-rows dt {
+  font-family: var(--font-mono), var(--font-sans);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-ink-3);
+}
+:lang(zh-Hant) .txs-check-rows dt {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+.txs-check-rows dd {
+  margin: 0;
+  font-size: 11.5px;
+}
+.txs-check-rows .txs-check-note {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--color-ink-2);
+}
+.txs-verdict {
+  margin-right: 4px;
+}
+
+/* ---- the gap: one coin, two transfers ---- */
+.txs-gap {
+  display: grid;
+  justify-items: center;
+}
+/* The transaction being spent, as one line. */
+.txs-parent {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 3px 12px;
+  margin: 0;
+  padding: 9px 12px 8px;
+  background: var(--color-ink);
+  color: var(--color-cream);
+  font-family: var(--font-sans);
+  font-size: 13px;
+}
+.txs-parent .txs-card-title {
+  margin: 0;
+}
+.txs-parent .mono {
+  font-size: 11.5px;
+}
+/* One stem down from the transaction being spent, splitting towards its two spenders. */
+.txs-split {
+  position: relative;
+  width: calc(50% + 9px);
+  height: 22px;
+  margin-top: 12px;
+  border: 3px solid var(--color-ink);
+  border-bottom: 0;
+}
+.txs-split::before {
+  content: '';
+  position: absolute;
+  left: calc(50% - 1.5px);
+  top: -15px;
+  width: 3px;
+  height: 12px;
+  background: var(--color-ink);
+}
+.txs-split[data-twice='false'] {
+  border-right-style: dashed;
+  border-right-color: var(--color-ink-3);
+}
+.txs-rivals {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 12px;
+  width: 100%;
+}
+/* Where the second transfer will stand: words, until there is one. */
+.txs-not-yet {
+  align-self: center;
+  margin: 0;
+  padding: 0 8px;
+  text-align: center;
+}
+
+.txs-warning {
+  margin: 14px 0 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--color-rule);
+}
+
+/* A narrow stage: the transactions stack, and the chain runs downwards. */
+@container (max-width: 539px) {
+  .txs-owners {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  /* Each owner becomes a row: the name, then the lines about it. */
+  .txs-owner {
+    grid-template-columns: 76px minmax(0, 1fr);
+    column-gap: 10px;
+    padding: 6px 0;
+    border-top: 1px solid var(--color-rule);
+  }
+  .txs-owner:first-child {
+    padding-top: 0;
+    border-top: 0;
+  }
+  .txs-owner-name {
+    grid-row: 1 / span 3;
+    margin: 0;
+  }
+  .txs-cols {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+  }
+  /* The link runs from the foot of one transaction to the head of the next, past the buttons between them. */
+  .txs-col + .txs-col .txs-field[data-field='prev']::before {
+    content: none;
+  }
+  .txs-col + .txs-col .txs-card::before {
+    content: '';
+    position: absolute;
+    right: 22px;
+    top: -52px;
+    width: 3px;
+    height: 52px;
+    background: var(--color-ink);
+  }
+  .txs-col + .txs-col .txs-card[data-link='broken']::before {
+    background: repeating-linear-gradient(180deg, var(--color-invalid) 0 4px, transparent 4px 8px);
+  }
+  /* A full-width transaction has room for buttons at their natural size. */
+  .txs-actions .btn {
+    flex: 0 1 auto;
+    padding-inline: 14px;
+  }
+  .txs-check-rows > div {
+    grid-template-columns: 82px minmax(0, 1fr);
+  }
+  .txs-check-rows .txs-check-note {
+    grid-column: 2;
+  }
+  /* Keep the two rival transactions row for row when the longer English label wraps. */
+  :lang(en) .txs-rivals .txs-field dt {
+    min-height: 2.8em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .txs-card,
+  .txs-field {
+    transition: none;
+  }
+}

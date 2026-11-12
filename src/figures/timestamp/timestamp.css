@@ -1,0 +1,137 @@
+/*
+ * Fig. 3.1: a chain of timestamps. Plain CSS on the site's tokens.
+ *
+ * The figure's frame is the only box. A block is the site's solid tile; its
+ * items are fields cut into it, without a border of their own.
+ */
+
+.tsc {
+  container-type: inline-size;
+}
+
+/* ---- the chain: stacked, so each hash sits right above the "prev" that carries it ---- */
+.tsc .tsc-chain {
+  flex-direction: column;
+  gap: 18px;
+}
+.tsc .tsc-chain > .tile + .tile::before {
+  left: 62px;
+  top: -18px;
+  width: 3px;
+  height: 18px;
+}
+.tsc .tsc-chain > .tile[data-state='invalid']::before {
+  background: repeating-linear-gradient(180deg, var(--color-invalid) 0 4px, transparent 4px 8px);
+}
+.tsc-chain .tile-row {
+  align-items: baseline;
+  overflow: visible;
+}
+.tsc-dim {
+  opacity: 0.6;
+}
+
+/* An edited block still stands; what marks it is its new hash. */
+.tsc-changed .tile-status {
+  color: var(--color-orange);
+  opacity: 1;
+}
+.tsc-fresh {
+  display: inline-block;
+  padding: 0 3px;
+  background: var(--color-orange);
+  color: var(--color-ink);
+}
+/* Beside a previous hash that is no longer the hash of the block above. Never squeezed out by the hash. */
+.tsc-stale {
+  flex: none;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* ---- items ---- */
+.tsc-items {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin: 7px 0;
+}
+.tsc-items input {
+  width: 100%;
+  min-width: 0;
+  padding: 6px 8px;
+  border: 0;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-mono), var(--font-sans);
+  font-size: 11.5px;
+  line-height: 1.4;
+}
+.tsc-items input:disabled {
+  opacity: 0.6;
+}
+
+/* ---- readouts ---- */
+.tsc-live {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  margin: 0;
+}
+.tsc-live dt {
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+.tsc-live dd {
+  margin: 0;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+.tsc-shimmer {
+  --shimmer-base: var(--color-ink-3);
+  --shimmer-highlight: var(--color-orange);
+}
+
+/*
+ * A step that points inside a block: the line reaches out to the block's edge,
+ * so the pointer stands in the gutter beside it like every other.
+ */
+.tsc-chain .tile .fig-pointed {
+  margin-left: -10px;
+  padding-left: 10px;
+}
+/* The two hashes of one link are marked as well, to be compared digit for digit. */
+.tsc-chain .tile-row.fig-pointed .tile-value {
+  color: var(--color-orange);
+}
+
+/* A wide stage (a tablet, where the figure spans the page) has room for the chain in a row. */
+@container (min-width: 760px) {
+  .tsc .tsc-chain {
+    flex-direction: row;
+    gap: 22px;
+  }
+  .tsc .tsc-chain > .tile + .tile::before {
+    left: -22px;
+    top: calc(50% - 1px);
+    width: 22px;
+    height: 3px;
+  }
+  .tsc .tsc-chain > .tile[data-state='invalid']::before {
+    background: repeating-linear-gradient(90deg, var(--color-invalid) 0 4px, transparent 4px 8px);
+  }
+  .tsc-items {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  /* Side by side, the space beside a block belongs to the link: the pointer stands just inside the block's edge. */
+  .tsc-chain .tile .fig-pointed {
+    margin-left: 0;
+    padding-left: 0;
+  }
+  .tsc-chain .tile .fig-pointed::before {
+    left: -7px;
+  }
+}
