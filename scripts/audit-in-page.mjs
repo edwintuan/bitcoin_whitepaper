@@ -173,7 +173,8 @@ export function auditInPage(rootSelector) {
 
     // Size as shown: words in a drawing are scaled with it.
     const style = styleOf(element);
-    const scale = element.ownerSVGElement && element.getScreenCTM ? Math.abs(element.getScreenCTM()?.a ?? 1) : 1;
+    const matrix = element.ownerSVGElement && element.getScreenCTM ? element.getScreenCTM() : null;
+    const scale = matrix ? Math.hypot(matrix.a, matrix.b) : 1;
     const size = parseFloat(style.fontSize) * scale;
     const shifted = element.closest('sup, sub') || (element.tagName === 'tspan' && (element.hasAttribute('dy') || element.hasAttribute('baseline-shift')));
     const floor = shifted ? 9 : 11;

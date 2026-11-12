@@ -23,7 +23,7 @@ export const UI = {
   depthHint: {
     starter: {
       en: 'Summaries, comparisons and the figures. Everything else is folded away.',
-      zh: '只展開總結、比方和交互圖，其餘內容先收起。',
+      zh: '只展開總結、比方和互動圖，其餘內容先收起。',
     },
     curious: {
       en: 'Adds the full explanation, the paper’s own words and who runs each part.',
@@ -59,28 +59,26 @@ export const UI = {
     original: { en: 'The paper’s own words', zh: '白皮書原文' },
     who: { en: 'Who runs this in the real world', zh: '工程上由誰實現' },
     source: { en: 'In the source', zh: '源碼一瞥' },
-    paperVsToday: { en: 'The paper vs. today', zh: '白皮書 vs 今天' },
+    paperVsToday: { en: 'The paper vs today', zh: '白皮書 vs 今天' },
   },
-  opensAt: { en: 'Opens at', zh: '預設展開於' },
 
   figure: { en: 'Fig.', zh: '圖' },
-  step: { en: 'Step', zh: '步驟' },
-  of: { en: 'of', zh: '／' },
+  stepCount: { en: '{n} / {total}', zh: '{n}／{total}' },
   stepPrev: { en: 'Back', zh: '上一步' },
   stepNext: { en: 'Next', zh: '下一步' },
   stepSkip: { en: 'Explore freely', zh: '自由操作' },
   stepRestart: { en: 'Replay the walkthrough', zh: '重看引導' },
-  figureLoading: { en: 'Loading the figure', zh: '正在載入交互圖' },
+  figureLoading: { en: 'Loading the figure', zh: '正在載入互動圖' },
   figureFailed: {
     en: 'This figure could not start in your browser. The explanation around it is complete without it.',
-    zh: '這個交互圖在你的瀏覽器中無法啟動。不看圖，前後的解說依然完整。',
+    zh: '這個互動圖在你的瀏覽器中無法啟動。不看圖，前後的解說依然完整。',
   },
 
+  /** Shown above the paper's text in the Chinese page only, where the translation stands beside the original. */
   originalNote: {
     en: 'Verbatim from the paper as published at bitcoin.org.',
-    zh: '左為本站譯文，僅供參考；右為英文原文，以英文為準。',
+    zh: '中文為本站譯文，僅供參考；並列的英文為白皮書原文，以英文為準。',
   },
-  originalToggle: { en: 'Show the English original', zh: '顯示英文原文' },
   sourceNote: {
     en: 'Copied verbatim from the official repository, MIT licence. The numbered notes are ours, not part of the code.',
     zh: '逐字引自官方倉庫（MIT 許可證）。帶編號的註解為本站所加，並非源碼的一部分。',
@@ -103,8 +101,6 @@ export const UI = {
     appearsIn: { en: 'Appears in', zh: '出現於' },
     seeAlso: { en: 'See also', zh: '相關' },
     precise: { en: 'More precisely', zh: '更精確地說' },
-    aka: { en: 'Also', zh: '又稱' },
-    open: { en: 'What is this?', zh: '這是甚麼？' },
   },
 
   hero: {
@@ -200,13 +196,6 @@ export const UI = {
     paperLink: { en: 'Read the original PDF', zh: '閱讀原始 PDF' },
   },
 
-  copied: { en: 'Copied', zh: '已複製' },
-  copy: { en: 'Copy', zh: '複製' },
-  valid: { en: 'Valid', zh: '有效' },
-  invalid: { en: 'Invalid', zh: '無效' },
-  reset: { en: 'Reset', zh: '重設' },
-  play: { en: 'Play', zh: '播放' },
-  pause: { en: 'Pause', zh: '暫停' },
   demoKeysWarning: {
     en: 'Keys made on this page are for demonstration. Never send real funds to them.',
     zh: '本頁生成的密鑰僅供示範，切勿向其轉入真實資金。',

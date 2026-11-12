@@ -86,8 +86,28 @@ describe('Collapsible', () => {
     expect(head).toHaveAttribute('aria-expanded', 'false');
   });
 
-  it('labels the panel with its heading', () => {
-    setup('curious');
-    expect(screen.getByRole('region', { name: /How it works/ })).toBeInTheDocument();
+  it('ties its button to the panel it opens', () => {
+    const head = setup('curious');
+    const panel = document.getElementById(head.getAttribute('aria-controls') ?? '');
+    expect(panel).not.toBeNull();
+    expect(panel).toHaveTextContent('Body copy');
+  });
+
+  it('is named by its title alone; the depth it opens at is a description, not part of the name', () => {
+    render(
+      <SettingsProvider initialLang="en" initialDepth="curious">
+        <Collapsible title="How it works" minDepth="curious" aside="Curious">
+          <p>Body copy</p>
+        </Collapsible>
+      </SettingsProvider>,
+    );
+    const head = screen.getByRole('button', { name: 'How it works' });
+    expect(head).toHaveAccessibleDescription('Curious');
+    expect(screen.getByRole('heading', { level: 3 })).toHaveTextContent('How it works');
+  });
+
+  it('is not a landmark: sixty of them would bury the real ones', () => {
+    setup('developer');
+    expect(screen.queryByRole('region')).toBeNull();
   });
 });

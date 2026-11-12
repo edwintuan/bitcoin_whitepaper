@@ -1,7 +1,6 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { Drawer } from '@/components/base/drawer/drawer';
 import { SegmentedControl, SegmentedControlItem } from '@/components/base/segmented-control/segmented-control';
-import { Tooltip, TooltipTrigger } from '@/components/base/tooltip/tooltip';
 import { SECTIONS } from '@/content/sections';
 import { DEPTHS, SECTION_IDS } from '@/content/types';
 import type { Depth, Lang } from '@/content/types';
@@ -36,35 +35,37 @@ function LanguageSwitch() {
   );
 }
 
-function DepthSwitch({ hints = true }: { hints?: boolean }) {
+function DepthSwitch() {
   const t = useT();
   const { depth, setDepth } = useSettings();
+  const id = useId();
   return (
-    <SegmentedControl
-      aria-label={t(UI.depthLabel)}
-      selectedKeys={new Set([depth])}
-      onSelectionChange={(keys) => {
-        const next = [...keys][0] as Depth | undefined;
-        if (!next || next === depth) return;
-        captureAnchor();
-        setDepth(next);
-      }}
-    >
-      {DEPTHS.map((value) =>
-        hints ? (
-          <TooltipTrigger key={value} delay={80} closeDelay={0}>
-            <SegmentedControlItem id={value}>{t(UI.depth[value])}</SegmentedControlItem>
-            <Tooltip placement="bottom" className="chain-tip" showArrow={false} offset={8}>
-              {t(UI.depthHint[value])}
-            </Tooltip>
-          </TooltipTrigger>
-        ) : (
-          <SegmentedControlItem key={value} id={value}>
-            {t(UI.depth[value])}
+    <>
+      <SegmentedControl
+        aria-label={t(UI.depthLabel)}
+        selectedKeys={new Set([depth])}
+        onSelectionChange={(keys) => {
+          const next = [...keys][0] as Depth | undefined;
+          if (!next || next === depth) return;
+          captureAnchor();
+          setDepth(next);
+        }}
+      >
+        {DEPTHS.map((value) => (
+          // What each depth shows is its description and the browser's own
+          // hint on hover. A tooltip per choice outlived the focus that
+          // raised it: the group moves the focus about on its way out.
+          <SegmentedControlItem key={value} id={value} aria-describedby={`${id}-${value}`}>
+            <span title={t(UI.depthHint[value])}>{t(UI.depth[value])}</span>
           </SegmentedControlItem>
-        ),
-      )}
-    </SegmentedControl>
+        ))}
+      </SegmentedControl>
+      {DEPTHS.map((value) => (
+        <span key={value} id={`${id}-${value}`} className="visually-hidden">
+          {t(UI.depthHint[value])}
+        </span>
+      ))}
+    </>
   );
 }
 
@@ -131,7 +132,7 @@ export function TopBar({ onSearch }: { onSearch?: () => void }) {
               </svg>
             </button>
           </div>
-          <DepthSwitch hints={false} />
+          <DepthSwitch />
           <p className="menu-hint ui">{t(UI.depthHint[depth])}</p>
           {onSearch ? (
             <button

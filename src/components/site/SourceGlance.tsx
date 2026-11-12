@@ -39,12 +39,12 @@ function Excerpt({ excerpt }: { excerpt: SourceExcerpt }) {
             {t(UI.sourceLines)} {excerpt.startLine}–{endLine}
           </span>
           <a href={url} target="_blank" rel="noreferrer noopener">
-            {t(UI.sourceOpen)} ↗
+            {t(UI.sourceOpen)} <span aria-hidden="true">↗</span>
           </a>
         </p>
       </header>
 
-      <div className="excerpt-code on-ink" tabIndex={0} role="group" aria-label={`${excerpt.path} ${excerpt.tag}`}>
+      <div className="excerpt-code on-ink" lang="en" tabIndex={0} role="group" aria-label={`${excerpt.path} ${excerpt.tag}`}>
         {lines.map((tokens, index) => {
           const lineNo = excerpt.startLine + index;
           const note = noteAt(lineNo);

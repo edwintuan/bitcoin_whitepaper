@@ -28,6 +28,16 @@ const PREFERRED: [avoid: string, use: string][] = [
   ['通貨膨脹', '通脹'],
   ['商家', '商戶'],
   ['品質', '質素'],
+  // Mainland renderings that are written in traditional characters and so pass the simplified check.
+  ['交互', '互動'],
+  ['內存', '記憶體'],
+  ['默認', '預設'],
+  ['服務器', '伺服器'],
+  ['字節', '位元組'],
+  ['界面', '介面'],
+  ['存儲', '儲存'],
+  ['數字簽名', '數碼簽署'],
+  ['屏幕', '螢幕'],
   // Hong Kong writing has both forms of these; the site keeps to the one the paper's translation uses.
   ['帳戶', '賬戶'],
   ['帳目', '賬目'],

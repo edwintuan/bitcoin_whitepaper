@@ -202,10 +202,6 @@
   .on-ink :where(button, a[href], input, select, textarea, summary, [role='button'], [role='radio'], [role='switch'], [role='tab'], [role='listitem'][tabindex]):focus-visible {
     outline-color: var(--color-orange) !important;
   }
-  /* The selected segment sits on an ink pill, where an ink ring cannot be seen. */
-  .seg-item:focus-visible {
-    outline-color: var(--color-orange) !important;
-  }
   button {
     font: inherit;
     color: inherit;

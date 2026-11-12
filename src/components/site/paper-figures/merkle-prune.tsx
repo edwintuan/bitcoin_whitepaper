@@ -58,6 +58,7 @@ export default function MerklePrune() {
     <Diagram
       width={560}
       height={312}
+      smallestLabel={12}
       label="Two drawings of one block. In the first, four transactions are hashed in pairs into Hash01 and Hash23, and those into the root hash in the block header. In the second, transactions 0 to 2 have been pruned: only Hash01, Hash2 and transaction 3 are kept, and the root hash is unchanged."
     >
       <Block x={10} pruned={false} caption="Transactions Hashed in a Merkle Tree" />

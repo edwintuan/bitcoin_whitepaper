@@ -98,13 +98,15 @@ export function WhoRuns({ items }: { items: WhoRunsItem[] }) {
             </p>
             <p className="who-artifact-head">
               <span className="tag tag-line">{t(UI.artifact[item.artifact.kind])}</span>
-              <code className="who-label">{item.artifact.label}</code>
+              <code className="who-label" lang="en">
+                {item.artifact.label}
+              </code>
             </p>
             <p className="who-detail ui">
               <Rich text={t(item.artifact.detail)} />
             </p>
             {item.artifact.snippet && depth === 'developer' ? (
-              <pre className="who-snippet on-ink" tabIndex={0}>
+              <pre className="who-snippet on-ink" lang="en" tabIndex={0}>
                 {item.artifact.snippet}
               </pre>
             ) : null}

@@ -40,6 +40,12 @@ export function Hero() {
   const tip = chain[chain.length - 1];
   const height = tip.height + 1;
 
+  // A new block starts with nothing timed yet: until it has been, the speed shown is the last one measured.
+  const [speed, setSpeed] = useState(HERO_RATE);
+  useEffect(() => {
+    if (view.rate > 0) setSpeed(view.rate);
+  }, [view.rate]);
+
   // Search for the next block as soon as there is a new tip.
   useEffect(() => {
     start(heroHeader(tip.height + 1, tip.hash, 0), HERO_TARGET, (result) => {
@@ -70,7 +76,7 @@ export function Hero() {
           height,
           bits: HERO_ZERO_BITS,
           tried: formatCount(view.tried),
-          rate: formatCount(Math.round(view.rate)),
+          rate: formatCount(Math.round(speed)),
         });
 
   return (
@@ -91,7 +97,9 @@ export function Hero() {
         <p className="hero-alt" lang={lang === 'en' ? 'zh-Hant-HK' : 'en'}>
           {other}
         </p>
-        <p className="hero-lede">{t(UI.hero.lede)}</p>
+        <p key={lang} className="hero-lede t-swap-soft">
+          {t(UI.hero.lede)}
+        </p>
 
         <div className="hero-live" role="img" aria-label={t(UI.hero.chainLabel)}>
           <ChainRow className="hero-chain">
@@ -144,7 +152,8 @@ export function Hero() {
               <path d="M8 2v11M3 8.5l5 5 5-5" />
             </svg>
           </a>
-          <button type="button" className="btn btn-line btn-sm" aria-pressed={paused} onClick={() => setPaused((value) => !value)}>
+          {/* The label says what a press will do; a pressed state on top of that would say it twice, and wrongly. */}
+          <button type="button" className="btn btn-line btn-sm" onClick={() => setPaused((value) => !value)}>
             {paused ? t(UI.hero.resume) : t(UI.hero.pause)}
           </button>
           <span className="label hero-credit">{t(UI.credit)}</span>

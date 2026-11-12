@@ -3,6 +3,7 @@ import type { ComponentType, LazyExoticComponent, ReactNode } from 'react';
 import type { SectionContent } from '@/content/types';
 import { UI } from '@/content/ui';
 import { useSettings, useT } from '@/i18n/settings';
+import { fill } from '@/text/format';
 import { useInView } from '@/state/useInView';
 import { usePageVisible, useReducedMotion } from '@/state/useMediaQuery';
 import { FigureContext } from './figureContext';
@@ -40,11 +41,18 @@ function figureFor(name: string): LazyExoticComponent<ComponentType> | null {
 
 /* ----------------------------------------------------------- error boundary */
 
-class FigureBoundary extends Component<{ fallback: ReactNode; children: ReactNode }, { failed: boolean }> {
+class FigureBoundary extends Component<
+  { fallback: ReactNode; onFail(): void; children: ReactNode },
+  { failed: boolean }
+> {
   state = { failed: false };
 
   static getDerivedStateFromError() {
     return { failed: true };
+  }
+
+  componentDidCatch() {
+    this.props.onFail();
   }
 
   render() {
@@ -65,7 +73,9 @@ export function FigureFrame({ section }: { section: SectionContent }) {
   const pageVisible = usePageVisible();
   const reducedMotion = useReducedMotion();
 
-  const steps = figure ? figure.steps[lang] : [];
+  // A figure that could not start has no walkthrough either: its steps would be instructions for nothing.
+  const [failed, setFailed] = useState(false);
+  const steps = figure && !failed ? figure.steps[lang] : [];
   const [step, setStep] = useState<number | null>(steps.length > 0 ? 0 : null);
   const goTo = useCallback(
     (next: number | null) => setStep(next === null ? null : Math.max(0, Math.min(steps.length - 1, next))),
@@ -136,7 +146,7 @@ export function FigureFrame({ section }: { section: SectionContent }) {
 
   if (!figure) return null;
   const Figure = figureFor(figure.component);
-  const failed = <p className="figure-failed ui">{t(UI.figureFailed)}</p>;
+  const failure = <p className="figure-failed ui">{t(UI.figureFailed)}</p>;
   const current = step === null ? null : steps[step];
 
   return (
@@ -152,13 +162,10 @@ export function FigureFrame({ section }: { section: SectionContent }) {
         <div ref={stepsBox} className="figure-steps" data-free={step === null}>
           {current && step !== null ? (
             <>
-              <div className="figure-step-text" aria-live="polite">
+              {/* Keyed by language: a change of language replaces the region, which says nothing; a step changes its text, which is announced. */}
+              <div key={lang} className="figure-step-text" aria-live="polite">
                 <p className="figure-step-title">
-                  <span className="figure-step-count mono">
-                    {step + 1}
-                    {lang === 'en' ? ' / ' : '／'}
-                    {steps.length}
-                  </span>
+                  <span className="figure-step-count mono">{fill(t(UI.stepCount), { n: step + 1, total: steps.length })}</span>
                   <span key={`${lang}-${step}`} className="t-swap-soft">
                     {current.title}
                   </span>
@@ -217,7 +224,7 @@ export function FigureFrame({ section }: { section: SectionContent }) {
       <div ref={stage} className="figure-stage" onFocus={(event) => uncover(event.target)}>
         <FigureContext.Provider value={api}>
           {Figure && near ? (
-            <FigureBoundary fallback={failed}>
+            <FigureBoundary fallback={failure} onFail={() => setFailed(true)}>
               <Suspense fallback={<FigureSkeleton label={t(UI.figureLoading)} />}>
                 <div className="t-reveal">
                   <Figure />
@@ -227,7 +234,7 @@ export function FigureFrame({ section }: { section: SectionContent }) {
           ) : Figure ? (
             <FigureSkeleton label={t(UI.figureLoading)} />
           ) : (
-            failed
+            failure
           )}
         </FigureContext.Provider>
       </div>

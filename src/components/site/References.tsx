@@ -45,7 +45,7 @@ export function References() {
           <p>{t(a.aboutAdvice)}</p>
           <p>
             <a className="btn btn-line btn-sm" href={WHITEPAPER_META.url} target="_blank" rel="noreferrer noopener">
-              {t(a.paperLink)} ↗
+              {t(a.paperLink)} <span aria-hidden="true">↗</span>
             </a>
           </p>
         </div>
@@ -64,7 +64,7 @@ export function Footer() {
         </p>
         <p className="label footer-credit">{t(UI.credit)}</p>
         <a className="label footer-top" href="#top">
-          {t(UI.backToTop)} ↑
+          {t(UI.backToTop)} <span aria-hidden="true">↑</span>
         </a>
       </div>
     </footer>

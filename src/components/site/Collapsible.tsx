@@ -43,7 +43,8 @@ export function Collapsible({ title, minDepth, aside, className, children }: Col
   if (open && !built) setBuilt(true);
 
   const id = useId();
-  const headId = `${id}-head`;
+  const titleId = `${id}-title`;
+  const asideId = `${id}-aside`;
   const panelId = `${id}-panel`;
 
   return (
@@ -51,14 +52,21 @@ export function Collapsible({ title, minDepth, aside, className, children }: Col
       <h3 className="m-0">
         <button
           type="button"
-          id={headId}
           className="t-acc-head collapsible-head"
+          aria-labelledby={titleId}
+          aria-describedby={aside ? asideId : undefined}
           aria-expanded={open}
           aria-controls={panelId}
           onClick={() => setOpen((value) => !value)}
         >
-          <span className="collapsible-title poster">{title}</span>
-          {aside ? <span className="collapsible-aside label">{aside}</span> : null}
+          <span id={titleId} className="collapsible-title poster">
+            {title}
+          </span>
+          {aside ? (
+            <span id={asideId} className="collapsible-aside label">
+              {aside}
+            </span>
+          ) : null}
           <span className="t-acc-chevron" aria-hidden="true">
             <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5">
               <path d="M4 6.5L8 10.5L12 6.5" />
@@ -66,7 +74,8 @@ export function Collapsible({ title, minDepth, aside, className, children }: Col
           </span>
         </button>
       </h3>
-      <div className="t-acc-panel" id={panelId} role="region" aria-labelledby={headId} inert={!open}>
+      {/* No region role: sixty-odd of them would bury the page's real landmarks. */}
+      <div className="t-acc-panel" id={panelId} inert={!open}>
         <div className="t-acc-panel-inner">
           <div className="collapsible-body">{built ? children : null}</div>
         </div>

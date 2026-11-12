@@ -9,19 +9,23 @@ import type { ReactNode } from 'react';
 
 const ArrowHead = createContext('');
 
-/** Labels are set at 13 px. Below this share of its drawn width a diagram's labels fall under 11 px. */
-const SMALLEST_SCALE = 11 / 13;
+/** The size labels are set at unless a diagram asks for less, and the smallest text the page allows. */
+const LABEL_SIZE = 13;
+const FLOOR = 11;
 
 export function Diagram({
   width,
   height,
   label,
+  smallestLabel = LABEL_SIZE,
   children,
 }: {
   width: number;
   height: number;
   /** What the diagram shows, for readers who cannot see it. */
   label: string;
+  /** The size of the smallest label in the diagram, when it sets one under 13 px. It decides how far the diagram may shrink. */
+  smallestLabel?: number;
   children: ReactNode;
 }) {
   const head = useId();
@@ -31,9 +35,9 @@ export function Diagram({
       viewBox={`0 0 ${width} ${height}`}
       role="img"
       aria-label={label}
-      // On a narrow screen the diagram stops shrinking while its labels can
-      // still be read, and its frame scrolls sideways instead.
-      style={{ maxWidth: width, minWidth: Math.ceil(width * SMALLEST_SCALE) }}
+      // On a narrow screen the diagram stops shrinking while its smallest
+      // label can still be read, and its frame scrolls sideways instead.
+      style={{ maxWidth: width, minWidth: Math.ceil(width * (FLOOR / smallestLabel)) }}
     >
       <defs>
         <marker id={head} viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">

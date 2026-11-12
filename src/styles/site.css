@@ -105,7 +105,7 @@
     content: '';
     width: 7px;
     height: 2px;
-    background: #555;
+    background: var(--color-ink-3);
   }
   .chain-nav a {
     display: block;
@@ -115,11 +115,12 @@
     display: block;
     width: 16px;
     height: 11px;
-    background: #3a3a3a;
+    /* A link not yet read is still a link: 3.3 to 1 against the bar, where it was 1.7. */
+    background: var(--color-ink-3);
     transition: background-color var(--duration-quick) var(--ease-out);
   }
   .chain-nav a:hover i {
-    background: #777;
+    background: var(--color-ink-4);
   }
   .chain-nav a[data-state='read'] i {
     background: var(--color-cream);
@@ -223,21 +224,24 @@
   .part-chips {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    margin: 20px 0 0;
+    gap: 4px 22px;
+    margin: 18px 0 0;
     padding: 0;
     list-style: none;
   }
+  /* The sections of a part: a number and an underlined title, with no box around them in the band. */
   .part-chip {
     display: inline-flex;
     align-items: baseline;
     gap: 8px;
-    padding: 5px 10px;
-    border: 2px solid var(--color-ink);
+    margin-inline: -5px;
+    padding: 3px 5px;
     font-family: var(--font-sans);
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 500;
-    text-decoration: none;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
     transition:
       background-color var(--duration-quick) var(--ease-out),
       color var(--duration-quick) var(--ease-out);
@@ -248,6 +252,7 @@
   .part-chip:hover {
     background: var(--color-ink);
     color: var(--color-orange);
+    text-decoration-color: transparent;
   }
 
   /* -------------------------------------------------------------- section */
@@ -378,7 +383,7 @@
     gap: 16px;
     margin-top: 40px;
     padding: 14px 16px;
-    border: 3px solid var(--color-ink);
+    border-top: 3px solid var(--color-ink);
     text-decoration: none;
     transition:
       background-color var(--duration-quick) var(--ease-out),
@@ -387,6 +392,9 @@
   .section-next:hover {
     background: var(--color-ink);
     color: var(--color-cream);
+  }
+  .section-next:hover .section-next-no {
+    color: var(--color-orange);
   }
   .section-next-title {
     display: flex;
@@ -666,12 +674,6 @@
   .tile[data-state='invalid'] .tile-status {
     color: var(--color-invalid);
   }
-  .tile[data-state='ghost'] {
-    background: transparent;
-    color: var(--color-ink-3);
-    outline: 2px dashed var(--color-ink-4);
-    outline-offset: -2px;
-  }
   .tile-top {
     display: flex;
     align-items: baseline;
@@ -692,7 +694,7 @@
     font-size: 11px;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    opacity: 0.65;
+    opacity: 0.72;
   }
   .tile[data-state='found'] .tile-status,
   .tile[data-state='invalid'] .tile-status {
@@ -714,9 +716,6 @@
   .tile[data-state='invalid'] .tile-label {
     opacity: 0.7;
   }
-  .tile[data-state='ghost'] .tile-label {
-    opacity: 1;
-  }
   .tile-value {
     min-width: 0;
     overflow: hidden;
@@ -733,8 +732,7 @@
   .tile[data-state='found'] .zero {
     color: var(--color-cream);
   }
-  .tile[data-state='invalid'] .zero,
-  .tile[data-state='ghost'] .zero {
+  .tile[data-state='invalid'] .zero {
     color: inherit;
     font-weight: inherit;
   }
@@ -1064,8 +1062,6 @@
   }
   .original-figure {
     margin: 4px 0 16px;
-    padding: 14px;
-    background: var(--color-paper);
     overflow-x: auto;
   }
   .original-table {
@@ -1439,11 +1435,9 @@
   }
 
   /* ---- actor table ---- */
-  .actor-table-wrap {
-    margin-top: 24px;
-  }
   .actor-table {
     width: 100%;
+    margin-top: 24px;
     border-collapse: collapse;
     font-family: var(--font-sans);
     font-size: 14px;
@@ -1660,6 +1654,10 @@
     border: 3px solid var(--color-ink) !important;
     background: var(--color-paper) !important;
     font-family: var(--font-sans);
+  }
+  /* The palette opens with its field focused: the caret says so, and a ring would be a frame inside the frame. */
+  .search-palette input:focus-visible {
+    outline: none !important;
   }
   .search-no {
     display: inline-block;
@@ -1967,14 +1965,12 @@
   .ja-blocks i {
     width: 30px;
     height: 30px;
-    border: 2px solid #5a5a5a;
+    background: var(--color-ink-2);
   }
   .ja-blocks i[data-on='true'] {
-    border-color: var(--color-cream);
     background: var(--color-cream);
   }
   .ja-blocks i[data-on='true'][data-first='true'] {
-    border-color: var(--color-orange);
     background: var(--color-orange);
   }
   .ja-big {

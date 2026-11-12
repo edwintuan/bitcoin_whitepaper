@@ -19,7 +19,9 @@ export function ChainNav() {
       <ol>
         {SECTIONS.map((section) => {
           const state = section.number === current ? 'current' : visited.has(section.number) ? 'read' : 'unread';
-          const name = `${section.number === 0 ? '' : `§${section.number} `}${t(section.title)}`;
+          const title = `${section.number === 0 ? '' : `§${section.number} `}${t(section.title)}`;
+          // What the fill shows, said in words as well.
+          const name = state === 'unread' ? title : `${title} · ${t(state === 'current' ? UI.current : UI.read)}`;
           return (
             <li key={section.id}>
               <TooltipTrigger delay={80} closeDelay={0}>

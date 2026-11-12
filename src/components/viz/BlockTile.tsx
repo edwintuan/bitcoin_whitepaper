@@ -2,13 +2,14 @@ import type { CSSProperties, ReactNode } from 'react';
 import { cx } from '@/utils/cx';
 
 /**
- * - confirmed: part of the chain (solid ink)
- * - candidate: still being worked on (outlined)
+ * A block is a solid shape in every state; what changes is its fill.
+ *
+ * - confirmed: part of the chain (ink)
+ * - candidate: still being worked on (pale)
  * - found: has just met its target (ink with orange type, lands with a slam)
- * - invalid: its hash or its link to the previous block no longer holds
- * - ghost: a placeholder for a block that does not exist yet
+ * - invalid: its hash or its link to the previous block no longer holds (tinted red)
  */
-export type BlockState = 'confirmed' | 'candidate' | 'found' | 'invalid' | 'ghost';
+export type BlockState = 'confirmed' | 'candidate' | 'found' | 'invalid';
 
 export interface BlockRow {
   label: ReactNode;

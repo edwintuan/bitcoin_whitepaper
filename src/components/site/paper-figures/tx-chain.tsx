@@ -53,6 +53,7 @@ export default function TxChain() {
     <Diagram
       width={560}
       height={330}
+      smallestLabel={12}
       label="Three transactions in a row. Each holds the new owner's public key, a hash, and the previous owner's signature. The hash takes in the previous transaction and the new owner's public key, and the previous owner signs it. Beneath each transaction is its new owner's private key. A dotted arrow labelled Sign runs from that private key to the owner's signature in the next transaction, and a dotted arrow labelled Verify runs from the owner's public key to the same signature."
     >
       <defs>

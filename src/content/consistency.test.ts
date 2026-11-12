@@ -4,7 +4,7 @@
  * and the appendices. Each file is written on its own; this is where they are
  * held to each other.
  */
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { TERMS, TERMS_WITH_VISUALS, TERM_IDS } from '@/glossary/terms';
@@ -59,12 +59,24 @@ interface Collected {
   leaves: Leaf[];
   /** Pairs whose two sides are not the same shape. */
   lopsided: string[];
+  /** Every pair of strings, side by side. */
+  pairs: { at: string; en: string; zh: string }[];
+}
+
+const none = (): Collected => ({ leaves: [], lopsided: [], pairs: [] });
+
+/** Matching strings of the two sides of a pair, however deep they sit. */
+function pairUp(en: unknown, zh: unknown, at: string, out: Collected['pairs']): void {
+  if (typeof en === 'string' && typeof zh === 'string') out.push({ at, en, zh });
+  else if (Array.isArray(en) && Array.isArray(zh)) en.forEach((item, i) => pairUp(item, zh[i], `${at}[${i}]`, out));
+  else if (isRecord(en) && isRecord(zh)) for (const key of Object.keys(en)) pairUp(en[key], zh[key], `${at}.${key}`, out);
 }
 
 /** Every bilingual string under `value`, and every pair whose languages disagree in shape. */
-function collect(value: unknown, at: string, into: Collected = { leaves: [], lopsided: [] }): Collected {
+function collect(value: unknown, at: string, into: Collected = none()): Collected {
   if (isPair(value)) {
     if (shapeOf(value.en) !== shapeOf(value.zh)) into.lopsided.push(at);
+    else pairUp(value.en, value.zh, at, into.pairs);
     stringsIn(value.en, at, 'en', into.leaves);
     stringsIn(value.zh, at, 'zh', into.leaves);
   } else if (Array.isArray(value)) {
@@ -80,13 +92,13 @@ const figureCopy = import.meta.glob<Record<string, unknown>>('../figures/*/copy.
 const sectionAt = (section: SectionContent) => `§${section.number}`;
 
 /** Copy the reader meets in the article itself, where every keyword is a link. */
-const article: Collected = { leaves: [], lopsided: [] };
+const article: Collected = none();
 for (const section of SECTIONS) collect(section, sectionAt(section), article);
 for (const [id, sources] of Object.entries(SOURCES)) collect(sources, `sources/${id}`, article);
 collect(JOURNEY, 'journey', article);
 
 /** Copy around the article: interface strings, appendices and the words inside figures. */
-const chrome: Collected = { leaves: [], lopsided: [] };
+const chrome: Collected = none();
 collect(UI, 'ui', chrome);
 collect(ACTORS, 'actors', chrome);
 collect(PARTS, 'parts', chrome);
@@ -95,6 +107,7 @@ for (const [file, module] of Object.entries(figureCopy)) collect(module, file.re
 const everything: Collected = {
   leaves: [...article.leaves, ...chrome.leaves],
   lopsided: [...article.lopsided, ...chrome.lopsided],
+  pairs: [...article.pairs, ...chrome.pairs],
 };
 
 const zhName = (termId: string) => TERMS[termId]?.name.zh;
@@ -239,10 +252,20 @@ describe('bilingual copy', () => {
       ['uses half-width punctuation next to Chinese', /\p{Script=Han}[,;:?!()]|[,;:?!(]\p{Script=Han}/u],
       ['uses Latin quotation marks', /\p{Script=Han}["“”‘’]|["“”‘’]\p{Script=Han}/u],
     ];
-    const breaches = article.leaves
+    // A placeholder is filled in later, with a name as often as with a number,
+    // so it cannot be held to the spacing rule: it stands here as a word
+    // joiner, which is neither a letter, a digit, a space nor punctuation.
+    const settled = (leaf: Leaf) => shown(leaf).replace(/\{\w+\}/g, '\u2060');
+    const breaches = everything.leaves
       .filter((leaf) => leaf.lang === 'zh')
-      .flatMap((leaf) => rules.filter(([, breach]) => breach.test(shown(leaf))).map(([rule]) => report(leaf, rule)));
+      .flatMap((leaf) => rules.filter(([, breach]) => breach.test(settled(leaf))).map(([rule]) => report(leaf, rule)));
     expect(breaches).toEqual([]);
+  });
+
+  it('fills the same placeholders in both languages', () => {
+    const names = (text: string) => [...text.matchAll(/\{(\w+)\}/g)].map((match) => match[1]).sort().join();
+    const uneven = everything.pairs.filter((pair) => names(pair.en) !== names(pair.zh));
+    expect(uneven.map((pair) => `${pair.at}: {${names(pair.en)}} in English, {${names(pair.zh)}} in Chinese`)).toEqual([]);
   });
 
   it('keeps English plain: no em dashes, no filler', () => {
@@ -257,6 +280,39 @@ describe('bilingual copy', () => {
   });
 });
 
+/* ------------------------------------------------------------- interface */
+
+describe('interface copy', () => {
+  /** Every source file but tests and the file that defines the strings. */
+  const sourceText = (() => {
+    const root = join(process.cwd(), 'src');
+    const files: string[] = [];
+    const walk = (folder: string) => {
+      for (const entry of readdirSync(folder, { withFileTypes: true })) {
+        const path = join(folder, entry.name);
+        if (entry.isDirectory()) walk(path);
+        else if (/\.tsx?$/.test(entry.name) && !/\.test\.tsx?$/.test(entry.name) && !path.endsWith(join('content', 'ui.ts'))) files.push(path);
+      }
+    };
+    walk(root);
+    return files.map((file) => readFileSync(file, 'utf8')).join('\n');
+  })();
+
+  it('is all in use: a string nobody shows is a string nobody keeps true', () => {
+    const paths: string[][] = [];
+    const walk = (value: unknown, path: string[]) => {
+      if (isPair(value)) paths.push(path);
+      else if (isRecord(value)) for (const [key, item] of Object.entries(value)) walk(item, [...path, key]);
+    };
+    walk(UI, []);
+    const used = (path: string[]) =>
+      // Read by name somewhere, or picked out of its group by a computed key (UI.depth[value]).
+      new RegExp(`\\.${path[path.length - 1]}\\b`).test(sourceText) ||
+      path.slice(0, -1).some((group) => new RegExp(`\\b${group}\\[`).test(sourceText));
+    expect(paths.filter((path) => !used(path)).map((path) => `UI.${path.join('.')}`)).toEqual([]);
+  });
+});
+
 /* ------------------------------------------------------------------ markup */
 
 describe('rich text', () => {
@@ -267,6 +323,17 @@ describe('rich text', () => {
       ),
     );
     expect(unknown).toEqual([]);
+  });
+
+  it('links only to places that exist on the page', () => {
+    const places = new Set<string>([...SECTION_IDS, 'top', 'journey', 'engineering-map', 'glossary', 'references']);
+    const lost = everything.leaves.flatMap((leaf) =>
+      [...leaf.text.matchAll(/\]\(#([^)]+)\)/g)]
+        .map((match) => match[1])
+        .filter((id) => !places.has(id) && !(id.startsWith('term-') && TERM_IDS.includes(id.slice(5))))
+        .map((id) => report(leaf, `links to #${id}, which is not on the page`)),
+    );
+    expect(lost).toEqual([]);
   });
 
   it('leaves no unparsed marker in the article', () => {

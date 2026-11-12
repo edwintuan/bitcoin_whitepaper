@@ -21,8 +21,7 @@ export function EngineeringMap() {
           <p className="appendix-lede">{t(a.aLede)}</p>
         </header>
 
-        <div className="actor-table-wrap">
-          <table className="actor-table">
+          <table className="actor-table" aria-labelledby="engineering-map-title">
             <thead>
               <tr className="label">
                 <th scope="col">{t(a.colActor)}</th>
@@ -56,7 +55,7 @@ export function EngineeringMap() {
                     </td>
                     <td data-label={t(a.colExamples)}>{t(actor.examples)}</td>
                     <td data-label={t(a.colInterfaces)}>
-                      <ul className="actor-speaks mono">
+                      <ul className="actor-speaks mono" lang="en">
                         {actor.interfaces.map((item) => (
                           <li key={item}>{item}</li>
                         ))}
@@ -67,7 +66,6 @@ export function EngineeringMap() {
               })}
             </tbody>
           </table>
-        </div>
       </div>
     </section>
   );

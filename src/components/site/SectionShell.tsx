@@ -1,12 +1,15 @@
-import type { ReactNode } from 'react';
+import { useRef } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { sectionByNumber } from '@/content/sections';
 import { SOURCES } from '@/content/sources';
 import type { SectionContent } from '@/content/types';
 import { UI } from '@/content/ui';
 import { WHITEPAPER } from '@/content/whitepaper';
-import { useT } from '@/i18n/settings';
+import { useSettings, useT } from '@/i18n/settings';
 import { useProgress } from '@/state/progress';
 import { sectionBlocks } from '@/state/sectionChain';
+import { useInView } from '@/state/useInView';
+import { cx } from '@/utils/cx';
 import { HashText } from '@/components/viz/HashText';
 import { Collapsible } from './Collapsible';
 import { FigureFrame } from './FigureFrame';
@@ -16,13 +19,20 @@ import { SourceGlance } from './SourceGlance';
 import { WhoRuns } from './WhoRuns';
 
 function LeadBlock({ label, className, children }: { label: string; className: string; children: ReactNode }) {
+  const { lang } = useSettings();
   return (
     <div className={`lead-block ${className}`}>
       <p className="label lead-label">{label}</p>
-      <p className="lead-text">{children}</p>
+      {/* Keyed by language: on a switch the new text fades in softly instead of snapping. */}
+      <p key={lang} className="lead-text t-swap-soft">
+        {children}
+      </p>
     </div>
   );
 }
+
+/** The place of a line in a staggered reveal. */
+const line = (index: number) => ({ '--i': index }) as CSSProperties;
 
 /**
  * One section of the paper. Every section has the same anatomy, so a reader
@@ -31,7 +41,11 @@ function LeadBlock({ label, className, children }: { label: string; className: s
  */
 export function SectionShell({ section }: { section: SectionContent }) {
   const t = useT();
+  const { lang } = useSettings();
   const { visited } = useProgress();
+  // The heading rises in, line after line, the first time the section comes into view.
+  const head = useRef<HTMLElement>(null);
+  const entered = useInView(head, { once: true, rootMargin: '0px 0px -10% 0px' });
 
   const block = sectionBlocks()[section.number];
   const mined = visited.has(section.number);
@@ -40,39 +54,37 @@ export function SectionShell({ section }: { section: SectionContent }) {
   const next = sectionByNumber(section.number + 1);
   const titleId = `${section.id}-title`;
 
-  const original = whitepaper ? (
-    <Collapsible title={t(UI.blocks.original)} minDepth="curious" aside={t(UI.depth.curious)}>
-      <OriginalText section={whitepaper} />
-    </Collapsible>
-  ) : null;
+  // The paper's own words: under the figure's column when the section has no figure, across the page when it has.
+  const original = (className?: string) =>
+    whitepaper ? (
+      <Collapsible className={className} title={t(UI.blocks.original)} minDepth="curious" aside={t(UI.depth.curious)}>
+        <OriginalText section={whitepaper} />
+      </Collapsible>
+    ) : null;
 
   return (
     <section id={section.id} className="section" aria-labelledby={titleId}>
       <div className="wrap">
-        <header className="section-head">
-          <span className="section-no poster" aria-hidden="true">
+        <header ref={head} className={cx('section-head t-stagger', entered && 'is-shown')}>
+          <span className="section-no poster t-stagger-line" style={line(0)} aria-hidden="true">
             {String(section.number).padStart(2, '0')}
           </span>
-          <h2 id={titleId} className="section-title poster">
-            <span className="poster-scale">{t(section.title)}</span>
+          <h2 id={titleId} className="section-title poster t-stagger-line" style={line(1)}>
+            <span key={lang} className="poster-scale t-swap-soft">
+              {t(section.title)}
+            </span>
           </h2>
-          <p className="block-strip label" data-mined={mined}>
+          <p className="block-strip label t-stagger-line" style={line(2)} data-mined={mined}>
             <span>
               {t(UI.block)} #{section.number}
             </span>
-            <span>
+            {/* The section's own block is for the eye: thirteen pairs of 64-digit hashes read aloud would help no one. */}
+            <span aria-hidden="true">
               prev <HashText hash={block.prev} lead={6} tail={0} zeros={false} />
             </span>
-            <span>nonce {mined ? block.nonce : '·'}</span>
-            <span>
-              hash{' '}
-              {mined ? (
-                <span className="t-pop">
-                  <HashText hash={block.hash} lead={8} tail={4} />
-                </span>
-              ) : (
-                '········'
-              )}
+            <span aria-hidden="true">nonce {mined ? block.nonce : '·'}</span>
+            <span aria-hidden="true">
+              hash {mined ? <HashText className="t-pop" hash={block.hash} lead={8} tail={4} /> : '········'}
             </span>
           </p>
         </header>
@@ -121,7 +133,7 @@ export function SectionShell({ section }: { section: SectionContent }) {
 
             <div className="section-eng">
               {/* Without a figure of its own, the section shows the paper's words here instead. */}
-              {section.figure ? null : original}
+              {section.figure ? null : original()}
               {section.whoRuns.length > 0 ? (
                 <Collapsible title={t(UI.blocks.who)} minDepth="curious" aside={t(UI.depth.curious)}>
                   <WhoRuns items={section.whoRuns} />
@@ -136,7 +148,7 @@ export function SectionShell({ section }: { section: SectionContent }) {
           </div>
         </div>
 
-        {section.figure && original ? <div className="section-original">{original}</div> : null}
+        {section.figure ? original('section-original') : null}
 
         {next ? (
           <a className="section-next" href={`#${next.id}`}>

@@ -27,6 +27,7 @@ export default function SpvChain() {
     <Diagram
       width={632}
       height={290}
+      smallestLabel={12}
       label="The longest proof-of-work chain drawn as three block headers, each holding a previous hash, a nonce and a Merkle root. Under the middle header hangs the Merkle branch for transaction 3: Hash01 and Hash23 lead to the Merkle root, Hash2 and Hash3 lead to Hash23, and transaction 3 leads to Hash3."
     >
       <Label x={6} y={12} size={12}>

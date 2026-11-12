@@ -150,7 +150,7 @@ bool GenericTransactionSignatureChecker<T>::CheckECDSASignature(const std::vecto
           lines: [1720, 1721],
           note: {
             en: "The check itself: does the signature fit that digest under that public key. The figure in this section runs the same kind of test each time you press Verify.",
-            zh: "真正的檢查在這裏：以這把公鑰來看，簽署與摘要是否相符。本章的交互圖每次按「驗證」，執行的就是同一類測試。",
+            zh: "真正的檢查在這裏：以這把公鑰來看，簽署與摘要是否相符。本章的互動圖每次按「驗證」，執行的就是同一類測試。",
           },
         },
       ],
