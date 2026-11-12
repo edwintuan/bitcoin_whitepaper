@@ -30,12 +30,14 @@ function* sourceFiles(dir) {
 }
 
 /** Sorted, unique, non-ASCII characters used by the site. */
-export function collectCharset(root = ROOT) {
+export function collectCharset(root = ROOT, { skipFiles = [] } = {}) {
   const found = new Set(ALWAYS);
   const add = (text) => {
     for (const char of text) if (char.codePointAt(0) > 0x7f) found.add(char);
   };
-  for (const file of sourceFiles(join(root, 'src'))) add(readFileSync(file, 'utf8'));
+  for (const file of sourceFiles(join(root, 'src'))) {
+    if (!skipFiles.some((name) => file.endsWith(`/${name}`))) add(readFileSync(file, 'utf8'));
+  }
   add(readFileSync(join(root, 'index.html'), 'utf8'));
   return [...found].sort((a, b) => a.codePointAt(0) - b.codePointAt(0));
 }

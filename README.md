@@ -1,7 +1,8 @@
 # Bitcoin, explained block by block
 
 An interactive walkthrough of *Bitcoin: A Peer-to-Peer Electronic Cash System*
-(Satoshi Nakamoto, 2008), in English and Traditional Chinese (Hong Kong usage).
+(Satoshi Nakamoto, 2008), in English, Traditional Chinese (Hong Kong usage)
+and Simplified Chinese.
 Provided by Animus Laboratories.
 
 The paper's abstract and twelve sections are laid out as one long page, in the
@@ -119,6 +120,12 @@ See `docs/authoring.md`. Section 4 (Proof-of-Work) is the reference.
   The English shown on the page is checked against its text by
   `src/content/whitepaper/whitepaper.test.ts`. The Traditional Chinese
   translation is ours.
+- The Simplified Chinese edition is not written separately. It is derived
+  from the Traditional copy as the page is drawn (`src/i18n/hans.ts`): words
+  that differ between Hong Kong and the mainland are swapped first
+  (`scripts/hans-terms.mjs`), then each remaining character is mapped to its
+  Simplified form. After changing the Chinese copy, run `npm run hans` and
+  then `npm run fonts`; the tests fail until you do.
 - Source excerpts are quoted from [bitcoin/bitcoin](https://github.com/bitcoin/bitcoin)
   at tag `v32.1`, and from the 2009 client at tag `v0.1.5`. Both are
   distributed under the MIT licence. Excerpts are verbatim; the notes beside

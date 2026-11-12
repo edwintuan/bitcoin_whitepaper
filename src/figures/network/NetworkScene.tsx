@@ -56,7 +56,7 @@ export function NetworkScene({ net, hint, selected, onSelect, still }: NetworkSc
   };
 
   const S = COPY.status;
-  const list = (nodes: number[]) => nodes.join(lang === 'zh' ? '、' : ', ');
+  const list = (nodes: number[]) => nodes.join(lang === 'en' ? ', ' : '、');
   // A reorg is reported after whatever else is going on, except during a fork, which is the bigger news.
   const reorgNews =
     freshReorg && now.kind !== 'fork'

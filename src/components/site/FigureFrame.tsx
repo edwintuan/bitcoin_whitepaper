@@ -2,7 +2,7 @@ import { Component, Suspense, lazy, useCallback, useEffect, useMemo, useRef, use
 import type { ComponentType, LazyExoticComponent, ReactNode } from 'react';
 import type { SectionContent } from '@/content/types';
 import { UI } from '@/content/ui';
-import { useSettings, useT } from '@/i18n/settings';
+import { pick, useSettings, useT } from '@/i18n/settings';
 import { fill } from '@/text/format';
 import { useInView } from '@/state/useInView';
 import { usePageVisible, useReducedMotion } from '@/state/useMediaQuery';
@@ -75,7 +75,7 @@ export function FigureFrame({ section }: { section: SectionContent }) {
 
   // A figure that could not start has no walkthrough either: its steps would be instructions for nothing.
   const [failed, setFailed] = useState(false);
-  const steps = figure && !failed ? figure.steps[lang] : [];
+  const steps = figure && !failed ? pick(figure.steps, lang) : [];
   const [step, setStep] = useState<number | null>(steps.length > 0 ? 0 : null);
   const goTo = useCallback(
     (next: number | null) => setStep(next === null ? null : Math.max(0, Math.min(steps.length - 1, next))),

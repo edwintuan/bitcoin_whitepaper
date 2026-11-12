@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { TERM_CATEGORIES } from '@/content/types';
 import type { Lang, TermCategory, TermDef } from '@/content/types';
+import { pick } from '@/i18n/settings';
 import { findZhProblems } from '@/content/zhChecks';
 import { TERM_IDS, TERMS, TERMS_WITH_VISUALS } from './terms';
 
@@ -56,7 +57,8 @@ const SPEC_VISUALS: readonly string[] = [
   'poisson-distribution', 'gamblers-ruin',
 ];
 
-const LANGS: readonly Lang[] = ['en', 'zh'];
+// The languages the copy is written in. Simplified is derived from `zh` and has no entries of its own.
+const LANGS = ['en', 'zh'] as const;
 const ALL: readonly TermDef[] = Object.values(TERMS);
 
 /** `[[term-id]]` or `[[term-id|shown words]]`. */
@@ -98,7 +100,7 @@ function shown({ text, lang }: Copy): string {
   return text
     .replace(
       LINK,
-      (_match, id: string, label: string | undefined) => label ?? TERMS[id]?.name[lang] ?? id,
+      (_match, id: string, label: string | undefined) => label ?? (TERMS[id] ? pick(TERMS[id].name, lang) : undefined) ?? id,
     )
     .replaceAll('`', '');
 }

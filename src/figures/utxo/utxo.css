@@ -153,7 +153,7 @@
   font-size: 16px;
   letter-spacing: 0.03em;
 }
-:lang(zh-Hant) .utxo-tx-head .poster {
+:lang(zh) .utxo-tx-head .poster {
   font-size: 14px;
 }
 .utxo-tx-head .mono {

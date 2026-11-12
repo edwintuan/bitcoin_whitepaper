@@ -293,7 +293,7 @@
   margin: 0 auto 0 0;
   font-size: 22px;
 }
-:lang(zh-Hant) .net-panel-title {
+:lang(zh) .net-panel-title {
   font-size: 19px;
 }
 .net-panel-close {
@@ -386,7 +386,7 @@
   font-size: 17px;
   font-weight: 400;
 }
-:lang(zh-Hant) .net-seq-end b {
+:lang(zh) .net-seq-end b {
   font-size: 15px;
   font-weight: 900;
 }
@@ -561,7 +561,7 @@
   white-space: nowrap;
 }
 /* The English word given once beside the Chinese one is not a heading: it keeps its lower case. */
-:lang(zh-Hant) .net-bytes-parts {
+:lang(zh) .net-bytes-parts {
   text-transform: none;
 }
 .net-field-note {

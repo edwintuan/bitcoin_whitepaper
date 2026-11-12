@@ -12,6 +12,7 @@ import { TopBar } from '@/components/site/TopBar';
 import { PARTS } from '@/content/parts';
 import { sectionByNumber } from '@/content/sections';
 import { UI } from '@/content/ui';
+import type { Lang } from '@/content/types';
 import { SettingsProvider, useSettings, useT } from '@/i18n/settings';
 import { ProgressProvider } from '@/state/progress';
 import { restoreAnchor } from '@/state/scrollAnchor';
@@ -26,9 +27,12 @@ const CommandSearch = lazy(() => loadSearch().then((module) => ({ default: modul
  * "Clear search"). Left alone they follow the browser's language, not the
  * page's: English in the Chinese page, Simplified Chinese in the English one.
  */
+/** The locale React Aria's own words are shown in, per language of the page. */
+const LOCALE: Record<Lang, string> = { en: 'en-GB', zh: 'zh-TW', cn: 'zh-CN' };
+
 function ControlsLocale({ children }: { children: ReactNode }) {
   const { lang } = useSettings();
-  return <I18nProvider locale={lang === 'zh' ? 'zh-TW' : 'en-GB'}>{children}</I18nProvider>;
+  return <I18nProvider locale={LOCALE[lang]}>{children}</I18nProvider>;
 }
 
 /** Side effects that follow the reader's settings. Renders nothing. */

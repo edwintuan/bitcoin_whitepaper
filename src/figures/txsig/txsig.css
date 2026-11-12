@@ -32,7 +32,7 @@
   font-size: 15px;
   letter-spacing: 0.03em;
 }
-:lang(zh-Hant) .txs-owner-name {
+:lang(zh) .txs-owner-name {
   font-size: 13.5px;
 }
 .txs-owner-key {
@@ -95,7 +95,7 @@
   letter-spacing: 0.03em;
   white-space: nowrap;
 }
-:lang(zh-Hant) .txs-card-title {
+:lang(zh) .txs-card-title {
   font-size: 14px;
   line-height: 1.2;
 }
@@ -117,7 +117,7 @@
   line-height: 1.4;
   opacity: 0.68;
 }
-:lang(zh-Hant) .txs-field dt {
+:lang(zh) .txs-field dt {
   font-size: 12px;
 }
 .txs-field dd {
@@ -212,7 +212,7 @@
   text-transform: uppercase;
   color: var(--color-ink-3);
 }
-:lang(zh-Hant) .txs-check-rows dt {
+:lang(zh) .txs-check-rows dt {
   font-family: var(--font-sans);
   font-size: 12px;
   letter-spacing: 0.04em;

@@ -118,7 +118,7 @@
   letter-spacing: 0.02em;
   text-transform: uppercase;
 }
-:lang(zh-Hant) .mch-part-name {
+:lang(zh) .mch-part-name {
   font-size: 14.5px;
   font-weight: 900;
   line-height: 1.2;
@@ -143,7 +143,7 @@
 .mch-panel-name {
   font-size: 24px;
 }
-:lang(zh-Hant) .mch-panel-name {
+:lang(zh) .mch-panel-name {
   font-size: 18px;
 }
 .mch-panel-text {
@@ -177,7 +177,7 @@
   font-size: 13px;
   line-height: 1.45;
 }
-:lang(zh-Hant) .mch-flows {
+:lang(zh) .mch-flows {
   line-height: 1.7;
 }
 .mch-flows li {
@@ -219,7 +219,7 @@
   font-size: 13px;
   line-height: 1.4;
 }
-:lang(zh-Hant) .mch-know {
+:lang(zh) .mch-know {
   line-height: 1.65;
 }
 .mch-know li {
@@ -245,7 +245,7 @@
   .mch-part-name {
     font-size: 13.5px;
   }
-  :lang(zh-Hant) .mch-part-name {
+  :lang(zh) .mch-part-name {
     font-size: 13px;
   }
   .mch-panel-text {
@@ -256,7 +256,7 @@
 /* The narrowest phones: a box is about 74 px wide, and "Transaction" has to fit on one line. */
 @media (max-width: 340px) {
   .mch-part-name,
-  :lang(zh-Hant) .mch-part-name {
+  :lang(zh) .mch-part-name {
     font-size: 12px;
   }
 }

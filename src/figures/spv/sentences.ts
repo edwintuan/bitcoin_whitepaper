@@ -6,9 +6,10 @@
 import type { Lang } from '@/content/types';
 import { fill, formatCount } from '@/text/format';
 import { COPY } from './copy';
+import { pick } from '@/i18n/settings';
 
 /** What goes between two sentences: a space in English, nothing in Chinese, whose sentences end in full-width punctuation. */
-export const gap = (lang: Lang): string => (lang === 'zh' ? '' : ' ');
+export const gap = (lang: Lang): string => (lang === 'en' ? ' ' : '');
 
 /** A hash, as it travels: 32 bytes. */
 export const HASH_BYTES = 32;
@@ -36,19 +37,19 @@ export interface ProofStatus {
 
 /** The status line under the check. */
 export function proofStatus(lang: Lang, state: ProofStatusInput): ProofStatus {
-  if (!state.asked) return { lead: null, text: COPY.statusPick[lang] };
+  if (!state.asked) return { lead: null, text: pick(COPY.statusPick, lang) };
   if (state.folded >= state.steps) {
-    if (state.equal) return { lead: COPY.equalLead[lang], text: COPY.statusEqual[lang] };
-    return { lead: COPY.notEqualLead[lang], text: (state.tamper === 'tx' ? COPY.statusForged : COPY.statusCorrupt)[lang] };
+    if (state.equal) return { lead: pick(COPY.equalLead, lang), text: pick(COPY.statusEqual, lang) };
+    return { lead: pick(COPY.notEqualLead, lang), text: pick((state.tamper === 'tx' ? COPY.statusForged : COPY.statusCorrupt), lang) };
   }
   if (state.folded === 0) {
-    return { lead: null, text: fill(COPY.statusAsked[lang], { n: state.steps, bytes: state.steps * HASH_BYTES }) };
+    return { lead: null, text: fill(pick(COPY.statusAsked, lang), { n: state.steps, bytes: state.steps * HASH_BYTES }) };
   }
   const template = state.ours === 'left' ? COPY.statusFoldLeft : COPY.statusFoldRight;
-  return { lead: null, text: fill(template[lang], { k: state.folded, n: state.steps }) };
+  return { lead: null, text: fill(pick(template, lang), { k: state.folded, n: state.steps }) };
 }
 
 /** The status line of the size scene, for a block of `count` transactions and a branch of `hashes` hashes. */
 export function sizeStatus(lang: Lang, count: number, hashes: number): string {
-  return fill(COPY.sizeStatus[lang], { count: formatCount(count), hashes });
+  return fill(pick(COPY.sizeStatus, lang), { count: formatCount(count), hashes });
 }

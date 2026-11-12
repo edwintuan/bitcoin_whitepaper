@@ -3,13 +3,18 @@
  * these types; components never hard-code reader-facing strings.
  */
 
-export type Lang = 'en' | 'zh';
+/**
+ * What the reader reads in. `zh` is Traditional Chinese as written in Hong
+ * Kong; `cn` is the same copy in Simplified characters and mainland wording,
+ * derived from it (src/i18n/hans.ts) rather than written a second time.
+ */
+export type Lang = 'en' | 'zh' | 'cn';
 
 export type Depth = 'starter' | 'curious' | 'developer';
 
 export const DEPTHS: readonly Depth[] = ['starter', 'curious', 'developer'];
 
-/** A value written once per language. `zh` is Traditional Chinese in Hong Kong usage. */
+/** A value written once per written language. Read it with `pick` or `useT`, never by index: `cn` has no entry of its own. */
 export type L<T> = { en: T; zh: T };
 
 export type SectionId =

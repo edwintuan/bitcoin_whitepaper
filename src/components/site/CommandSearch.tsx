@@ -2,6 +2,7 @@ import { CommandPalette, CommandPaletteItem, CommandPaletteSection } from '@/com
 import { SECTIONS } from '@/content/sections';
 import { UI } from '@/content/ui';
 import { TERMS, TERM_IDS } from '@/glossary';
+import { toHans } from '@/i18n/hans';
 import { useT } from '@/i18n/settings';
 import { afterOverlay, followLink } from '@/state/navigate';
 import { requestTerm } from '@/state/termRequest';
@@ -43,7 +44,7 @@ export function CommandSearch({ isOpen, onOpenChange }: { isOpen: boolean; onOpe
           <CommandPaletteItem
             key={section.id}
             id={`section:${section.id}`}
-            textValue={`${section.number} ${section.title.en} ${section.title.zh}`}
+            textValue={`${section.number} ${section.title.en} ${section.title.zh} ${toHans(section.title.zh)}`}
           >
             <span className="mono search-no">{section.number === 0 ? '#0' : `§${section.number}`}</span> {t(section.title)}
           </CommandPaletteItem>
@@ -56,7 +57,9 @@ export function CommandSearch({ isOpen, onOpenChange }: { isOpen: boolean; onOpe
             <CommandPaletteItem
               key={id}
               id={`term:${id}`}
-              textValue={searchable(`${term.name.en} ${term.name.zh} ${term.aka?.en ?? ''} ${term.aka?.zh ?? ''}`)}
+              textValue={searchable(
+                `${term.name.en} ${term.name.zh} ${toHans(term.name.zh)} ${term.aka?.en ?? ''} ${term.aka?.zh ?? ''} ${toHans(term.aka?.zh ?? '')}`,
+              )}
             >
               <span className="search-term">
                 <span className="search-term-name">{t(term.name)}</span>

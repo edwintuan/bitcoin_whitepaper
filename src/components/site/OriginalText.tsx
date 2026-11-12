@@ -2,7 +2,7 @@ import { Fragment, Suspense, lazy } from 'react';
 import type { ComponentType, LazyExoticComponent, ReactNode } from 'react';
 import type { OriginalBlock, PaperFigureId, WhitepaperSection } from '@/content/types';
 import { UI } from '@/content/ui';
-import { useSettings, useT } from '@/i18n/settings';
+import { HTML_LANG, pick, useSettings, useT } from '@/i18n/settings';
 
 // Static redraws of the paper's seven diagrams: paper-figures/<id>.tsx.
 const figureLoaders = import.meta.glob<{ default: ComponentType }>(['./paper-figures/*.tsx', '!**/*.test.tsx']);
@@ -112,10 +112,10 @@ export function OriginalText({ section }: { section: WhitepaperSection }) {
   return (
     <div className="original original-zh">
       <p className="original-note ui">{t(UI.originalNote)}</p>
-      {section.zh.map((block, index) =>
+      {pick(section, lang).map((block, index) =>
         isProse(block) ? (
           <div className="original-pair" key={index}>
-            <div className="original-side" lang="zh-Hant-HK">
+            <div className="original-side" lang={HTML_LANG[lang]}>
               <Block block={block} />
             </div>
             <div className="original-side original-source" lang="en">

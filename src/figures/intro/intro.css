@@ -28,7 +28,7 @@
   margin: 0 0 10px;
   font-size: 19px;
 }
-:lang(zh-Hant) .itr-lane-title {
+:lang(zh) .itr-lane-title {
   font-size: 16px;
 }
 .itr-lane > .fig-row {
@@ -204,7 +204,7 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
-:lang(zh-Hant) .itr-file-name {
+:lang(zh) .itr-file-name {
   font-weight: 900;
   font-size: 14px;
 }
@@ -249,7 +249,7 @@
   font-size: 19px;
   color: var(--color-orange);
 }
-:lang(zh-Hant) .itr-mint-head .poster {
+:lang(zh) .itr-mint-head .poster {
   font-size: 16px;
 }
 .itr-mint .itr-mint-record {

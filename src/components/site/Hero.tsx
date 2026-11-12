@@ -3,7 +3,7 @@ import type { CSSProperties } from 'react';
 import { BlockTile, ChainRow } from '@/components/viz/BlockTile';
 import { HashText } from '@/components/viz/HashText';
 import { UI } from '@/content/ui';
-import { useSettings, useT } from '@/i18n/settings';
+import { HTML_LANG, useSettings, useT } from '@/i18n/settings';
 import { fill, formatCount } from '@/text/format';
 import { useInView } from '@/state/useInView';
 import { usePageVisible, useReducedMotion } from '@/state/useMediaQuery';
@@ -94,7 +94,7 @@ export function Hero() {
             {after}
           </span>
         </h1>
-        <p className="hero-alt" lang={lang === 'en' ? 'zh-Hant-HK' : 'en'}>
+        <p className="hero-alt" lang={lang === 'en' ? HTML_LANG.zh : 'en'}>
           {other}
         </p>
         <p key={lang} className="hero-lede t-swap-soft">

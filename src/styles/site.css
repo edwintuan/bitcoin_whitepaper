@@ -224,7 +224,7 @@
     font-size: clamp(18px, 1.9vw, 22px);
     line-height: 1.35;
   }
-  :lang(zh-Hant) .part-blurb {
+  :lang(zh) .part-blurb {
     line-height: 1.7;
   }
   .part-chips {
@@ -279,7 +279,7 @@
     line-height: 0.78;
     color: var(--color-orange);
   }
-  :lang(zh-Hant) .section-no {
+  :lang(zh) .section-no {
     /* Digits are set in Anton in both languages. */
     font-weight: 400;
     line-height: 0.78;
@@ -344,7 +344,7 @@
     font-variation-settings: 'opsz' 36;
     max-width: 24em;
   }
-  :lang(zh-Hant) .tldr .lead-text {
+  :lang(zh) .tldr .lead-text {
     font-size: clamp(19px, 2vw, 23px);
     line-height: 1.65;
     font-weight: 700;
@@ -370,7 +370,7 @@
     font-size: 16.5px;
     line-height: 1.5;
   }
-  :lang(zh-Hant) .pvt li {
+  :lang(zh) .pvt li {
     font-size: 15.5px;
     line-height: 1.85;
   }
@@ -440,7 +440,7 @@
     font-size: 22px;
     transition: color var(--duration-quick) var(--ease-out);
   }
-  :lang(zh-Hant) .collapsible-title {
+  :lang(zh) .collapsible-title {
     font-size: 19px;
   }
   .collapsible-head:hover .collapsible-title {
@@ -506,7 +506,7 @@
     letter-spacing: 0.02em;
     text-transform: uppercase;
   }
-  :lang(zh-Hant) .figure-step-title {
+  :lang(zh) .figure-step-title {
     font-weight: 900;
     font-size: 17px;
     letter-spacing: 0.05em;
@@ -616,7 +616,7 @@
     line-height: 1.5;
     color: var(--color-ink-2);
   }
-  :lang(zh-Hant) .fig-note {
+  :lang(zh) .fig-note {
     line-height: 1.75;
   }
   .fig-status {
@@ -685,7 +685,7 @@
     font-size: 15px;
     letter-spacing: 0.03em;
   }
-  :lang(zh-Hant) .tile-title {
+  :lang(zh) .tile-title {
     font-size: 13px;
     line-height: 1.2;
   }
@@ -830,7 +830,7 @@
   .who-name {
     font-size: 20px;
   }
-  :lang(zh-Hant) .who-name {
+  :lang(zh) .who-name {
     font-size: 17px;
   }
   .who-role {
@@ -879,7 +879,7 @@
     margin: 0;
     font-size: 19px;
   }
-  :lang(zh-Hant) .excerpt-title {
+  :lang(zh) .excerpt-title {
     font-size: 16.5px;
   }
   .excerpt-meta {
@@ -1001,8 +1001,8 @@
   .original p {
     margin: 0 0 0.75em;
   }
-  .original [lang='zh-Hant-HK'] p,
-  .original [lang='zh-Hant-HK'] li {
+  .original [lang^='zh'] p,
+  .original [lang^='zh'] li {
     font-size: 15.5px;
     line-height: 1.85;
     text-align: justify;
@@ -1115,7 +1115,7 @@
     color: var(--color-orange);
     overflow-wrap: anywhere;
   }
-  :lang(zh-Hant) .term-name {
+  :lang(zh) .term-name {
     font-size: 21px;
   }
   .term-alt {
@@ -1146,7 +1146,7 @@
     font-size: 14.5px;
     line-height: 1.5;
   }
-  :lang(zh-Hant) .term-short {
+  :lang(zh) .term-short {
     line-height: 1.75;
   }
   .term-precise {
@@ -1333,7 +1333,7 @@
     font-size: clamp(18px, 1.7vw, 21px);
     line-height: 1.4;
   }
-  :lang(zh-Hant) .hero-lede {
+  :lang(zh) .hero-lede {
     font-size: clamp(16.5px, 1.5vw, 18.5px);
     line-height: 1.8;
   }
@@ -1446,7 +1446,7 @@
     font-size: 14px;
     line-height: 1.5;
   }
-  :lang(zh-Hant) .actor-table {
+  :lang(zh) .actor-table {
     line-height: 1.75;
   }
   .actor-table thead th {
@@ -1473,7 +1473,7 @@
   .actor-name {
     font-size: 19px;
   }
-  :lang(zh-Hant) .actor-name {
+  :lang(zh) .actor-name {
     font-size: 16px;
   }
   .actor-sections {
@@ -1514,7 +1514,7 @@
       background-color var(--duration-quick) var(--ease-out),
       color var(--duration-quick) var(--ease-out);
   }
-  :lang(zh-Hant) .cat-chip {
+  :lang(zh) .cat-chip {
     font-size: 12.5px;
     letter-spacing: 0.08em;
   }
@@ -1607,7 +1607,7 @@
     font-size: 14px;
     line-height: 1.55;
   }
-  :lang(zh-Hant) .about {
+  :lang(zh) .about {
     line-height: 1.8;
   }
   .about-title {
@@ -1833,7 +1833,7 @@
     font-size: clamp(15px, 1.5vw, 19px);
     line-height: 1.05;
   }
-  :lang(zh-Hant) .station-name {
+  :lang(zh) .station-name {
     font-size: clamp(14px, 1.3vw, 16px);
     line-height: 1.25;
   }

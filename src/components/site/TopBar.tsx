@@ -5,7 +5,7 @@ import { SECTIONS } from '@/content/sections';
 import { DEPTHS, SECTION_IDS } from '@/content/types';
 import type { Depth, Lang } from '@/content/types';
 import { UI } from '@/content/ui';
-import { useSettings, useT } from '@/i18n/settings';
+import { HTML_LANG, useSettings, useT } from '@/i18n/settings';
 import { afterOverlay, followLink } from '@/state/navigate';
 import { useProgress } from '@/state/progress';
 import { captureAnchor } from '@/state/scrollAnchor';
@@ -30,7 +30,10 @@ function LanguageSwitch() {
         <span lang="en">EN</span>
       </SegmentedControlItem>
       <SegmentedControlItem id="zh" aria-label="繁體中文">
-        <span lang="zh-Hant-HK">繁</span>
+        <span lang={HTML_LANG.zh}>繁</span>
+      </SegmentedControlItem>
+      <SegmentedControlItem id="cn" aria-label="简体中文">
+        <span lang={HTML_LANG.cn}>简</span>
       </SegmentedControlItem>
     </SegmentedControl>
   );

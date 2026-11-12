@@ -8,9 +8,10 @@ import { fill } from '@/text/format';
 import { COPY } from './copy';
 import { LARGEST_BLOCK_BYTES, megabytes, yearlyHeaderBytes } from './model';
 import type { StorageCount } from './model';
+import { pick } from '@/i18n/settings';
 
 /** What goes between two sentences: a space in English, nothing in Chinese, whose sentences end in full-width punctuation. */
-export const gap = (lang: Lang): string => (lang === 'zh' ? '' : ' ');
+export const gap = (lang: Lang): string => (lang === 'en' ? ' ' : '');
 
 /** Joins sentences that were written separately, leaving out any that are missing. */
 export function sentences(lang: Lang, ...parts: (string | null | false | undefined)[]): string {
@@ -46,33 +47,33 @@ export function treeStatus(lang: Lang, state: TreeStatusInput): Status {
   const { building, counts } = state;
   if (building) {
     const template = building.level === 1 ? COPY.buildingLeaves : building.oddBelow ? COPY.buildingOdd : COPY.building;
-    return { text: fill(template[lang], { level: building.level, levels: building.levels }), aside: null };
+    return { text: fill(pick(template, lang), { level: building.level, levels: building.levels }), aside: null };
   }
   if (!state.pruned) {
-    if (state.spent > 0) return { text: fill(COPY.marked[lang], { n: state.spent, total: state.count }), aside: null };
-    return { text: (state.count % 2 === 1 ? COPY.idleOdd : COPY.idle)[lang], aside: null };
+    if (state.spent > 0) return { text: fill(pick(COPY.marked, lang), { n: state.spent, total: state.count }), aside: null };
+    return { text: pick((state.count % 2 === 1 ? COPY.idleOdd : COPY.idle), lang), aside: null };
   }
 
   let text: string;
   if (state.waiting > 0) {
-    text = fill(COPY.markedMore[lang], { n: state.waiting });
+    text = fill(pick(COPY.markedMore, lang), { n: state.waiting });
   } else if (counts.txKept === 0) {
-    text = COPY.prunedAll[lang];
+    text = pick(COPY.prunedAll, lang);
   } else {
-    text = fill(COPY.pruned[lang], {
+    text = fill(pick(COPY.pruned, lang), {
       dropped: counts.txTotal - counts.txKept,
       total: counts.txTotal,
-      stubs: counts.stubHashes === 1 ? COPY.oneHash[lang] : fill(COPY.hashes[lang], { n: counts.stubHashes }),
+      stubs: counts.stubHashes === 1 ? pick(COPY.oneHash, lang) : fill(pick(COPY.hashes, lang), { n: counts.stubHashes }),
     });
   }
-  return { text, aside: COPY.prunedLocked[lang] };
+  return { text, aside: pick(COPY.prunedLocked, lang) };
 }
 
 /** The status line of the header storage scene, for a block every `minutes` minutes. */
 export function storageStatus(lang: Lang, minutes: number): string {
-  if (minutes === 10) return COPY.storagePaper[lang];
+  if (minutes === 10) return pick(COPY.storagePaper, lang);
   const yearly = yearlyHeaderBytes(minutes);
-  return fill(COPY.storageOther[lang], {
+  return fill(pick(COPY.storageOther, lang), {
     minutes,
     megabytes: megabytes(yearly),
     blocks: (yearly / LARGEST_BLOCK_BYTES).toFixed(1),

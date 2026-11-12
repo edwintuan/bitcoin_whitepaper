@@ -3,7 +3,7 @@ import { useFigure } from '@/components/site/FigureFrame';
 import { BlockTile, ChainRow } from '@/components/viz/BlockTile';
 import type { BlockState } from '@/components/viz/BlockTile';
 import { HashText } from '@/components/viz/HashText';
-import { useSettings, useT } from '@/i18n/settings';
+import { pick, useSettings, useT } from '@/i18n/settings';
 import { GENESIS_HASH } from '@/lib/header';
 import { useMiner } from '@/state/useMiner';
 import { fill, formatCount } from '@/text/format';
@@ -23,7 +23,7 @@ export function TamperScene({ point }: { point: Point | null }) {
   const { active, reducedMotion } = useFigure();
 
   // Until the reader edits something, the chain is the sample text in their language.
-  const samples = COPY.samples[lang];
+  const samples = pick(COPY.samples, lang);
   const pristine = useMemo(() => buildChain(samples), [samples]);
   const [edited, setEdited] = useState<ToyBlock[] | null>(null);
   const chain = edited ?? pristine;

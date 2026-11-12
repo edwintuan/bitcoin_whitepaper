@@ -231,8 +231,8 @@
   }
 
   /* Traditional Chinese: looser leading, slightly smaller body. */
-  :lang(zh-Hant) body,
-  body:lang(zh-Hant) {
+  :lang(zh) body,
+  body:lang(zh) {
     font-size: 16.5px;
     line-height: 1.9;
   }
@@ -255,13 +255,13 @@
     line-height: 0.95;
     letter-spacing: 0.005em;
   }
-  :lang(zh-Hant) .poster {
+  :lang(zh) .poster {
     font-weight: 900;
     line-height: 1.16;
     letter-spacing: 0.04em;
   }
   /* Anton's caps are short; Chinese fills the em box. Level them. */
-  :lang(zh-Hant) .poster-scale {
+  :lang(zh) .poster-scale {
     font-size: 0.8em;
   }
 
@@ -273,7 +273,7 @@
     letter-spacing: 0.07em;
     text-transform: uppercase;
   }
-  :lang(zh-Hant) .label {
+  :lang(zh) .label {
     font-size: 12px;
     letter-spacing: 0.1em;
   }
@@ -283,7 +283,7 @@
     font-size: 14px;
     line-height: 1.5;
   }
-  :lang(zh-Hant) .ui {
+  :lang(zh) .ui {
     line-height: 1.7;
   }
 
@@ -299,7 +299,7 @@
   .prose {
     max-width: 34em;
   }
-  :lang(zh-Hant) .prose {
+  :lang(zh) .prose {
     max-width: 32em;
     text-align: justify;
   }
@@ -408,7 +408,7 @@
       color var(--duration-quick) var(--ease-out),
       transform var(--duration-quick) var(--ease-out);
   }
-  :lang(zh-Hant) .btn {
+  :lang(zh) .btn {
     font-weight: 900;
     font-size: 14px;
     letter-spacing: 0.08em;
@@ -447,7 +447,7 @@
     font-size: 13px;
     border-width: 2px;
   }
-  :lang(zh-Hant) .btn-sm {
+  :lang(zh) .btn-sm {
     font-size: 12.5px;
     padding-block: 3px;
   }

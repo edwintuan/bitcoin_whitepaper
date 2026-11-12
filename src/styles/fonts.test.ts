@@ -92,7 +92,10 @@ describe('the Chinese font subsets', () => {
   });
 
   it('are the files the stylesheet loads, each with a range of its own, none blocking the text', () => {
-    const expected = [...WEIGHTS.flatMap((weight) => [`${weight}.woff2`, `${weight}-symbols.woff2`]), ...FIRST.map((weight) => `${weight}-first.woff2`)];
+    const expected = [
+      ...WEIGHTS.flatMap((weight) => [`${weight}.woff2`, `${weight}-symbols.woff2`, `${weight}-hans.woff2`]),
+      ...FIRST.flatMap((weight) => [`${weight}-first.woff2`, `${weight}-hans-first.woff2`]),
+    ];
     expect(faces.map((face) => face.file).sort()).toEqual(expected.sort());
     for (const face of faces) {
       expect(face.range, face.file).not.toBe('');
@@ -102,17 +105,34 @@ describe('the Chinese font subsets', () => {
 
   it('do not make an English page fetch the Chinese text for one line and one button', () => {
     // The paper's Chinese title under the English one, and the language switch.
-    const shownInEnglish = [...new Set(`${UI.hero.title.zh.join('')}繁`)].filter((char) => (char.codePointAt(0) ?? 0) > 0x7f);
+    const shownInEnglish = [...new Set(`${UI.hero.title.zh.join('')}繁简`)].filter((char) => (char.codePointAt(0) ?? 0) > 0x7f);
     for (const weight of FIRST) {
       const first = faces.find((face) => face.file === `${weight}-first.woff2`);
+      const hansFirst = faces.find((face) => face.file === `${weight}-hans-first.woff2`);
+      const hans = faces.find((face) => face.file === `${weight}-hans.woff2`);
       const whole = faces.find((face) => face.file === `${weight}.woff2`);
-      expect(first && whole, weight).toBeTruthy();
-      const missing = shownInEnglish.filter((char) => !inRange(first!.range, char));
+      expect(first && whole && hans && hansFirst, weight).toBeTruthy();
+      // 简 on the switch is not in the Hong Kong font: it has a small face of its own, asked before the Simplified text.
+      expect(hansFirst!.range).toBe('U+7B80');
+      expect(faces.indexOf(hansFirst!)).toBeGreaterThan(faces.indexOf(hans!));
+      expect(statSync(join(fonts, hansFirst!.file)).size).toBeLessThan(4_000);
+      const missing = shownInEnglish.filter((char) => !inRange(first!.range, char) && !inRange(hansFirst!.range, char));
       expect(missing.join(''), `${weight}-first lacks these`).toBe('');
       // Where two faces claim a character, the one declared later is asked first.
       expect(faces.indexOf(first!), `${weight}-first must come after the whole face`).toBeGreaterThan(faces.indexOf(whole!));
       // The small face is exact: it claims nothing it does not hold.
       expect(first!.range.split(',').length).toBeLessThanOrEqual(shownInEnglish.length);
+    }
+  });
+
+  it('keep the Simplified characters in a face a reader of the Traditional page never fetches', () => {
+    for (const weight of WEIGHTS) {
+      const whole = faces.find((face) => face.file === `${weight}.woff2`)!;
+      const hans = faces.find((face) => face.file === `${weight}-hans.woff2`)!;
+      expect(faces.indexOf(hans), `${weight}-hans must come after the whole face`).toBeGreaterThan(faces.indexOf(whole));
+      for (const char of ['区', '链', '这', '简']) expect(inRange(hans.range, char), `${weight}-hans lacks ${char}`).toBe(true);
+      for (const char of ['區', '塊', '這', '，', '的']) expect(inRange(hans.range, char), `${weight}-hans takes in ${char}`).toBe(false);
+      expect(statSync(join(fonts, hans.file)).size).toBeLessThan(150_000);
     }
   });
 

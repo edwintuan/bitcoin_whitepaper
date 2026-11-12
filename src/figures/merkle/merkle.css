@@ -136,7 +136,7 @@ button.mkl-leaf:hover {
   letter-spacing: 0.03em;
   text-transform: uppercase;
 }
-:lang(zh-Hant) .mkl-leaf-state {
+:lang(zh) .mkl-leaf-state {
   letter-spacing: 0;
 }
 
@@ -171,7 +171,7 @@ button.mkl-leaf[data-state='spent']:hover {
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
-:lang(zh-Hant) .mkl-node[data-state='copy'] {
+:lang(zh) .mkl-node[data-state='copy'] {
   letter-spacing: 0;
 }
 

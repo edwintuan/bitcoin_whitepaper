@@ -2,7 +2,7 @@ import { Suspense, useState } from 'react';
 import { SECTION_IDS } from '@/content/types';
 import { UI } from '@/content/ui';
 import { TERMS, visualFor } from '@/glossary';
-import { useSettings, useT } from '@/i18n/settings';
+import { HTML_LANG, useSettings, useT } from '@/i18n/settings';
 import { afterOverlay, followLink } from '@/state/navigate';
 import { CardNavigation, Rich } from './Rich';
 
@@ -32,7 +32,7 @@ export function TermCard({ id, onNavigate, onClose }: TermCardProps) {
         <header className="term-head">
           <h3 className="term-name poster">{t(def.name)}</h3>
           <p className="term-alt label">
-            <span lang={lang === 'en' ? 'zh-Hant-HK' : 'en'}>{otherName}</span>
+            <span lang={lang === 'en' ? HTML_LANG.zh : 'en'}>{otherName}</span>
             {def.aka ? <span> · {t(def.aka)}</span> : null}
           </p>
           <button type="button" className="term-close" aria-label={t(UI.close)} onClick={onClose}>

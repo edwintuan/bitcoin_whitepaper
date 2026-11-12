@@ -2,17 +2,26 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import type { ReactNode } from 'react';
 import { DEPTHS } from '@/content/types';
 import type { Depth, L, Lang } from '@/content/types';
+import { toHansDeep } from './hans';
 
 const LANG_KEY = 'bwe.lang';
 const DEPTH_KEY = 'bwe.depth';
 
-/** What goes on <html lang>. The Chinese is Traditional, Hong Kong usage. */
-export const HTML_LANG: Record<Lang, string> = { en: 'en', zh: 'zh-Hant-HK' };
+/** What goes on <html lang>: Traditional as in Hong Kong, Simplified as on the mainland. */
+export const HTML_LANG: Record<Lang, string> = { en: 'en', zh: 'zh-Hant-HK', cn: 'zh-Hans-CN' };
+
+/** Whether the reader is reading Chinese, in either script. */
+export const isChinese = (lang: Lang): boolean => lang !== 'en';
+
+/** Regions whose readers write Simplified, as they appear in a language tag. */
+const HANS_TAG = /^(cn|zh-(hans|cn|sg|my)(-|$))/;
 
 function parseLang(value: string | null | undefined): Lang | null {
   if (!value) return null;
   const tag = value.toLowerCase();
   if (tag === 'en' || tag.startsWith('en-')) return 'en';
+  if (HANS_TAG.test(tag)) return 'cn';
+  // Plain `zh` stays Traditional: links shared before the Simplified edition existed say `?lang=zh`.
   if (tag.startsWith('zh')) return 'zh';
   return null;
 }
@@ -124,7 +133,7 @@ export function SettingsProvider({
   }, [lang]);
 
   const setLang = useCallback((next: Lang) => {
-    // Before the page is drawn again: the two languages are set in different
+    // Before the page is drawn again: English and Chinese are set in different
     // sizes by `:lang()`, and whoever measures the new layout needs them applied.
     document.documentElement.lang = HTML_LANG[next];
     setLangState(next);
@@ -153,12 +162,13 @@ export function useSettings(): Settings {
   return settings;
 }
 
+/** The reader's language out of an `L<T>`. Simplified is the Chinese entry, converted. */
 export function pick<T>(value: L<T>, lang: Lang): T {
-  return value[lang];
+  return lang === 'cn' ? toHansDeep(value.zh) : value[lang];
 }
 
 /** Returns a function that picks the current language out of an `L<T>`. */
 export function useT(): <T>(value: L<T>) => T {
   const { lang } = useSettings();
-  return useCallback(<T,>(value: L<T>) => value[lang], [lang]);
+  return useCallback(<T,>(value: L<T>) => pick(value, lang), [lang]);
 }

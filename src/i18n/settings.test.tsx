@@ -20,11 +20,29 @@ describe('resolveInitialLang', () => {
     expect(resolveInitialLang(base)).toBe('en');
   });
 
-  it('treats every Chinese locale as Traditional Chinese', () => {
-    for (const tag of ['zh', 'zh-TW', 'zh-CN', 'zh-Hant-HK']) {
+  it('reads Chinese locales that write Traditional as Traditional, and a bare zh too', () => {
+    for (const tag of ['zh', 'zh-TW', 'zh-HK', 'zh-MO', 'zh-Hant-HK']) {
       expect(resolveInitialLang({ ...base, languages: [tag] })).toBe('zh');
     }
     expect(resolveInitialLang({ ...base, search: '?lang=zh-Hant' })).toBe('zh');
+    // Links shared before the Simplified edition existed.
+    expect(resolveInitialLang({ ...base, search: '?lang=zh', languages: ['zh-CN'] })).toBe('zh');
+  });
+
+  it('reads Chinese locales that write Simplified as Simplified', () => {
+    for (const tag of ['zh-CN', 'zh-SG', 'zh-Hans', 'zh-Hans-CN', 'zh-hans-sg']) {
+      expect(resolveInitialLang({ ...base, languages: [tag] })).toBe('cn');
+    }
+    expect(resolveInitialLang({ ...base, search: '?lang=zh-CN' })).toBe('cn');
+    expect(resolveInitialLang({ ...base, search: '?lang=cn' })).toBe('cn');
+    expect(resolveInitialLang({ ...base, stored: 'cn' })).toBe('cn');
+  });
+
+  it('gives Simplified readers the Chinese copy converted, and the others theirs untouched', () => {
+    const copy = { en: 'A block header', zh: '區塊頭' };
+    expect(pick(copy, 'en')).toBe('A block header');
+    expect(pick(copy, 'zh')).toBe('區塊頭');
+    expect(pick(copy, 'cn')).toBe('区块头');
   });
 
   it('takes the first language it supports and falls back to English', () => {

@@ -84,7 +84,7 @@ export function LinkageScene({ reuse, combine, onReuse, onCombine, pointed = nul
             role="img"
             aria-label={fill(t(COPY.graphAlt), {
               count: tiedNumbers.length,
-              list: tiedNumbers.map((n) => fill(t(COPY.txNumber), { n })).join(lang === 'zh' ? '、' : ', '),
+              list: tiedNumbers.map((n) => fill(t(COPY.txNumber), { n })).join(lang === 'en' ? ', ' : '、'),
             })}
           >
             <defs>

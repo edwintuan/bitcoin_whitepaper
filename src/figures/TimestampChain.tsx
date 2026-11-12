@@ -3,7 +3,7 @@ import { useFigure } from '@/components/site/FigureFrame';
 import { BlockTile, ChainRow } from '@/components/viz/BlockTile';
 import type { BlockState } from '@/components/viz/BlockTile';
 import { HashText } from '@/components/viz/HashText';
-import { useSettings, useT } from '@/i18n/settings';
+import { pick, useSettings, useT } from '@/i18n/settings';
 import { fill } from '@/text/format';
 import { cx } from '@/utils/cx';
 import { buildChain, chainStatus, editItem, repairCost, repairPlan, republish } from './timestamp/chain';
@@ -29,7 +29,7 @@ export default function TimestampChain() {
   const { lang } = useSettings();
   const { step, goTo, active, reducedMotion } = useFigure();
 
-  const samples = COPY.samples[lang];
+  const samples = pick(COPY.samples, lang);
   const [chain, setChain] = useState<StampBlock[]>(() => buildChain(samples));
   const [touched, setTouched] = useState(false);
   const [repairing, setRepairing] = useState(false);

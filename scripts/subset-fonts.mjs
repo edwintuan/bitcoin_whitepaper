@@ -13,6 +13,9 @@
  * - the symbols the Latin fonts lack: arrows, check marks and the like (a
  *   few kilobytes), so that an arrow in an English sentence does not pull in
  *   the Chinese text;
+ * - the Simplified characters the Hong Kong fonts lack, cut from the SC font
+ *   of the same weight (a few dozen kilobytes), fetched only by a reader of
+ *   the Simplified page;
  * - for the sans weights, the handful of characters an English page shows
  *   before anything is pressed: the paper's Chinese title in the hero and the
  *   language switch (a few kilobytes).
@@ -37,13 +40,17 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = join(ROOT, 'src', 'assets', 'fonts');
 const MODULES = join(ROOT, 'node_modules');
 
-/** Each weight the site sets Chinese in, and the full font to cut it from. */
+/**
+ * Each weight the site sets Chinese in, and the full font to cut it from.
+ * `hans` is where the Simplified characters come from: the Hong Kong fonts
+ * hold only some of them, so the rest are cut from the matching SC weight.
+ */
 const FACES = [
-  { name: 'noto-sans-hk-400', family: 'Noto Sans HK', weight: 400, first: true, source: '@expo-google-fonts/noto-sans-hk/400Regular/NotoSansHK_400Regular.ttf' },
-  { name: 'noto-sans-hk-500', family: 'Noto Sans HK', weight: 500, first: true, source: '@expo-google-fonts/noto-sans-hk/500Medium/NotoSansHK_500Medium.ttf' },
-  { name: 'noto-sans-hk-900', family: 'Noto Sans HK', weight: 900, first: true, source: '@expo-google-fonts/noto-sans-hk/900Black/NotoSansHK_900Black.ttf' },
-  { name: 'noto-serif-hk-400', family: 'Noto Serif HK', weight: 400, first: false, source: '@expo-google-fonts/noto-serif-hk/400Regular/NotoSerifHK_400Regular.ttf' },
-  { name: 'noto-serif-hk-700', family: 'Noto Serif HK', weight: 700, first: false, source: '@expo-google-fonts/noto-serif-hk/700Bold/NotoSerifHK_700Bold.ttf' },
+  { name: 'noto-sans-hk-400', family: 'Noto Sans HK', weight: 400, first: true, source: '@expo-google-fonts/noto-sans-hk/400Regular/NotoSansHK_400Regular.ttf', hans: '@expo-google-fonts/noto-sans-sc/400Regular/NotoSansSC_400Regular.ttf' },
+  { name: 'noto-sans-hk-500', family: 'Noto Sans HK', weight: 500, first: true, source: '@expo-google-fonts/noto-sans-hk/500Medium/NotoSansHK_500Medium.ttf', hans: '@expo-google-fonts/noto-sans-sc/500Medium/NotoSansSC_500Medium.ttf' },
+  { name: 'noto-sans-hk-900', family: 'Noto Sans HK', weight: 900, first: true, source: '@expo-google-fonts/noto-sans-hk/900Black/NotoSansHK_900Black.ttf', hans: '@expo-google-fonts/noto-sans-sc/900Black/NotoSansSC_900Black.ttf' },
+  { name: 'noto-serif-hk-400', family: 'Noto Serif HK', weight: 400, first: false, source: '@expo-google-fonts/noto-serif-hk/400Regular/NotoSerifHK_400Regular.ttf', hans: '@expo-google-fonts/noto-serif-sc/400Regular/NotoSerifSC_400Regular.ttf' },
+  { name: 'noto-serif-hk-700', family: 'Noto Serif HK', weight: 700, first: false, source: '@expo-google-fonts/noto-serif-hk/700Bold/NotoSerifHK_700Bold.ttf', hans: '@expo-google-fonts/noto-serif-sc/700Bold/NotoSerifSC_700Bold.ttf' },
 ];
 
 /**
@@ -97,7 +104,7 @@ async function firstPaintChars() {
   const ui = await readFile(join(ROOT, 'src', 'content', 'ui.ts'), 'utf8');
   const title = /title:\s*\{[^}]*?zh:\s*\[([^\]]+)\]/s.exec(ui);
   if (!title) throw new Error('Could not find the hero title in src/content/ui.ts');
-  return [...new Set(`${title[1]}繁`)].filter((char) => code(char) > 0x7f && isCjk(char));
+  return [...new Set(`${title[1]}繁简`)].filter((char) => code(char) > 0x7f && isCjk(char));
 }
 
 const charset = collectCharset(ROOT);
@@ -126,21 +133,32 @@ const rules = [];
 const absent = new Map();
 for (const face of FACES) {
   const full = await readFile(join(MODULES, face.source));
+  const hansFull = await readFile(join(MODULES, face.hans));
   const held = charactersOf(full);
-  const lacking = charset.filter((char) => !held.has(code(char)));
+  const hansHeld = charactersOf(hansFull);
+  const has = (char) => held.has(code(char));
+  /** Simplified characters the Hong Kong font lacks and the SC font holds. */
+  const hans = cjk.filter((char) => !has(char) && hansHeld.has(code(char)));
+  const lacking = charset.filter((char) => !has(char) && !hans.includes(char));
   if (lacking.length > 0) absent.set(face.name, lacking.join(''));
-  const cut = async (suffix, chars) => {
+  const cut = async (suffix, chars, source = full) => {
     const file = `${face.name}${suffix}.woff2`;
-    const subset = await subsetFont(full, chars.join(''), { targetFormat: 'woff2' });
+    const subset = await subsetFont(source, chars.join(''), { targetFormat: 'woff2' });
     await writeFile(join(OUT, file), subset);
-    report(file, full.length, subset.length);
+    report(file, source.length, subset.length);
     return file;
   };
 
-  rules.push(rule(face, await cut('', cjk), CJK_BLOCKS.map(([from, to]) => `U+${hex(from)}-${hex(to)}`).join(', ')));
+  rules.push(rule(face, await cut('', cjk.filter(has)), CJK_BLOCKS.map(([from, to]) => `U+${hex(from)}-${hex(to)}`).join(', ')));
   rules.push(rule(face, await cut('-symbols', symbols), exactRange(symbols)));
   // Declared after the face it overlaps: of two faces that claim a character, the later one is asked first.
-  if (face.first) rules.push(rule(face, await cut('-first', first), exactRange(first)));
+  // Exact, so a reader of the Traditional page never fetches it.
+  rules.push(rule(face, await cut('-hans', hans, hansFull), exactRange(hans)));
+  if (face.first) {
+    rules.push(rule(face, await cut('-first', first.filter(has)), exactRange(first.filter(has))));
+    const firstHans = first.filter((char) => hans.includes(char));
+    rules.push(rule(face, await cut('-hans-first', firstHans, hansFull), exactRange(firstHans)));
+  }
 }
 
 if (absent.size > 0) {
@@ -157,9 +175,10 @@ await writeFile(
  *
  * Noto Sans HK and Noto Serif HK, cut down to the characters this site uses
  * and split by unicode-range: the Chinese text, the symbols the Latin fonts
- * lack, and the few characters an English page shows at first paint. Checked
- * by fonts.test.ts. Both families are licensed under the SIL Open Font
- * License 1.1.
+ * lack, the Simplified characters the Hong Kong fonts do not hold (cut from
+ * Noto Sans SC and Noto Serif SC, under the same family names), and the few
+ * characters an English page shows at first paint. Checked by fonts.test.ts.
+ * All four families are licensed under the SIL Open Font License 1.1.
  */
 ${rules.join('\n\n')}
 `,

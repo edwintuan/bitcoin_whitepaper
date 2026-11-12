@@ -77,7 +77,7 @@
 .atk-odds {
   font-size: 16px;
 }
-:lang(zh-Hant) .atk-odds {
+:lang(zh) .atk-odds {
   font-size: 15px;
 }
 .atk-exact {
@@ -162,7 +162,7 @@
   font-size: 13.5px;
   line-height: 1.5;
 }
-:lang(zh-Hant) .atk-callout {
+:lang(zh) .atk-callout {
   line-height: 1.75;
 }
 
@@ -246,7 +246,7 @@
   text-align: left;
   color: var(--color-ink-3);
 }
-:lang(zh-Hant) .atk-watch-row .atk-gloss {
+:lang(zh) .atk-watch-row .atk-gloss {
   line-height: 1.55;
 }
 .atk-watch-result .atk-watch-row {
