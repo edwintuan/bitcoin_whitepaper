@@ -41,7 +41,7 @@ Copy is "rich text" (`src/text/richtext.ts`):
 
 - `[[term-id]]` or `[[term-id|shown words]]` links a glossary term. The ids are in `src/glossary/terms.ts`.
 - `{§4}` or `{§4|shown words}` links a section. `{§0}` is the Abstract.
-- `**strong**`, `*emphasis*`, `` `code` ``, `[words](https://…)`.
+- `**strong**`, `*emphasis*`, `` `code` ``, `[words](https://…)`, and `[words](#engineering-map)` for a place on this page.
 
 Link a term the first time it matters in a block, not every time it appears.
 Do not link inside figure step titles. Do not use `*` for multiplication; write ×.
@@ -130,6 +130,20 @@ Everything works from the keyboard. Focus is visible. A live result is
 announced with `role="status"`. Decorative drawings are `aria-hidden`; a
 drawing that carries information has a text alternative. Text contrast meets
 WCAG AA.
+
+Three things the reviews of the first chapters kept finding:
+
+- Do not set `outline` on anything that can take the focus. Figure styles are
+  not in a cascade layer and the site's focus ring is, so your outline wins
+  and the focused button looks like any other. To point at a control during a
+  walkthrough, highlight a wrapper around it (`data-region` in `pow/`).
+- A button that changes state when pressed must not use the `disabled`
+  attribute: the browser takes the focus away and a keyboard reader is back at
+  the top of the page. Use `aria-disabled="true"` and a handler that does
+  nothing. `.btn[aria-disabled='true']` is styled like a disabled button. If
+  pressing a button removes it, move the focus to what replaces it.
+- No text under 11 px (superscripts may go down to 9 px). Words in a drawing
+  are set at the size they are shown, not scaled with it.
 
 ## Term visuals
 
