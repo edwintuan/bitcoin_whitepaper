@@ -5,7 +5,7 @@ import { verify } from '@/lib/keys';
 import { merkleRoot, verifyProof } from '@/lib/merkle';
 import { mineSync } from '@/lib/miner';
 import { fee, txid } from '@/lib/tx';
-import { buildStory, formatBtc } from './story';
+import { buildStory } from './story';
 
 const story = buildStory();
 
@@ -51,16 +51,5 @@ describe('the journey of one payment', () => {
     expect(story.proof.length).toBeGreaterThan(0);
     expect(verifyProof(story.txid, story.proof, story.merkleRoot)).toBe(true);
     expect(verifyProof(story.blockTxids[0], story.proof, story.merkleRoot)).toBe(false);
-  });
-});
-
-describe('formatBtc', () => {
-  it('prints satoshis as bitcoin without trailing zeros', () => {
-    expect(formatBtc(50_000_000n)).toBe('0.5');
-    expect(formatBtc(4_990_000n)).toBe('0.0499');
-    expect(formatBtc(10_000n)).toBe('0.0001');
-    expect(formatBtc(100_000_000n)).toBe('1');
-    expect(formatBtc(0n)).toBe('0');
-    expect(formatBtc(1n)).toBe('0.00000001');
   });
 });

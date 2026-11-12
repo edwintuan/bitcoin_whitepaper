@@ -5,7 +5,8 @@ import type { BlockState } from '@/components/viz/BlockTile';
 import { HashText } from '@/components/viz/HashText';
 import { useSettings, useT } from '@/i18n/settings';
 import { GENESIS_HASH } from '@/lib/header';
-import { COPY, fill } from './copy';
+import { fill, formatCount } from '@/text/format';
+import { COPY } from './copy';
 import { TOY_TARGET, buildChain, chainProblems, editBlock, headerOf } from './toyChain';
 import type { ToyBlock } from './toyChain';
 import { useMiner } from '@/state/useMiner';
@@ -13,7 +14,6 @@ import { useMiner } from '@/state/useMiner';
 /** Slow the repair down so its cost can be watched. */
 const REPAIR_RATE = 700;
 
-const count = new Intl.NumberFormat('en-US');
 
 /** Edit an old block and see what it costs to make the chain whole again. */
 export function TamperScene() {
@@ -124,7 +124,7 @@ export function TamperScene() {
               state={state}
               rows={[
                 { label: 'prev', value: <HashText hash={prev} lead={8} tail={0} /> },
-                { label: 'nonce', value: count.format(shownNonce) },
+                { label: 'nonce', value: formatCount(shownNonce) },
                 { label: 'hash', value: <HashText hash={shownHash} lead={8} tail={0} /> },
               ]}
             >
@@ -160,7 +160,7 @@ export function TamperScene() {
           </div>
           <div>
             <dt>{t(COPY.repairCost)}</dt>
-            <dd>{count.format(cost + (repairing !== null ? view.tried : 0))}</dd>
+            <dd>{formatCount(cost + (repairing !== null ? view.tried : 0))}</dd>
           </div>
         </dl>
       </div>

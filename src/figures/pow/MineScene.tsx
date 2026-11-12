@@ -5,7 +5,8 @@ import { HashText } from '@/components/viz/HashText';
 import { useT } from '@/i18n/settings';
 import { leadingZeroBits, targetToHex } from '@/lib/header';
 import { BLOCK_1, expectedTries, toyTarget } from './blocks';
-import { COPY, fill } from './copy';
+import { fill, formatCount } from '@/text/format';
+import { COPY } from './copy';
 import { useMiner } from '@/state/useMiner';
 
 type FieldKey = keyof typeof COPY.fields;
@@ -19,7 +20,6 @@ const FIELDS: { key: FieldKey; bytes: number }[] = [
   { key: 'nonce', bytes: 4 },
 ];
 
-const count = new Intl.NumberFormat('en-US');
 const hex32 = (value: number) => `0x${value.toString(16).padStart(8, '0')}`;
 const utc = (seconds: number) => `${new Date(seconds * 1000).toISOString().replace('T', ' ').slice(0, 19)} UTC`;
 
@@ -58,7 +58,7 @@ export function MineScene({ highlight }: { highlight: MineHighlight }) {
       </>
     ),
     bits: hex32(bits),
-    nonce: count.format(view.nonce),
+    nonce: formatCount(view.nonce),
   };
 
   return (
@@ -132,7 +132,7 @@ export function MineScene({ highlight }: { highlight: MineHighlight }) {
           </div>
           <div>
             <dt className="label">{t(COPY.expected)}</dt>
-            <dd className="stat-value">{count.format(expected)}</dd>
+            <dd className="stat-value">{formatCount(expected)}</dd>
           </div>
           <div className="pow-target">
             <dt className="label">{t(COPY.target)}</dt>
@@ -156,11 +156,11 @@ export function MineScene({ highlight }: { highlight: MineHighlight }) {
         <dl className="pow-live mono">
           <div>
             <dt>{t(COPY.tries)}</dt>
-            <dd>{count.format(view.tried)}</dd>
+            <dd>{formatCount(view.tried)}</dd>
           </div>
           <div>
             <dt>{t(COPY.rate)}</dt>
-            <dd>{view.rate > 0 ? count.format(Math.round(view.rate)) : '0'}</dd>
+            <dd>{view.rate > 0 ? formatCount(Math.round(view.rate)) : '0'}</dd>
           </div>
         </dl>
       </div>
@@ -175,7 +175,7 @@ export function MineScene({ highlight }: { highlight: MineHighlight }) {
         {view.status === 'found' ? (
           <>
             <b>{t(COPY.found)}</b>{' '}
-            {fill(t(COPY.foundDetail), { tried: count.format(view.tried), expected: count.format(expected) })}{' '}
+            {fill(t(COPY.foundDetail), { tried: formatCount(view.tried), expected: formatCount(expected) })}{' '}
             {view.tried <= expected ? t(COPY.lucky) : t(COPY.unlucky)} <span className="pow-dim">{t(COPY.againNote)}</span>
           </>
         ) : null}

@@ -4,15 +4,12 @@ import { BlockTile, ChainRow } from '@/components/viz/BlockTile';
 import { HashText } from '@/components/viz/HashText';
 import { UI } from '@/content/ui';
 import { useSettings, useT } from '@/i18n/settings';
+import { fill, formatCount } from '@/text/format';
 import { useInView } from '@/state/useInView';
 import { usePageVisible, useReducedMotion } from '@/state/useMediaQuery';
 import { useMiner } from '@/state/useMiner';
 import { HERO_RATE, HERO_SEED, HERO_TARGET, HERO_ZERO_BITS, heroHeader } from './hero/chain';
 import type { HeroBlock } from './hero/chain';
-
-const count = new Intl.NumberFormat('en-US');
-const fill = (template: string, values: Record<string, string | number>) =>
-  template.replace(/\{(\w+)\}/g, (_, key: string) => String(values[key] ?? ''));
 
 const SHIFT = { '--shift-from': 'calc(100% + 22px)' } as CSSProperties;
 
@@ -66,14 +63,14 @@ export function Hero() {
   const moved = advances > 0;
 
   const status = found
-    ? fill(t(UI.hero.found), { height: found.height, tried: count.format(found.nonce + 1) })
+    ? fill(t(UI.hero.found), { height: found.height, tried: formatCount(found.nonce + 1) })
     : paused
       ? t(UI.hero.pausedNote)
       : fill(t(UI.hero.mining), {
           height,
           bits: HERO_ZERO_BITS,
-          tried: count.format(view.tried),
-          rate: count.format(Math.round(view.rate)),
+          tried: formatCount(view.tried),
+          rate: formatCount(Math.round(view.rate)),
         });
 
   return (
@@ -107,7 +104,7 @@ export function Hero() {
                 status={`${tip.height - block.height + 1} ${t(UI.hero.conf)}`}
                 rows={[
                   { label: 'prev', value: <HashText hash={block.prev} lead={10} tail={0} /> },
-                  { label: 'nonce', value: count.format(block.nonce) },
+                  { label: 'nonce', value: formatCount(block.nonce) },
                   { label: 'hash', value: <HashText hash={block.hash} lead={10} tail={0} /> },
                 ]}
               />
@@ -121,7 +118,7 @@ export function Hero() {
               state={found ? 'found' : 'candidate'}
               rows={[
                 { label: 'prev', value: <HashText hash={tip.hash} lead={10} tail={0} /> },
-                { label: 'nonce', value: count.format(found ? found.nonce : view.nonce) },
+                { label: 'nonce', value: formatCount(found ? found.nonce : view.nonce) },
                 {
                   label: 'hash',
                   value: found ? (

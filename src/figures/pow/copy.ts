@@ -173,8 +173,3 @@ export const COPY = {
   },
   steady: { en: 'Hash power matches the difficulty: nothing to adjust.', zh: '算力與難度相稱，無須調整。' },
 } satisfies Record<string, L<unknown> | Record<string, unknown>>;
-
-/** Fills `{name}` placeholders in a line of copy. */
-export function fill(template: string, values: Record<string, string | number>): string {
-  return template.replace(/\{(\w+)\}/g, (_, key: string) => String(values[key] ?? ''));
-}

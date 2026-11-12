@@ -116,10 +116,3 @@ export function buildStory(): Story {
   };
   return cached;
 }
-
-/** Satoshis as bitcoin, without trailing zeros: 4990000n → "0.0499". */
-export function formatBtc(sats: bigint): string {
-  const whole = sats / 100_000_000n;
-  const fraction = (sats % 100_000_000n).toString().padStart(8, '0').replace(/0+$/, '');
-  return fraction ? `${whole}.${fraction}` : `${whole}`;
-}

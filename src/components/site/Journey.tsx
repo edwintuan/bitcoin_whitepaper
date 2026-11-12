@@ -11,7 +11,8 @@ import { mineSync } from '@/lib/miner';
 import { useInView } from '@/state/useInView';
 import { usePageVisible, useReducedMotion } from '@/state/useMediaQuery';
 import { useMiner } from '@/state/useMiner';
-import { buildStory, formatBtc } from './journey/story';
+import { formatBtc, formatCount, shortHex } from '@/text/format';
+import { buildStory } from './journey/story';
 import { Rich } from './Rich';
 import { ActorIcon } from './WhoRuns';
 
@@ -24,9 +25,7 @@ const FULL_CONFIRMATIONS = 6;
 /** Hashes per second while the reader watches the miner stop. */
 const MINER_RATE = 2600;
 
-const count = new Intl.NumberFormat('en-US');
-const shortAddress = (address: string) => `${address.slice(0, 10)}…${address.slice(-6)}`;
-const shortHex = (hex: string, lead = 16, tail = 8) => `${hex.slice(0, lead)}…${tail > 0 ? hex.slice(-tail) : ''}`;
+const shortAddress = (address: string) => shortHex(address, 10, 6);
 
 interface Solved {
   nonce: number;
@@ -221,12 +220,12 @@ export function Journey() {
           <p className="ja-head">
             <span className={`tag ${solved ? 'tag-orange' : 'tag-line'}`}>{solved ? t(l.found) : t(l.searching)}</span>
             <span className="ja-dim">
-              {story.zeroBits} zero bits · {count.format(tried)} {t(l.tries)}
+              {story.zeroBits} zero bits · {formatCount(tried)} {t(l.tries)}
             </span>
           </p>
           <p className="ja-row">
             <span className="ja-key">{t(l.nonce)}</span>
-            <span>{count.format(nonce)}</span>
+            <span>{formatCount(nonce)}</span>
           </p>
           <p className="ja-stack">
             <span className="ja-key">{t(l.hash)}</span>

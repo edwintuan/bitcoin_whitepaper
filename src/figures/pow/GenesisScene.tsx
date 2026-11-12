@@ -4,7 +4,8 @@ import { HexView } from '@/components/viz/HexView';
 import type { HexSegment } from '@/components/viz/HexView';
 import { useT } from '@/i18n/settings';
 import { GENESIS_HASH, GENESIS_HEADER, headerHash, leadingZeroBits, serializeHeader } from '@/lib/header';
-import { COPY, fill } from './copy';
+import { fill, formatCount } from '@/text/format';
+import { COPY } from './copy';
 
 type FieldKey = keyof typeof COPY.fields;
 
@@ -60,7 +61,7 @@ export function GenesisScene() {
         <button type="button" className="btn btn-line btn-sm" onClick={() => setBumped((value) => !value)}>
           {bumped ? t(COPY.restore) : t(COPY.bumpNonce)}
         </button>
-        <span className="mono pow-dim">nonce = {header.nonce.toLocaleString('en-US')}</span>
+        <span className="mono pow-dim">nonce = {formatCount(header.nonce)}</span>
       </div>
 
       <dl className="pow-compare">
