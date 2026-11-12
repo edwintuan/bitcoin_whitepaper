@@ -1,4 +1,4 @@
-import type { ArtifactKind, Depth, L } from './types';
+import type { ArtifactKind, Depth, L, TermCategory } from './types';
 
 /**
  * Every reader-facing string that belongs to the interface rather than to a
@@ -83,7 +83,7 @@ export const UI = {
   originalToggle: { en: 'Show the English original', zh: '顯示英文原文' },
   sourceNote: {
     en: 'Copied verbatim from the official repository, MIT licence. The numbered notes are ours, not part of the code.',
-    zh: '逐字引自官方倉庫（MIT 許可）。帶編號的註解為本站所加，並非源碼的一部分。',
+    zh: '逐字引自官方倉庫（MIT 許可證）。帶編號的註解為本站所加，並非源碼的一部分。',
   },
   sourceLines: { en: 'lines', zh: '行' },
   sourceOpen: { en: 'View on GitHub', zh: '在 GitHub 查看' },
@@ -141,6 +141,63 @@ export const UI = {
     conf: { en: 'conf', zh: '確認' },
     miningShort: { en: 'mining…', zh: '挖礦中…' },
     foundShort: { en: 'found', zh: '已找到' },
+  },
+
+  appendix: {
+    aKicker: { en: 'Appendix A', zh: '附錄 A' },
+    aTitle: { en: 'Who builds what', zh: '誰負責甚麼' },
+    aLede: {
+      en: 'The paper describes roles. These are the programs and machines that fill them today. Products are named as examples only; none is a recommendation.',
+      zh: '白皮書描述的是角色，下表列出今天擔當這些角色的程式與機器。產品名稱僅作舉例，並不構成任何推薦。',
+    },
+    colActor: { en: 'Actor', zh: '角色' },
+    colWhat: { en: 'What it does', zh: '負責甚麼' },
+    colCovers: { en: 'In the paper', zh: '對應白皮書' },
+    colExamples: { en: 'Examples', zh: '例子' },
+    colInterfaces: { en: 'Speaks', zh: '介面與協議' },
+
+    bKicker: { en: 'Appendix B', zh: '附錄 B' },
+    bTitle: { en: 'Every term', zh: '關鍵詞總表' },
+    bLede: {
+      en: 'All {count} terms used on this page. Press one to open its card.',
+      zh: '本頁用到的全部 {count} 個關鍵詞。按任何一個，即可打開它的卡片。',
+    },
+    filterLabel: { en: 'Filter by category', zh: '按類別篩選' },
+    all: { en: 'All', zh: '全部' },
+    categories: {
+      crypto: { en: 'Cryptography', zh: '密碼學' },
+      money: { en: 'Coins and transactions', zh: '貨幣與交易' },
+      chain: { en: 'Chain and consensus', zh: '鏈與共識' },
+      network: { en: 'Network', zh: '網絡' },
+      mining: { en: 'Incentive and mining', zh: '激勵與挖礦' },
+      storage: { en: 'Storage and light wallets', zh: '儲存與輕量驗證' },
+      privacy: { en: 'Privacy', zh: '私隱' },
+      math: { en: 'Mathematics', zh: '數學' },
+      engineering: { en: 'Engineering', zh: '工程' },
+    } satisfies Record<TermCategory, L<string>>,
+
+    refKicker: { en: 'References', zh: '參考文獻' },
+    refTitle: { en: 'What the paper cites', zh: '白皮書引用的文獻' },
+    refNote: { en: 'As printed on the last page of the paper.', zh: '依白皮書最後一頁原樣列出。' },
+    aboutTitle: { en: 'Where this page gets its facts', zh: '本頁的資料來源' },
+    aboutPaper: {
+      en: 'The paper: Satoshi Nakamoto, “Bitcoin: A Peer-to-Peer Electronic Cash System”, 2008, as published at bitcoin.org. The English shown here is the paper’s text word for word. The Traditional Chinese is our own translation.',
+      zh: '白皮書：中本聰〈Bitcoin: A Peer-to-Peer Electronic Cash System〉，2008 年，取自 bitcoin.org。本頁的英文為原文逐字收錄，繁體中文則為本站自行翻譯。',
+    },
+    aboutChecksum: { en: 'SHA-256 of the PDF', zh: 'PDF 檔案的 SHA-256' },
+    aboutCode: {
+      en: 'Source code: Bitcoin Core {tag} and the original 2009 client (tag v0.1.5), both from github.com/bitcoin/bitcoin under the MIT licence. Excerpts are verbatim. The numbered notes beside them are ours.',
+      zh: '源碼：取自 github.com/bitcoin/bitcoin 的 Bitcoin Core {tag}，以及 2009 年的原始客戶端（標籤 v0.1.5），兩者均以 MIT 許可證發布。片段逐字引用，旁邊帶編號的註解則為本站所加。',
+    },
+    aboutCompute: {
+      en: 'Everything computed on this page runs in your browser. Nothing is sent anywhere, and nothing here connects to the Bitcoin network.',
+      zh: '本頁所有運算均在你的瀏覽器內進行，不會傳送任何數據，亦不會連接比特幣網絡。',
+    },
+    aboutAdvice: {
+      en: 'This page explains how a system works. It is not financial advice.',
+      zh: '本頁旨在解釋一個系統如何運作，並非財務建議。',
+    },
+    paperLink: { en: 'Read the original PDF', zh: '閱讀原始 PDF' },
   },
 
   copied: { en: 'Copied', zh: '已複製' },

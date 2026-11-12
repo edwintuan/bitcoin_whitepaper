@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parseRich, termIdsIn } from './richtext';
+import { parseRich, plainRich, termIdsIn } from './richtext';
 
 describe('parseRich', () => {
   it('returns plain text untouched', () => {
@@ -85,5 +85,24 @@ describe('termIdsIn', () => {
   it('lists each term once, in order of first appearance', () => {
     expect(termIdsIn('[[hash]] then [[nonce|n]] then [[hash|h]] and {§4}')).toEqual(['hash', 'nonce']);
     expect(termIdsIn('no terms here')).toEqual([]);
+  });
+});
+
+describe('plainRich', () => {
+  const nameOf = (id: string) => ({ hash: 'hash', nonce: 'nonce' })[id];
+
+  it('drops the markup and keeps the words', () => {
+    expect(plainRich('A [[nonce]] changes the [[hash|block hash]]; see {§4}.', nameOf)).toBe(
+      'A nonce changes the block hash; see §4.',
+    );
+    expect(plainRich('**never** *ever* `nBits` [BIP 174](https://example.org/x)', nameOf)).toBe('never ever nBits BIP 174');
+  });
+
+  it('falls back to the id for a term it cannot name', () => {
+    expect(plainRich('[[merkle-tree]]', nameOf)).toBe('merkle-tree');
+  });
+
+  it('uses a section label when one is given', () => {
+    expect(plainRich('{§11|the calculations}', nameOf)).toBe('the calculations');
   });
 });

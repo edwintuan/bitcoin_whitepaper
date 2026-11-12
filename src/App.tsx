@@ -1,6 +1,10 @@
-import { Fragment, useEffect, useLayoutEffect } from 'react';
+import { Fragment, useEffect, useLayoutEffect, useState } from 'react';
+import { CommandSearch } from '@/components/site/CommandSearch';
+import { EngineeringMap } from '@/components/site/EngineeringMap';
+import { GlossaryIndex } from '@/components/site/GlossaryIndex';
 import { Hero } from '@/components/site/Hero';
 import { PartDivider } from '@/components/site/PartDivider';
+import { Footer, References } from '@/components/site/References';
 import { SectionShell } from '@/components/site/SectionShell';
 import { TopBar } from '@/components/site/TopBar';
 import { PARTS } from '@/content/parts';
@@ -28,9 +32,10 @@ function SettingsEffects() {
 }
 
 function Page() {
+  const [searchOpen, setSearchOpen] = useState(false);
   return (
     <>
-      <TopBar />
+      <TopBar onSearch={() => setSearchOpen(true)} />
       <main id="top">
         <Hero />
         {PARTS.map((part) => {
@@ -45,7 +50,12 @@ function Page() {
             </Fragment>
           );
         })}
+        <EngineeringMap />
+        <GlossaryIndex />
+        <References />
       </main>
+      <Footer />
+      <CommandSearch isOpen={searchOpen} onOpenChange={setSearchOpen} />
     </>
   );
 }

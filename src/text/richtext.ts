@@ -71,3 +71,22 @@ export function termIdsIn(source: string): string[] {
   }
   return [...ids];
 }
+
+/**
+ * The same copy without markup, for search indexes and accessible names.
+ * `nameOf` supplies a term's display name when the copy does not give one.
+ */
+export function plainRich(source: string, nameOf: (termId: string) => string | undefined): string {
+  return parseRich(source)
+    .map((token) => {
+      switch (token.type) {
+        case 'term':
+          return token.label ?? nameOf(token.id) ?? token.id;
+        case 'section':
+          return token.label ?? `§${token.number}`;
+        default:
+          return token.text;
+      }
+    })
+    .join('');
+}
