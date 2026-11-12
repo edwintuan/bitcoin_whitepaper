@@ -1,0 +1,45 @@
+/*
+ * Noto Sans HK and Noto Serif HK, cut down to the characters this site uses.
+ * The files are built by scripts/subset-fonts.mjs (`npm run fonts`) and
+ * checked by fonts.test.ts. Both families are licensed under the SIL Open
+ * Font License 1.1.
+ */
+@font-face {
+  font-family: 'Noto Sans HK';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../assets/fonts/noto-sans-hk-400.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Noto Sans HK';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('../assets/fonts/noto-sans-hk-500.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Noto Sans HK';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url('../assets/fonts/noto-sans-hk-900.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Noto Serif HK';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../assets/fonts/noto-serif-hk-400.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Noto Serif HK';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../assets/fonts/noto-serif-hk-700.woff2') format('woff2');
+}

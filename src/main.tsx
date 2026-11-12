@@ -7,11 +7,7 @@ import '@fontsource/dm-mono/latin-500.css';
 import '@fontsource-variable/newsreader/opsz.css';
 import '@fontsource-variable/newsreader/opsz-italic.css';
 import '@fontsource-variable/public-sans/wght.css';
-import '@fontsource/noto-sans-hk/chinese-hongkong-400.css';
-import '@fontsource/noto-sans-hk/chinese-hongkong-500.css';
-import '@fontsource/noto-sans-hk/chinese-hongkong-900.css';
-import '@fontsource/noto-serif-hk/400.css';
-import '@fontsource/noto-serif-hk/700.css';
+import '@/styles/fonts-hk.css';
 import '@/styles/index.css';
 
 import App from './App';
