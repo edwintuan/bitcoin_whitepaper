@@ -93,7 +93,7 @@ export const UI = {
     rpc: { en: 'RPC', zh: 'RPC' },
     cli: { en: 'Command', zh: '指令' },
     p2p: { en: 'P2P message', zh: 'P2P 訊息' },
-    protocol: { en: 'Protocol', zh: '協議' },
+    protocol: { en: 'Protocol', zh: '協定' },
     file: { en: 'Source file', zh: '源碼檔案' },
     hardware: { en: 'Hardware', zh: '硬件' },
     bip: { en: 'Standard', zh: '標準' },
@@ -154,7 +154,7 @@ export const UI = {
     colWhat: { en: 'What it does', zh: '負責甚麼' },
     colCovers: { en: 'In the paper', zh: '對應白皮書' },
     colExamples: { en: 'Examples', zh: '例子' },
-    colInterfaces: { en: 'Speaks', zh: '介面與協議' },
+    colInterfaces: { en: 'Speaks', zh: '介面與協定' },
 
     bKicker: { en: 'Appendix B', zh: '附錄 B' },
     bTitle: { en: 'Every term', zh: '關鍵詞總表' },

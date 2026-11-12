@@ -1,19 +1,7 @@
 import { lazy } from 'react';
 import type { ComponentType, LazyExoticComponent } from 'react';
-import type { TermDef } from '@/content/types';
 
-// The term data. Loaded through a glob while the glossary file is still being
-// written, so the page keeps building; replaced by a plain import once it lands.
-const termModules = import.meta.glob<{
-  TERMS?: Record<string, TermDef>;
-  TERM_IDS?: readonly string[];
-  TERMS_WITH_VISUALS?: readonly string[];
-}>('./terms.ts', { eager: true });
-const termModule = termModules['./terms.ts'];
-
-export const TERMS: Record<string, TermDef> = termModule?.TERMS ?? {};
-export const TERM_IDS: readonly string[] = termModule?.TERM_IDS ?? [];
-export const TERMS_WITH_VISUALS: readonly string[] = termModule?.TERMS_WITH_VISUALS ?? [];
+export { TERMS, TERMS_WITH_VISUALS, TERM_IDS } from './terms';
 
 // A term's visual is the file visuals/<term-id>.tsx with a default export.
 // It is drawn on the black card: use cream and orange, no backgrounds.
