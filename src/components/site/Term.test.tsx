@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import { TERMS } from '@/glossary';
@@ -57,6 +57,19 @@ describe('Term', () => {
     expect(await screen.findByRole('dialog')).toBeInTheDocument();
     await user.keyboard('{Escape}');
     expect(trigger).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it('takes the focus into its card and hands it back to the word on Escape', async () => {
+    const user = userEvent.setup();
+    const trigger = setup();
+    await user.tab();
+    await user.keyboard('{Enter}');
+    const card = await screen.findByRole('dialog');
+    await waitFor(() => expect(card.contains(document.activeElement)).toBe(true));
+
+    await user.keyboard('{Escape}');
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+    await waitFor(() => expect(trigger).toHaveFocus());
   });
 
   it('falls back to plain text for an id the glossary does not have', () => {

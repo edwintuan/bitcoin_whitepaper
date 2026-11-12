@@ -72,7 +72,7 @@ export const ACTORS: Record<ActorId, ActorDef> = {
       en: 'Collects transactions into a block, shares out the search for its proof-of-work, and claims the reward',
       zh: '把交易收進區塊、分派尋找工作量證明的工作，並領取獎勵',
     },
-    examples: { en: 'Public pools; CKPool is open source', zh: '各大公開礦池；CKPool 為開源實現' },
+    examples: { en: 'Public pools; CKPool is open source', zh: '各大公開礦池；CKPool 為開源軟件' },
     interfaces: ['getblocktemplate', 'Stratum v1 / v2'],
   },
   'asic-miner': {
