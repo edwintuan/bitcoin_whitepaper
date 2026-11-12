@@ -1,5 +1,5 @@
-import { Suspense, lazy } from 'react';
-import type { ComponentType, LazyExoticComponent } from 'react';
+import { Fragment, Suspense, lazy } from 'react';
+import type { ComponentType, LazyExoticComponent, ReactNode } from 'react';
 import type { OriginalBlock, PaperFigureId, WhitepaperSection } from '@/content/types';
 import { UI } from '@/content/ui';
 import { useSettings, useT } from '@/i18n/settings';
@@ -25,16 +25,36 @@ function PaperFigure({ id }: { id: PaperFigureId }) {
   );
 }
 
+/**
+ * The paper's prose is held as plain text, which cannot carry the one
+ * subscript the paper prints outside its formulas: q with a subscript z,
+ * spelled "qz" in the data. This sets it as printed.
+ */
+function paperText(text: string): ReactNode {
+  const parts = text.split(/\bqz\b/);
+  if (parts.length === 1) return text;
+  return parts.map((part, index) => (
+    <Fragment key={index}>
+      {index > 0 ? (
+        <>
+          q<sub>z</sub>
+        </>
+      ) : null}
+      {part}
+    </Fragment>
+  ));
+}
+
 function Block({ block }: { block: OriginalBlock }) {
   switch (block.type) {
     case 'p':
-      return <p>{block.text}</p>;
+      return <p>{paperText(block.text)}</p>;
     case 'list': {
       const List = block.ordered ? 'ol' : 'ul';
       return (
         <List className={block.ordered ? 'original-ol' : 'original-ul'}>
           {block.items.map((item, index) => (
-            <li key={index}>{item}</li>
+            <li key={index}>{paperText(item)}</li>
           ))}
         </List>
       );
