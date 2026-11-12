@@ -715,6 +715,10 @@
   .tile[data-state='invalid'] .tile-label {
     opacity: 0.7;
   }
+  /* Orange on ink has less to give away than cream on ink: at 55% its labels were 3.3 to 1. */
+  .tile[data-state='found'] .tile-label {
+    opacity: 0.8;
+  }
   .tile-value {
     min-width: 0;
     overflow: hidden;

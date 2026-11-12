@@ -7,7 +7,7 @@
  *
  *   node scripts/layout-audit.mjs [--url http://localhost:5199/]
  *        [--widths 1440,1024,820,390] [--langs en,zh] [--depth developer]
- *        [--only <section-id>] [--cards] [--verbose]
+ *        [--only <section-id>] [--cards] [--reduced] [--verbose]
  *
  * For every chapter it walks the figure's guided steps and checks each one.
  * With --cards it also opens every glossary card. Truncation with an ellipsis
@@ -32,6 +32,8 @@ const langs = opt('langs', 'en,zh').split(',');
 const depth = opt('depth', 'developer');
 const only = opt('only', null);
 const cards = flag('cards');
+/** As a reader who has asked the system for less motion sees it. */
+const reduced = flag('reduced');
 const verbose = flag('verbose');
 
 /**
@@ -65,7 +67,11 @@ const note = (config, place, findings) => {
 for (const width of widths) {
   for (const lang of langs) {
     const config = `${width}/${lang}`;
-    const context = await browser.newContext({ viewport: { width, height: 900 }, hasTouch: width < 600 });
+    const context = await browser.newContext({
+      viewport: { width, height: 900 },
+      hasTouch: width < 600,
+      reducedMotion: reduced ? 'reduce' : 'no-preference',
+    });
     const page = await context.newPage();
     const errors = [];
     page.on('pageerror', (error) => errors.push(error.message));
