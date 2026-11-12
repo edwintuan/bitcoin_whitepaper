@@ -3,6 +3,7 @@ import { CommandSearch } from '@/components/site/CommandSearch';
 import { EngineeringMap } from '@/components/site/EngineeringMap';
 import { GlossaryIndex } from '@/components/site/GlossaryIndex';
 import { Hero } from '@/components/site/Hero';
+import { Journey } from '@/components/site/Journey';
 import { PartDivider } from '@/components/site/PartDivider';
 import { Footer, References } from '@/components/site/References';
 import { SectionShell } from '@/components/site/SectionShell';
@@ -38,6 +39,7 @@ function Page() {
       <TopBar onSearch={() => setSearchOpen(true)} />
       <main id="top">
         <Hero />
+        <Journey />
         {PARTS.map((part) => {
           const sections = part.sections.map(sectionByNumber).filter((section) => section !== undefined);
           if (sections.length === 0) return null;

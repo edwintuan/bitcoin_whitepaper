@@ -311,6 +311,19 @@
   filter: blur(0);
 }
 
+/* The same rise for content that is revealed by being mounted. */
+.t-rise {
+  animation: t-rise var(--stagger-dur) var(--stagger-ease) both;
+  animation-delay: calc(var(--i, 0) * var(--stagger-stagger));
+}
+@keyframes t-rise {
+  from {
+    opacity: 0;
+    transform: translateY(var(--stagger-distance));
+    filter: blur(var(--stagger-blur));
+  }
+}
+
 /* --------------------------------------------------------------------------
    Error state shake: four legs, each with its own easing.
    -------------------------------------------------------------------------- */
@@ -530,6 +543,7 @@
   .t-shimmer::before,
   .t-subtle-number .t-subtle-new,
   .t-pop,
+  .t-rise,
   .t-reveal,
   .t-slam,
   .t-shift,
