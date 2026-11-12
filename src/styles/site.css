@@ -390,7 +390,7 @@
     font-size: clamp(22px, 3vw, 34px);
   }
   .section-next-no {
-    color: var(--color-orange);
+    color: var(--color-orange-ink);
     font-family: var(--font-display);
     font-weight: 400;
   }
@@ -456,6 +456,15 @@
     background: var(--color-orange);
     border-bottom: 3px solid var(--color-ink);
   }
+  /*
+   * While the reader walks through a figure taller than the window, its steps
+   * stay in reach under the top bar. The frame's own lines go with them.
+   */
+  .figure-steps[data-free='false'] {
+    position: sticky;
+    top: var(--topbar-h);
+    z-index: 4;
+  }
   .figure-steps[data-free='true'] {
     padding: 6px 14px;
     background: var(--color-cream-2);
@@ -513,6 +522,8 @@
   }
   .figure-stage {
     padding: 16px 14px 18px;
+    /* Whatever a figure stacks stays inside its stage, and so under the steps when they stick. */
+    isolation: isolate;
   }
   .figure-skeleton {
     height: 280px;
@@ -549,6 +560,11 @@
     width: 4px;
     background: var(--color-orange);
     animation: t-fade-in var(--duration-fast) var(--ease-out);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .fig-pointed::before {
+      animation: none;
+    }
   }
   /* A group with a label, set off from the one above by a hairline. */
   .fig-group + .fig-group {
@@ -635,8 +651,13 @@
   .tile[data-state='found'] {
     color: var(--color-orange);
   }
+  /* A failed block: its name and state in red, what it holds in ink, which reads better at this size. */
   .tile[data-state='invalid'] {
     background: var(--color-invalid-soft);
+    color: var(--color-ink);
+  }
+  .tile[data-state='invalid'] .tile-title,
+  .tile[data-state='invalid'] .tile-status {
     color: var(--color-invalid);
   }
   .tile[data-state='ghost'] {
@@ -683,10 +704,10 @@
     opacity: 0.55;
   }
   /* On a light tile 55% is too faint to read (2.6:1 in red on white). */
-  .tile[data-state='candidate'] .tile-label {
+  .tile[data-state='candidate'] .tile-label,
+  .tile[data-state='invalid'] .tile-label {
     opacity: 0.7;
   }
-  .tile[data-state='invalid'] .tile-label,
   .tile[data-state='ghost'] .tile-label {
     opacity: 1;
   }
@@ -895,9 +916,14 @@
     flex: none;
     width: 46px;
     padding-right: 8px;
-    color: #7c766b;
+    color: var(--color-ink-4);
     text-align: right;
     user-select: none;
+  }
+  /* On a marked line the ground is lighter, so the number is too. */
+  .code-line[data-noted='true'] .code-no,
+  .code-line[data-active='true'] .code-no {
+    color: var(--color-cream-3);
   }
   .code-mark {
     flex: none;
@@ -1034,7 +1060,6 @@
     margin: 4px 0 16px;
     padding: 14px;
     background: var(--color-paper);
-    border: 1px solid var(--color-ink);
     overflow-x: auto;
   }
   .original-table {

@@ -10,7 +10,7 @@
 @theme {
   /* ---- palette -------------------------------------------------------- */
   --color-orange: #f7931a;
-  --color-orange-ink: #b45f06; /* orange text on light grounds */
+  --color-orange-ink: #9c5106; /* orange text on light grounds: 4.7 to 1 or better on paper, cream, cream-2 and orange-soft */
   --color-orange-soft: #fde3bd;
   --color-ink: #0b0b0b;
   --color-ink-2: #3a342c;
@@ -22,9 +22,9 @@
   --color-paper: #ffffff;
   --color-rule: #d8cfbf;
   --color-valid: #1e7a46;
-  --color-valid-soft: #dcefe2;
+  --color-valid-soft: #e6f4ea; /* light enough for --color-valid type to read on it */
   --color-invalid: #c22d1f;
-  --color-invalid-soft: #f7ded9;
+  --color-invalid-soft: #fbe9e5; /* light enough for --color-invalid type to read on it */
 
   /* BoardUI re-tints from this ramp. */
   --color-accent-50: #fff6e8;

@@ -6,6 +6,7 @@ import { useSettings, useT } from '@/i18n/settings';
 import { useInView } from '@/state/useInView';
 import { usePageVisible, useReducedMotion } from '@/state/useMediaQuery';
 import { FigureContext } from './figureContext';
+import { scrollToShow } from './followPointer';
 import type { FigureApi } from './figureContext';
 import { Rich } from './Rich';
 
@@ -82,6 +83,52 @@ export function FigureFrame({ section }: { section: SectionContent }) {
     focusAfter.current = null;
   }, [step]);
 
+  // A step the reader asked for may point at a part that is off screen: a
+  // tall figure on a phone has its Mine button below the fold. The page then
+  // moves just far enough to show it. Only a press of Back, Next or replay
+  // does this; a step the figure itself moves to follows the reader's own
+  // hand, which is already where the action is.
+  const stepsBox = useRef<HTMLDivElement>(null);
+  const stage = useRef<HTMLDivElement>(null);
+  const follow = useRef(false);
+  const stepTo = (next: number | null) => {
+    follow.current = true;
+    goTo(next);
+  };
+  useEffect(() => {
+    if (!follow.current) return;
+    follow.current = false;
+    // Two frames: a figure may open another scene in an effect of its own before the pointer exists.
+    let second = 0;
+    const first = requestAnimationFrame(() => {
+      second = requestAnimationFrame(() => {
+        const pointed = stage.current?.querySelector('.fig-pointed');
+        if (!pointed) return;
+        const bar = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--topbar-h')) || 0;
+        const part = pointed.getBoundingClientRect();
+        const by = scrollToShow(
+          { top: part.top, bottom: part.bottom },
+          // The steps stay under the top bar while the figure is on screen, so the room starts below them.
+          { top: bar + (stepsBox.current?.offsetHeight ?? 0) + 12, bottom: window.innerHeight - 12 },
+        );
+        if (by !== 0) window.scrollBy({ top: by, behavior: reducedMotion ? 'instant' : 'smooth' });
+      });
+    });
+    return () => {
+      cancelAnimationFrame(first);
+      cancelAnimationFrame(second);
+    };
+  }, [step, reducedMotion]);
+
+  // The steps stick to the top while the reader walks through a tall figure.
+  // A control reached with Tab must not end up hidden behind them.
+  const uncover = (target: HTMLElement) => {
+    const steps = stepsBox.current;
+    if (!steps || step === null || !target.matches(':focus-visible')) return;
+    const covered = steps.getBoundingClientRect().bottom + 8 - target.getBoundingClientRect().top;
+    if (covered > 0) window.scrollBy({ top: -covered, behavior: 'instant' });
+  };
+
   const api = useMemo<FigureApi>(
     () => ({ step, total: steps.length, goTo, active: onScreen && pageVisible, reducedMotion }),
     [step, steps.length, goTo, onScreen, pageVisible, reducedMotion],
@@ -102,7 +149,7 @@ export function FigureFrame({ section }: { section: SectionContent }) {
       </figcaption>
 
       {steps.length > 0 ? (
-        <div className="figure-steps" data-free={step === null}>
+        <div ref={stepsBox} className="figure-steps" data-free={step === null}>
           {current && step !== null ? (
             <>
               <div className="figure-step-text" aria-live="polite">
@@ -127,13 +174,13 @@ export function FigureFrame({ section }: { section: SectionContent }) {
                   className="btn btn-sm btn-line"
                   aria-disabled={step === 0}
                   onClick={() => {
-                    if (step > 0) goTo(step - 1);
+                    if (step > 0) stepTo(step - 1);
                   }}
                 >
                   {t(UI.stepPrev)}
                 </button>
                 {step < steps.length - 1 ? (
-                  <button ref={forwardButton} type="button" className="btn btn-sm btn-dark" onClick={() => goTo(step + 1)}>
+                  <button ref={forwardButton} type="button" className="btn btn-sm btn-dark" onClick={() => stepTo(step + 1)}>
                     {t(UI.stepNext)}
                   </button>
                 ) : (
@@ -158,7 +205,7 @@ export function FigureFrame({ section }: { section: SectionContent }) {
               className="figure-replay label"
               onClick={() => {
                 focusAfter.current = 'forward';
-                goTo(0);
+                stepTo(0);
               }}
             >
               {t(UI.stepRestart)}
@@ -167,7 +214,7 @@ export function FigureFrame({ section }: { section: SectionContent }) {
         </div>
       ) : null}
 
-      <div className="figure-stage">
+      <div ref={stage} className="figure-stage" onFocus={(event) => uncover(event.target)}>
         <FigureContext.Provider value={api}>
           {Figure && near ? (
             <FigureBoundary fallback={failed}>

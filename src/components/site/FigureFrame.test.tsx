@@ -1,6 +1,6 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { SectionContent } from '@/content/types';
 import { UI } from '@/content/ui';
 import { SettingsProvider } from '@/i18n/settings';
@@ -85,5 +85,65 @@ describe('FigureFrame walkthrough', () => {
     await user.keyboard('{Enter}');
     expect(screen.getByText('Step 1')).toBeInTheDocument();
     expect(next()).toHaveFocus();
+  });
+});
+
+describe('FigureFrame, following the pointer', () => {
+  const scrollBy = vi.fn();
+
+  /** Puts a pointed part into the stage at a place of the test's choosing: jsdom lays nothing out. */
+  function pointAt(top: number, bottom: number) {
+    const part = document.createElement('div');
+    part.className = 'fig-pointed';
+    part.getBoundingClientRect = () => ({ top, bottom, left: 0, right: 100, width: 100, height: bottom - top, x: 0, y: top, toJSON: () => ({}) });
+    document.querySelector('.figure-stage')!.append(part);
+  }
+
+  function setupWindow() {
+    scrollBy.mockClear();
+    window.scrollBy = scrollBy as unknown as typeof window.scrollBy;
+    Object.defineProperty(window, 'innerHeight', { value: 800, configurable: true });
+    return setup();
+  }
+
+  const settle = () => new Promise((resolve) => setTimeout(resolve, 80));
+
+  afterEach(() => {
+    document.querySelectorAll('.fig-pointed').forEach((part) => part.remove());
+  });
+
+  it('brings a part below the fold into view when the reader steps to it', async () => {
+    const user = setupWindow();
+    pointAt(900, 960);
+    await user.click(next());
+    await waitFor(() => expect(scrollBy).toHaveBeenCalledTimes(1));
+    // Just far enough for the part to end 12 px above the bottom of an 800 px window.
+    expect(scrollBy.mock.calls[0][0]).toMatchObject({ top: 172 });
+  });
+
+  it('brings a part back into view when stepping back to one that is above', async () => {
+    const user = setupWindow();
+    await user.click(next());
+    await settle();
+    scrollBy.mockClear();
+    pointAt(-300, -240);
+    await user.click(back());
+    await waitFor(() => expect(scrollBy).toHaveBeenCalledTimes(1));
+    expect(scrollBy.mock.calls[0][0].top).toBeLessThan(0);
+  });
+
+  it('leaves the page alone when the part is already in view', async () => {
+    const user = setupWindow();
+    pointAt(300, 360);
+    await user.click(next());
+    await settle();
+    expect(scrollBy).not.toHaveBeenCalled();
+  });
+
+  it('never scrolls a page the reader has only just opened', async () => {
+    setupWindow();
+    pointAt(900, 960);
+    await settle();
+    expect(scrollBy).not.toHaveBeenCalled();
   });
 });

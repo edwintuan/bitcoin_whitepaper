@@ -93,7 +93,8 @@ export function SegmentedControl({ className, children, variant = "solid", ref, 
       className={(state) =>
         cx(
           // No outline around the group: the filled pill is enough to show the choice.
-          "relative inline-flex items-stretch",
+          // As wide as its choices, never wider than its row: they wrap first.
+          "relative flex w-fit max-w-full flex-wrap items-stretch",
           variant === "solid" && "bg-transparent",
           typeof className === "function" ? className(state) : className,
         )

@@ -97,7 +97,7 @@ export function WhoRuns({ items }: { items: WhoRunsItem[] }) {
               <Rich text={t(item.role)} />
             </p>
             <p className="who-artifact-head">
-              <span className="tag">{t(UI.artifact[item.artifact.kind])}</span>
+              <span className="tag tag-line">{t(UI.artifact[item.artifact.kind])}</span>
               <code className="who-label">{item.artifact.label}</code>
             </p>
             <p className="who-detail ui">
