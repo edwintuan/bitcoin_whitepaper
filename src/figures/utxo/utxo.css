@@ -1,0 +1,356 @@
+/* Fig. 9.1: combining and splitting value. Plain CSS on the site's tokens.
+   The figure's frame is the only box: what is inside is told apart by fill, space and rules. */
+
+.utxo-cap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 12px;
+  margin: 0 0 8px;
+  color: var(--color-ink-3);
+}
+.utxo-cap b {
+  color: var(--color-ink);
+  font-weight: 500;
+}
+
+/* ---- the wallet: one square per coin, area by value ---- */
+.utxo-coins {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 10px 12px;
+  min-height: 108px;
+  margin: 0;
+  /* Room under the row for the word that marks a coin as change. */
+  padding: 0 0 16px;
+  list-style: none;
+}
+.utxo-coins li {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+/* A coin is a solid square with no edge: ink in the wallet, orange once it is chosen as an input. */
+.utxo-coin {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: var(--color-ink);
+  cursor: pointer;
+  transition:
+    background-color var(--duration-quick) var(--ease-out),
+    transform var(--duration-quick) var(--ease-out);
+}
+.utxo-coin:hover {
+  background: var(--color-ink-2);
+}
+.utxo-coin:active {
+  transform: scale(var(--scale-small));
+}
+.utxo-coin[aria-pressed='true'],
+.utxo-coin[aria-pressed='true']:hover {
+  background: var(--color-orange);
+}
+.utxo-coin-value {
+  font-size: 11.5px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+/* Set under the value and out of the flow, so a coin that carries it stands on the same line as the others. */
+.utxo-coin-tag {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--color-orange-ink);
+  font-size: 11px;
+  line-height: 1.3;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.utxo-wallet-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 14px;
+  margin: 10px 0 0;
+  padding-top: 8px;
+  border-top: 1px solid var(--color-rule);
+  font-size: 12px;
+}
+.utxo-wallet-foot .label {
+  color: var(--color-ink-3);
+}
+
+/* ---- the amount ---- */
+.utxo-pay {
+  display: grid;
+  gap: 4px;
+}
+/* A form control, so it keeps its edge. */
+.utxo-amount {
+  display: flex;
+  align-items: stretch;
+  max-width: 250px;
+  border: 3px solid var(--color-ink);
+  background: var(--color-paper);
+}
+.utxo-amount input {
+  flex: 1;
+  min-width: 0;
+  padding: 7px 9px;
+  border: 0;
+  background: transparent;
+  color: var(--color-ink);
+  font-family: var(--font-mono), var(--font-sans);
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+}
+.utxo-amount span {
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  background: var(--color-ink);
+  color: var(--color-cream);
+}
+.utxo-amount[data-bad='true'] {
+  border-color: var(--color-invalid);
+}
+.utxo-quick {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  margin-top: 4px;
+}
+.utxo-quick .label {
+  color: var(--color-ink-3);
+}
+.utxo-quick .label:not(:first-child) {
+  margin-left: 8px;
+}
+
+/* ---- the transaction: one solid shape, its inputs and outputs lines of text inside it ---- */
+.utxo-tx {
+  padding: 9px 10px 10px;
+  background: var(--color-ink);
+  color: var(--color-cream);
+}
+.utxo-tx-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 8px;
+}
+.utxo-tx-head .poster {
+  font-size: 16px;
+  letter-spacing: 0.03em;
+}
+:lang(zh-Hant) .utxo-tx-head .poster {
+  font-size: 14px;
+}
+.utxo-tx-head .mono {
+  font-size: 11px;
+  opacity: 0.8;
+}
+.utxo-sides {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0 22px;
+}
+.utxo-side {
+  min-width: 0;
+}
+.utxo-side-head {
+  margin: 0 0 2px;
+  color: var(--color-orange);
+}
+.utxo-rows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/* One input or output: a line of text, a hairline under it. */
+.utxo-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0 8px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--color-ink-3);
+  font-size: 12.5px;
+  animation: utxo-flow var(--duration-slow) var(--ease-smooth-out) both;
+  animation-delay: calc(var(--i, 0) * var(--duration-micro));
+}
+.utxo-row b {
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.utxo-row small {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  opacity: 0.7;
+}
+.utxo-row[data-kind='none'] {
+  font-family: var(--font-sans);
+  opacity: 0.7;
+}
+.utxo-total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 6px 0 0;
+  font-size: 12.5px;
+}
+.utxo-total .label {
+  opacity: 0.65;
+}
+.utxo-total b {
+  font-weight: 500;
+}
+/* Value arriving from the left and leaving to the right. */
+@keyframes utxo-flow {
+  from {
+    opacity: 0;
+    transform: translateX(calc(var(--distance-large) * -1));
+  }
+}
+.utxo-tx-empty {
+  color: var(--color-ink-3);
+}
+
+/* ---- the same value, drawn to scale as inputs and as outputs ---- */
+.utxo-bars {
+  display: grid;
+  gap: 3px;
+}
+.utxo-bar-cap {
+  margin: 0;
+  color: var(--color-ink-3);
+}
+.utxo-bar + .utxo-bar-cap {
+  margin-top: 6px;
+}
+.utxo-bar {
+  display: flex;
+  gap: 2px;
+  height: 26px;
+  transform-origin: left center;
+  animation: utxo-pour var(--duration-very-slow) var(--ease-smooth-out) both;
+  animation-delay: calc(var(--i, 0) * var(--duration-fast));
+}
+@keyframes utxo-pour {
+  from {
+    transform: scaleX(0);
+  }
+}
+/* A label is laid out in pieces that wrap. The bar is one line tall, so a piece
+   that does not fit its segment drops out of sight whole and is never cut in two. */
+.utxo-seg {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  column-gap: 4px;
+  min-width: 3px;
+  padding: 0 6px 0 2px;
+  background: var(--color-ink);
+  color: var(--color-cream);
+  font-family: var(--font-mono), var(--font-sans);
+  font-size: 11px;
+  line-height: 26px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+/* An empty first piece, so that the first word can drop out too. */
+.utxo-seg::before {
+  content: '';
+  height: 26px;
+}
+.utxo-seg[data-kind='payment'] {
+  background: var(--color-orange);
+  color: var(--color-ink);
+}
+.utxo-seg[data-kind='change'] {
+  background: var(--color-cream-3);
+  color: var(--color-ink);
+}
+/* Drawn wider than it is, so that it can be seen at all. */
+.utxo-seg[data-kind='fee'] {
+  flex: none;
+  width: 5px;
+  padding: 0;
+  background: var(--color-ink-3);
+}
+
+/* ---- the fee: the result the figure is about, on the one tint ---- */
+.utxo-fee {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  font-size: 13px;
+}
+.utxo-fee .label {
+  color: var(--color-ink-3);
+}
+.utxo-fee b {
+  padding: 0 5px;
+  background: var(--color-ink);
+  color: var(--color-orange);
+  font-weight: 500;
+}
+
+/* ---- not enough ---- */
+.utxo-short-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+.utxo-short-sums {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px 16px;
+  margin: 10px 0 0;
+}
+.utxo-short-sums dt {
+  color: var(--color-ink-3);
+}
+.utxo-short-sums dd {
+  margin: 2px 0 0;
+  font-size: 14px;
+}
+.utxo-short-sums [data-missing='true'] dd {
+  color: var(--color-invalid);
+}
+
+@media (max-width: 640px) {
+  .utxo-sides {
+    gap: 0 14px;
+  }
+  .utxo-row {
+    font-size: 12px;
+  }
+  .utxo-short-sums {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .utxo-row,
+  .utxo-bar {
+    animation: none;
+  }
+  .utxo-coin {
+    transition: none;
+  }
+}

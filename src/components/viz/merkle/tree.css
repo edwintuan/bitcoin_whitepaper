@@ -1,0 +1,199 @@
+/* A Merkle tree drawn as a bracket, root on top. Shared by the figures of sections 7 and 8.
+   Columns are percentages of the width and rows are pixels, set inline by Tree.tsx. */
+
+.mtree {
+  position: relative;
+  width: 100%;
+}
+
+/* ---- boxes ---- */
+.mtree-slot {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  padding-inline: 2px;
+}
+.mtree-slot > * {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: var(--mtree-max, 150px);
+}
+.mtree-slot[data-level='0'] > * {
+  max-width: var(--mtree-leaf-max, 84px);
+}
+.mtree-slot[data-top='true'] > * {
+  max-width: var(--mtree-top-max, var(--mtree-max, 150px));
+}
+
+/* ---- links: a stem down from the parent, an arm out to each child ---- */
+.mtree-stem,
+.mtree-arm {
+  position: absolute;
+  box-sizing: border-box;
+  border: 0 solid var(--color-ink);
+  pointer-events: none;
+  transition: border-color var(--duration-fast) var(--ease-out);
+}
+.mtree-stem {
+  border-left-width: 2px;
+}
+.mtree-arm {
+  border-top-width: 2px;
+}
+.mtree-arm[data-side='l'] {
+  border-left-width: 2px;
+}
+.mtree-arm[data-side='r'] {
+  border-right-width: 2px;
+}
+.mtree [data-tone='live'] {
+  border-color: var(--color-orange);
+}
+.mtree [data-tone='faint'] {
+  border-color: var(--color-rule);
+}
+
+/* ---- a hash on its way up: along the arm, then up the stem ---- */
+/* The markers' own layer. It clips: a marker is as wide as the tree and moved by a share of
+   that width, so without the clip it would reach past the edge and widen the page. */
+.mtree-flows {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.mtree-flow {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 0;
+  pointer-events: none;
+  animation: mtree-flow var(--duration-very-slow) var(--ease-in-out) both;
+}
+.mtree-flow::before {
+  content: '';
+  position: absolute;
+  left: -4px;
+  top: -4px;
+  width: 8px;
+  height: 8px;
+  background: var(--color-orange);
+}
+@keyframes mtree-flow {
+  0% {
+    transform: translate(var(--x0), var(--y0));
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  40% {
+    transform: translate(var(--x0), var(--ym));
+  }
+  75% {
+    transform: translate(var(--x1), var(--ym));
+  }
+  88% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--x1), var(--y1));
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mtree-flow {
+    display: none;
+  }
+  .mtree-stem,
+  .mtree-arm {
+    transition: none;
+  }
+}
+
+/* ---- the small tree of the term cards: four leaves, drawn on the black card ---- */
+.mtree-mini-row {
+  display: grid;
+  align-items: center;
+}
+.mtree-mini-row[data-row='root'] {
+  grid-template-columns: 1fr 2fr 1fr;
+}
+.mtree-mini-row[data-row='mid'] {
+  grid-template-columns: repeat(2, 1fr);
+}
+.mtree-mini-row[data-row='leaves'] {
+  grid-template-columns: repeat(4, 1fr);
+}
+.mtree-mini-label {
+  padding-right: 6px;
+  text-align: right;
+  opacity: 0.55;
+}
+/* A hash is a filled shape with no edge: cream when it is simply there, orange when it is the one pointed at. */
+.mtree-mini-node {
+  display: block;
+  min-width: 0;
+  padding: 2px 3px;
+  border: 0;
+  background: var(--color-cream);
+  color: var(--color-ink);
+  font: inherit;
+  font-size: 11px;
+  line-height: 1.35;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+.mtree-mini-node > span {
+  display: block;
+}
+.mtree-mini-row[data-row='mid'] > .mtree-mini-node {
+  margin: 0 14%;
+}
+.mtree-mini-row[data-row='leaves'] > .mtree-mini-node {
+  margin: 0 3px;
+}
+button.mtree-mini-node {
+  cursor: pointer;
+}
+.mtree-mini-node[data-tone='hit'] {
+  background: var(--color-orange);
+}
+/* Beside the point: its text only, with no shape behind it. */
+.mtree-mini-node[data-tone='dim'] {
+  background: transparent;
+  color: inherit;
+  opacity: 0.55;
+}
+/* Still to be worked out: an empty place, and the dashes are that state. */
+.mtree-mini-node[data-tone='wait'] {
+  padding: 0 1px;
+  border: 2px dashed var(--color-orange);
+  background: transparent;
+  color: var(--color-orange);
+}
+/* Not held at all: left out, its place kept. */
+.mtree-mini-node[data-tone='none'] {
+  visibility: hidden;
+}
+.mtree-mini-links {
+  display: block;
+  width: 100%;
+  height: 10px;
+  fill: none;
+  stroke: var(--color-cream);
+  stroke-opacity: 0.5;
+  stroke-width: 1.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mtree-mini-node {
+    transition: none;
+  }
+}

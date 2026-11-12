@@ -1,8 +1,9 @@
 // @vitest-environment node
 import { describe, expect, it } from 'vitest';
 import {
-  merkleLevels, merkleParent, merkleProof, merkleRoot, prunableNodes, verifyProof,
+  foldProof, merkleLevels, merkleParent, merkleProof, merkleRoot, prunableNodes, rootFromStore, verifyProof,
 } from './merkle';
+import type { PrunedStore } from './merkle';
 import { sha256Hex } from './hash';
 import { headerHash } from './header';
 
@@ -288,5 +289,123 @@ describe('prunableNodes', () => {
     expect(() => prunableNodes(levels, [true, true])).toThrow(RangeError);
     expect(() => prunableNodes(levels, [true, true, true, true, true])).toThrow(RangeError);
     expect(() => prunableNodes([], [])).toThrow(RangeError);
+  });
+});
+
+describe('foldProof', () => {
+  it('keeps every intermediate hash on the way from a txid to the root', () => {
+    for (const n of [2, 3, 5, 8, 11]) {
+      const t = ids(n);
+      const root = merkleRoot(t);
+      t.forEach((id, index) => {
+        const proof = merkleProof(t, index);
+        const folds = foldProof(id, proof);
+        expect(folds).toHaveLength(proof.length);
+        expect(folds[folds.length - 1].out).toBe(root);
+        folds.forEach((fold, level) => {
+          expect(fold.out).toBe(merkleParent(fold.left, fold.right));
+          // The sibling sits on the side the proof names; the running hash takes the other.
+          expect(fold.ours).toBe(proof[level].position === 'left' ? 'right' : 'left');
+          expect(fold.ours === 'left' ? fold.right : fold.left).toBe(proof[level].hash);
+          expect(fold.ours === 'left' ? fold.left : fold.right).toBe(level === 0 ? id : folds[level - 1].out);
+        });
+      });
+    }
+  });
+  it('puts the txid on the left for an even-numbered leaf and on the right for an odd one', () => {
+    const t = ids(8);
+    expect(foldProof(t[2], merkleProof(t, 2))[0].ours).toBe('left');
+    expect(foldProof(t[3], merkleProof(t, 3))[0].ours).toBe('right');
+  });
+  it('ends away from the root exactly when verifyProof says no', () => {
+    const t = ids(8);
+    const root = merkleRoot(t);
+    const proof = merkleProof(t, 5);
+    const end = (id: string, steps: typeof proof) => foldProof(id, steps).at(-1)?.out;
+    expect(end(t[5], proof)).toBe(root);
+    expect(end(t[4], proof)).not.toBe(root);
+    proof.forEach((_, i) => {
+      const bad = proof.map((s, j) => (j === i ? { ...s, hash: sha256Hex('forged') } : s));
+      expect(end(t[5], bad)).not.toBe(root);
+      expect(verifyProof(t[5], bad, root)).toBe(false);
+    });
+  });
+  it('is empty for a block with one transaction', () => {
+    expect(foldProof(ids(1)[0], [])).toEqual([]);
+  });
+  it('accepts hex in either case and answers in lower case', () => {
+    const t = ids(4);
+    const proof = merkleProof(t, 1).map((s) => ({ ...s, hash: s.hash.toUpperCase() }));
+    const folds = foldProof(t[1].toUpperCase(), proof);
+    expect(folds).toEqual(foldProof(t[1], merkleProof(t, 1)));
+    expect(folds[0].right).toBe(t[1]);
+  });
+  it('rejects a txid or a sibling that is not a 32-byte hash', () => {
+    const t = ids(4);
+    expect(() => foldProof('not a txid', merkleProof(t, 0))).toThrow(RangeError);
+    expect(() => foldProof('not a txid', [])).toThrow(RangeError);
+    expect(() => foldProof(t[0], [{ hash: 'abcd', position: 'right' }])).toThrow(RangeError);
+  });
+});
+
+describe('rootFromStore', () => {
+  /** What pruning leaves of a block: the unspent transactions, and one hash for each fully spent subtree. */
+  const storeOf = (txids: string[], spent: boolean[]): PrunedStore => {
+    const levels = merkleLevels(txids);
+    return {
+      leafCount: txids.length,
+      txids: new Map(txids.flatMap((id, i): [number, string][] => (spent[i] ? [] : [[i, id]]))),
+      stubs: prunableNodes(levels, spent).map((node) => ({ ...node, hash: levels[node.level][node.index] })),
+    };
+  };
+  /** Every way of marking n leaves as spent. */
+  const masks = (n: number) =>
+    Array.from({ length: 2 ** n }, (_, bits) => Array.from({ length: n }, (_, i) => ((bits >> i) & 1) === 1));
+
+  it('recomputes the root from what pruning leaves, whatever was spent', () => {
+    for (let n = 1; n <= 8; n++) {
+      const t = ids(n);
+      const root = merkleRoot(t);
+      for (const spent of masks(n)) expect(rootFromStore(storeOf(t, spent)), `${n} leaves, ${spent.join()}`).toBe(root);
+    }
+  });
+  it('reproduces the paper: Hash01, Hash2 and Tx3 are enough', () => {
+    const t = ids(4);
+    const levels = merkleLevels(t);
+    const store: PrunedStore = {
+      leafCount: 4,
+      txids: new Map([[3, t[3]]]),
+      stubs: [{ level: 1, index: 0, hash: levels[1][0] }, { level: 0, index: 2, hash: t[2] }],
+    };
+    expect(rootFromStore(store)).toBe(merkleRoot(t));
+  });
+  it('reads nothing but the store: a wrong stub gives a wrong root', () => {
+    const t = ids(4);
+    const store = storeOf(t, [true, true, true, false]);
+    store.stubs[1] = { ...store.stubs[1], hash: t[0] };
+    expect(rootFromStore(store)).not.toBe(merkleRoot(t));
+  });
+  it('is the one stub when the whole block was pruned', () => {
+    const t = ids(5);
+    const store = storeOf(t, [true, true, true, true, true]);
+    expect(store.txids.size).toBe(0);
+    expect(store.stubs).toHaveLength(1);
+    expect(rootFromStore(store)).toBe(merkleRoot(t));
+  });
+  it('accepts hex in either case', () => {
+    const t = ids(4);
+    const store = storeOf(t, [true, true, false, false]);
+    store.txids.set(2, t[2].toUpperCase());
+    store.stubs[0] = { ...store.stubs[0], hash: store.stubs[0].hash.toUpperCase() };
+    expect(rootFromStore(store)).toBe(merkleRoot(t));
+  });
+  it('fails when a hash the root depends on is missing', () => {
+    const store = storeOf(ids(4), [true, true, true, false]);
+    store.txids.delete(3);
+    expect(() => rootFromStore(store)).toThrow(/transaction 3/);
+  });
+  it('rejects a store that is not that of a block', () => {
+    expect(() => rootFromStore({ leafCount: 0, txids: new Map(), stubs: [] })).toThrow(RangeError);
+    expect(() => rootFromStore({ leafCount: 2.5, txids: new Map(), stubs: [] })).toThrow(RangeError);
   });
 });

@@ -117,6 +117,42 @@ export function verifyProof(txid: string, proof: ProofStep[], root: string): boo
   }
 }
 
+/** One step of folding a Merkle proof into a txid: two hashes joined and hashed into one. */
+export interface Fold {
+  /** The left and right halves of what was hashed, display order. */
+  left: string;
+  right: string;
+  /** The side the running hash was on. The sibling from the proof took the other. */
+  ours: 'left' | 'right';
+  /** `sha256d(left ‖ right)`: the running hash after this step, display order. */
+  out: string;
+}
+
+/**
+ * The working behind {@link verifyProof}: folds the proof into the txid one
+ * sibling at a time and keeps every intermediate result, so the check can be
+ * shown step by step. The last `out` is what a light client compares with the
+ * Merkle root in a block header; comparing is left to the caller.
+ *
+ * `txid` and the proof's hashes are display-order hex, in either case, and
+ * every hash in the result is in lower case. A block with one transaction has
+ * an empty proof and nothing to fold: the txid is the root.
+ *
+ * @throws RangeError unless `txid` and every sibling are 64 hex characters.
+ */
+export function foldProof(txid: string, proof: ProofStep[]): Fold[] {
+  const folds: Fold[] = [];
+  let running = normalize(txid);
+  for (const step of proof) {
+    const sibling = normalize(step.hash);
+    const left = step.position === 'left' ? sibling : running;
+    const right = step.position === 'left' ? running : sibling;
+    running = merkleParent(left, right);
+    folds.push({ left, right, ours: step.position === 'left' ? 'right' : 'left', out: running });
+  }
+  return folds;
+}
+
 /**
  * Finds what whitepaper section 7 lets a node discard: the largest subtrees
  * whose transactions are all spent. Each returned node (`levels[level][index]`)
@@ -153,4 +189,59 @@ export function prunableNodes(levels: string[][], spent: boolean[]): { level: nu
   };
   visit(levels.length - 1, 0);
   return found;
+}
+
+/**
+ * Everything a node still holds of a block once it has been pruned as
+ * whitepaper section 7 describes: the transactions it kept, and one hash in
+ * place of each subtree it threw away.
+ */
+export interface PrunedStore {
+  /** The block's transaction count: it fixes the shape of the tree. */
+  leafCount: number;
+  /** The txids of the transactions still stored, by position in the block. */
+  txids: Map<number, string>;
+  /**
+   * One hash for each pruned subtree: the node it stands in for, named as
+   * {@link prunableNodes} names it, and that node's hash, display order.
+   */
+  stubs: { level: number; index: number; hash: string }[];
+}
+
+/**
+ * Recomputes the Merkle root of a pruned block from the store alone: the
+ * txids that are left and the hashes kept in place of the rest. This is what
+ * lets the block's hash stand after its spent transactions are gone. A lone
+ * last node is paired with itself, as in {@link merkleLevels}.
+ *
+ * Hashes are display-order hex, in either case; the root comes back in lower
+ * case. A stub is taken as it is, and nothing beneath it is read.
+ *
+ * @throws RangeError unless `leafCount` is a positive integer, or if a hash in
+ * the store is not 64 hex characters.
+ * @throws Error if the root depends on a transaction that is neither stored
+ * nor covered by a stub.
+ */
+export function rootFromStore(store: PrunedStore): string {
+  if (!Number.isInteger(store.leafCount) || store.leafCount < 1) {
+    throw new RangeError(`a block holds a positive whole number of transactions, got ${store.leafCount}`);
+  }
+  // widths[level]: how many nodes that level of the tree has.
+  const widths = [store.leafCount];
+  while (widths[widths.length - 1] > 1) widths.push(Math.ceil(widths[widths.length - 1] / 2));
+  const stubs = new Map(store.stubs.map((stub) => [`${stub.level}:${stub.index}`, stub.hash]));
+
+  const hashAt = (level: number, index: number): string => {
+    const stub = stubs.get(`${level}:${index}`);
+    if (stub !== undefined) return normalize(stub);
+    if (level === 0) {
+      const id = store.txids.get(index);
+      if (id === undefined) throw new Error(`transaction ${index} is neither stored nor covered by a stub`);
+      return normalize(id);
+    }
+    const left = hashAt(level - 1, 2 * index);
+    const right = 2 * index + 1 < widths[level - 1] ? hashAt(level - 1, 2 * index + 1) : left;
+    return merkleParent(left, right);
+  };
+  return hashAt(widths.length - 1, 0);
 }

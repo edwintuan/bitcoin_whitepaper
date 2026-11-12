@@ -1,0 +1,335 @@
+/* Fig. 8.1: simplified payment verification. Plain CSS on the site's tokens.
+   The figure's frame is the only box: what is inside is told apart by fill, space and rules. */
+
+/* ---- the chain of headers ---- */
+/* The root the payment is checked against: the one thing picked out in the chain. */
+.spv-root {
+  color: var(--color-orange);
+}
+
+/* ---- the link from that root down to the wallet's own result ---- */
+.spv-compare {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  height: 34px;
+  margin-top: 0;
+}
+.spv-compare::before {
+  content: '';
+  position: absolute;
+  left: calc(50% - 1px);
+  top: 0;
+  bottom: 0;
+  border-left: 2px dashed var(--color-ink-4);
+}
+.spv-compare[data-ok]::before {
+  border-left: 2px solid var(--color-ink);
+}
+.spv-compare .tag {
+  position: relative;
+  align-self: center;
+}
+
+/* ---- the tree only full nodes hold ---- */
+.spv-tree {
+  margin-top: 0;
+  --mtree-leaf-max: 76px;
+}
+/* A hash the wallet never sees is not there, as far as the wallet is concerned: the dashes are that state.
+   Every other shape is filled and has no edge. The edge is a border, so the focus ring stays the site's. */
+.spv-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 0 3px;
+  border: 2px dashed var(--color-ink-4);
+  background: transparent;
+  color: var(--color-ink-3);
+  font-family: var(--font-mono), var(--font-sans);
+  font-size: 11px;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+/* Whatever a shape holds is cut to its width, with an ellipsis. */
+.spv-node > span {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.spv-name {
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+button.spv-node {
+  cursor: pointer;
+}
+button.spv-node[data-role='unknown']:hover {
+  background: var(--color-cream-2);
+  color: var(--color-ink);
+}
+/* Yours: the payment, and each hash the wallet works out from it. */
+.spv-node[data-role='mine'],
+.spv-node[data-role='computed'] {
+  border-color: transparent;
+  background: var(--color-orange);
+  color: var(--color-ink);
+}
+/* Yours to work out, not worked out yet. */
+.spv-node[data-role='pending'] {
+  border-color: var(--color-orange);
+  color: var(--color-orange-ink);
+}
+/* Sent by the full node. */
+.spv-node[data-role='given'] {
+  border-color: transparent;
+  background: var(--color-ink);
+  color: var(--color-cream);
+}
+/* The wallet's result, once it has been held against the root in the header. The tag above it says which. */
+.spv-node[data-ok='true'] {
+  background: var(--color-valid);
+  color: var(--color-paper);
+}
+.spv-node[data-ok='false'] {
+  background: var(--color-invalid);
+  color: var(--color-paper);
+}
+/* What the reader tampered with, in the tree and in the working. */
+.spv-node[data-altered='true'],
+.spv-chip[data-altered='true'] {
+  text-decoration: underline wavy;
+  text-underline-offset: 2px;
+}
+
+.spv-tree-cap {
+  margin-top: 8px;
+  color: var(--color-ink-3);
+}
+.spv-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin-top: 6px;
+  margin-bottom: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--color-ink-2);
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
+.spv-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.spv-swatch {
+  flex: none;
+  width: 12px;
+  height: 12px;
+}
+.spv-swatch[data-role='mine'] {
+  background: var(--color-orange);
+}
+.spv-swatch[data-role='given'] {
+  background: var(--color-ink);
+}
+.spv-swatch[data-role='unknown'] {
+  border: 2px dashed var(--color-ink-4);
+}
+
+/* ---- the payment being checked: a line of text, not a panel ---- */
+.spv-pay {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+  font-size: 12px;
+}
+.spv-pay .label {
+  color: var(--color-ink-3);
+}
+.spv-pay b {
+  font-weight: 500;
+}
+
+/* ---- controls ---- */
+.spv-tamper {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+}
+.spv-tamper > .label {
+  color: var(--color-ink-3);
+}
+/* The control never runs past its row, however long its labels are in a language: its choices wrap first. */
+.spv-tamper-choices {
+  flex-wrap: wrap;
+  max-width: 100%;
+}
+
+/* ---- the wallet's working: a ruled list under one heavy line ---- */
+.spv-folds {
+  margin-bottom: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 3px solid var(--color-ink);
+  font-size: 11.5px;
+}
+.spv-folds-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 0 4px;
+  color: var(--color-ink-3);
+}
+.spv-fold {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  gap: 6px;
+  align-items: center;
+  padding: 5px 0;
+  border-top: 1px solid var(--color-rule);
+}
+.spv-fold-no {
+  color: var(--color-ink-3);
+}
+.spv-fold-sum {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 3px 6px;
+  min-width: 0;
+}
+/* A hash is filled with the colour of where it came from. One that is not known yet is a plain gap. */
+.spv-chip {
+  padding: 1px 5px;
+  color: var(--color-ink-3);
+  white-space: nowrap;
+}
+.spv-chip[data-side='ours'] {
+  background: var(--color-orange);
+  color: var(--color-ink);
+}
+.spv-chip[data-side='theirs'] {
+  background: var(--color-ink);
+  color: var(--color-cream);
+}
+.spv-verdict {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  padding: 8px 0 0;
+  border-top: 3px solid var(--color-ink);
+}
+
+/* ---- size of a proof ---- */
+.spv-size {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 18px;
+  align-items: end;
+}
+.spv-size-cap {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+.spv-facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px 20px;
+  margin-bottom: 0;
+  padding-top: 12px;
+  border-top: 3px solid var(--color-ink);
+}
+.spv-facts > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+}
+.spv-facts dt {
+  color: var(--color-ink-3);
+}
+.spv-facts dd {
+  margin: 2px 0 0;
+}
+.spv-facts [data-accent='true'] dd {
+  color: var(--color-orange-ink);
+}
+.spv-ladder-cap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  margin: 0 0 6px;
+  color: var(--color-ink-3);
+}
+.spv-ladder {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 11.5px;
+}
+.spv-rung {
+  display: grid;
+  grid-template-columns: 22px 34px minmax(0, 1fr);
+  gap: 6px;
+  align-items: baseline;
+  padding: 3px 0;
+  border-bottom: 1px solid var(--color-rule);
+  white-space: nowrap;
+}
+.spv-rung .hash {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.spv-rung-no,
+.spv-rung-side {
+  color: var(--color-ink-3);
+}
+
+@media (max-width: 640px) {
+  /* Three headers across a phone: keep the title and the root. */
+  .spv-chain > .tile {
+    padding-inline: 7px;
+  }
+  .spv-chain .tile-top + .tile-row {
+    display: none;
+  }
+  .spv-chain .tile-label {
+    width: 28px;
+  }
+  /* Eight transactions across a phone: every pixel of the leaf goes to its text. */
+  .spv-tree .mtree-slot {
+    padding-inline: 1px;
+  }
+  .spv-node {
+    padding: 0 1px;
+  }
+  .spv-name {
+    letter-spacing: 0;
+  }
+  .spv-ladder {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spv-node {
+    transition: none;
+  }
+}
