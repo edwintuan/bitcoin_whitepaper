@@ -99,6 +99,7 @@ export default function MyFigure() {
 - Nothing is faked. Hashes, signatures, proofs, probabilities and mining all come from the engine in `src/lib`. Read the module's JSDoc before using it.
 - Randomness that drives a simulation comes from `mulberry32` in `src/lib/rng.ts` so that it can be tested and replayed.
 - Logic that lives in the figure's folder gets a unit test, written first (`pow/toyChain.test.ts`).
+- A figure's folder is its own. A term visual may reuse parts of its chapter's figure; anything two figures share belongs in `src/components/viz` (drawing parts), `src/state` (hooks) or `src/lib` (computation).
 - Keys made in the page are throwaway. Where a key or address is shown, say so (`UI.demoKeysWarning`).
 
 ### Look
