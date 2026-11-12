@@ -24,3 +24,11 @@ export function shortHex(hex: string, lead = 10, tail = 4): string {
 export function fill(template: string, values: Record<string, string | number>): string {
   return template.replace(/\{(\w+)\}/g, (_, key: string) => String(values[key] ?? ''));
 }
+
+/**
+ * Text for matching a search query against. Copy uses typographic apostrophes;
+ * most keyboards type straight ones, so a second copy with those is appended.
+ */
+export function searchable(text: string): string {
+  return text.includes('’') ? `${text} ${text.replaceAll('’', "'")}` : text;
+}

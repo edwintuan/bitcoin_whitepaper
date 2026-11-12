@@ -234,20 +234,20 @@ describe('glossary copy', () => {
     expect(problems).toEqual([]);
   });
 
-  it('keeps the English short definition to 32 words', () => {
+  it('keeps the English short definition to 28 words', () => {
     const problems = RICH.filter(({ at }) => at.endsWith(' short.en')).flatMap((copy) => {
       const words = shown(copy).split(/\s+/).filter(Boolean).length;
-      return words > 32 ? [`${copy.at}: ${words} words`] : [];
+      return words > 28 ? [`${copy.at}: ${words} words`] : [];
     });
     expect(problems).toEqual([]);
   });
 
-  it('keeps the Chinese short definition to about 45 characters', () => {
-    // Each Han character and each Latin word or number counts once; 50 is the hard stop.
+  it('keeps the Chinese short definition to 45 characters', () => {
+    // Each Han character and each Latin word or number counts once.
     const problems = RICH.filter(({ at }) => at.endsWith(' short.zh')).flatMap((copy) => {
       const length = (shown(copy).match(/[㐀-鿿]|[A-Za-z0-9][A-Za-z0-9.,/-]*/g) ?? [])
         .length;
-      return length > 50 ? [`${copy.at}: ${length} characters`] : [];
+      return length > 45 ? [`${copy.at}: ${length} characters`] : [];
     });
     expect(problems).toEqual([]);
   });
@@ -300,6 +300,129 @@ describe('glossary copy', () => {
         ...((text.match(/`/g) ?? []).length % 2 === 0 ? [] : [`${at}: unclosed code mark`]),
       ]),
     ];
+    expect(problems).toEqual([]);
+  });
+
+  it('writes each definition as one sentence', () => {
+    const withoutCode = (text: string) => text.replace(/`[^`]*`/g, 'x');
+    const problems = RICH.flatMap(({ at, lang, text }) => {
+      const plain = withoutCode(text);
+      const oneSentence =
+        lang === 'en' ? /\.$/.test(plain) && !/[.!?]\s+\S/.test(plain) : /。$/.test(plain) && plain.split('。').length === 2;
+      return oneSentence ? [] : [`${at}: not a single sentence`];
+    });
+    expect(problems).toEqual([]);
+  });
+
+  it('links the same terms and quotes the same code in both languages', () => {
+    const codeIn = (text: string) => [...text.matchAll(/`([^`]*)`/g)].map((match) => match[1]).sort();
+    const problems = problemsPerTerm((term) =>
+      (['short', 'precise'] as const).flatMap((field) => {
+        const copy = term[field];
+        if (!copy) return [];
+        return [
+          ...([...linkedIds(copy.en)].sort().join() === [...linkedIds(copy.zh)].sort().join() ? [] : [`${field} links differ`]),
+          ...(codeIn(copy.en).join() === codeIn(copy.zh).join() ? [] : [`${field} code differs`]),
+        ];
+      }),
+    );
+    expect(problems).toEqual([]);
+  });
+
+  it('uses typographic apostrophes and quotation marks in English', () => {
+    const problems = EVERY.filter(({ lang }) => lang === 'en')
+      .filter(({ text }) => /['"]/.test(text.replace(/`[^`]*`/g, '')))
+      .map(({ at }) => `${at}: straight quote`);
+    expect(problems).toEqual([]);
+  });
+});
+
+describe('glossary wording', () => {
+  /** Names fixed by the binding vocabulary of the design spec and by the translation of the paper. */
+  const NAMES: Record<string, string> = {
+    hash: '哈希',
+    'digital-signature': '數碼簽署',
+    'public-key': '公鑰',
+    'private-key': '私鑰',
+    'key-pair': '密鑰對',
+    'electronic-coin': '電子貨幣',
+    transaction: '交易',
+    input: '輸入',
+    output: '輸出',
+    utxo: '未花費輸出（UTXO）',
+    change: '找續',
+    fee: '交易手續費',
+    'double-spending': '雙重支付',
+    'trusted-third-party': '可信第三方',
+    mint: '鑄幣廠',
+    block: '區塊',
+    'block-header': '區塊頭',
+    timestamp: '時間戳',
+    'timestamp-server': '時間戳伺服器',
+    'proof-of-work': '工作量證明',
+    nonce: '隨機數（nonce）',
+    difficulty: '難度',
+    target: '目標值',
+    'hash-rate': '算力',
+    'longest-chain': '最長鏈',
+    fork: '分叉',
+    reorg: '重組',
+    confirmation: '確認',
+    'peer-to-peer': '點對點',
+    node: '節點',
+    'full-node': '全節點',
+    'light-client': '輕錢包',
+    broadcast: '廣播',
+    mempool: '記憶池',
+    incentive: '激勵',
+    'block-subsidy': '區塊補貼',
+    halving: '減半',
+    miner: '礦工',
+    'mining-pool': '礦池',
+    'merkle-tree': '默克爾樹',
+    'merkle-root': '默克爾根',
+    'merkle-branch': '默克爾分支',
+    pruning: '修剪',
+    spv: '簡易支付驗證（SPV）',
+    'poisson-distribution': '泊松分佈',
+    'binomial-random-walk': '二項隨機漫步',
+    'gamblers-ruin': '賭徒破產問題',
+    wallet: '錢包',
+    'software-wallet': '軟件錢包',
+    'hardware-wallet': '硬件錢包',
+  };
+
+  it('names the bound terms as the vocabulary and the paper\u2019s translation do', () => {
+    const named = Object.fromEntries(Object.keys(NAMES).map((id) => [id, TERMS[id]?.name.zh]));
+    expect(named).toEqual(NAMES);
+  });
+
+  it('words Chinese definitions as the paper\u2019s translation does', () => {
+    // Where the English uses the word on the left, the Chinese beside it uses the rendering on the right.
+    const bound: [en: RegExp, zh: string][] = [
+      [/\bowners?\b/i, '擁有者'],
+      [/\bdistributed\b/i, '分佈式'],
+      [/\bbits?\b/, '位元'],
+    ];
+    const problems = problemsPerTerm((term) =>
+      (['short', 'precise'] as const).flatMap((field) => {
+        const copy = term[field];
+        if (!copy) return [];
+        // Code is quoted, not translated: `bits` in backticks is a field name, not the word.
+        const english = shown({ at: '', lang: 'en', text: copy.en.replace(/`[^`]*`/g, '') });
+        return bound.flatMap(([en, zh]) => (en.test(english) && !copy.zh.includes(zh) ? [`${field}.zh lacks ${zh}`] : []));
+      }),
+    );
+    expect(problems).toEqual([]);
+  });
+
+  it('calls the parts of the paper 章, as the interface does, and never 節', () => {
+    const problems = EVERY.filter(({ lang, text }) => lang === 'zh' && /第 \d+ 節/.test(text)).map(({ at }) => at);
+    expect(problems).toEqual([]);
+  });
+
+  it('never names a field with 位 where the vocabulary says 位元', () => {
+    const problems = EVERY.filter(({ lang, at, text }) => lang === 'zh' && !at.includes(' aka.') && /難度位/.test(text)).map(({ at }) => at);
     expect(problems).toEqual([]);
   });
 });

@@ -28,7 +28,7 @@ const CRYPTO: Entry[] = [
       zh: '由任何數據算出的一段固定長度「指紋」；數據只要改動一點，指紋便面目全非。',
     },
     precise: {
-      en: "Bitcoin's main hash function is [[sha-256]], whose output is always 32 bytes; no practical way is known to recover the input from the output or to find two inputs that give the same output.",
+      en: "Bitcoin’s main hash function is [[sha-256]], whose output is always 32 bytes; no practical way is known to recover the input from the output or to find two inputs that give the same output.",
       zh: '比特幣主要採用 [[sha-256]]，輸出固定為 32 位元組；現時未有可行方法由輸出反推輸入，或找出輸出相同的兩份輸入。',
     },
     sections: [2, 3, 4, 7, 8],
@@ -69,7 +69,7 @@ const CRYPTO: Entry[] = [
     aka: { en: 'signature', zh: '又稱數位簽章（台灣）、數字簽名（內地）' },
     short: {
       en: 'Proof, made with a [[private-key|private key]], that its holder approved a message; anyone can check it with the matching [[public-key|public key]].',
-      zh: '以[[private-key|私鑰]]為一則訊息產生的憑證，表示持有人認可該訊息；任何人都可用對應的[[public-key|公鑰]]核實。',
+      zh: '以[[private-key|私鑰]]為一則訊息產生的證明，表示持有人認可該訊息；任何人都可用對應的[[public-key|公鑰]]核實。',
     },
     precise: {
       en: 'Bitcoin signs a hash of the transaction, using [[ecdsa]] or, since the Taproot upgrade of 2021, Schnorr signatures (BIP 340), both over the curve secp256k1.',
@@ -160,8 +160,8 @@ const CRYPTO: Entry[] = [
     id: 'hash160',
     name: { en: 'HASH160', zh: 'HASH160' },
     short: {
-      en: 'A 20-byte fingerprint of a [[public-key|public key]], made by applying two [[hash]] functions in a row, SHA-256 then RIPEMD-160; many addresses carry it instead of the key.',
-      zh: '[[public-key|公鑰]]的 20 位元組指紋，由兩種[[hash|哈希]]函數接連計算而成（先 SHA-256，後 RIPEMD-160）；不少地址載的是它，而非公鑰本身。',
+      en: 'A 20-byte fingerprint of a [[public-key|public key]], made by running two [[hash]] functions one after the other; many addresses carry it instead of the key itself.',
+      zh: '[[public-key|公鑰]]的 20 位元組指紋，由兩種[[hash|哈希]]函數接連計算而成；不少地址載的是它，而非公鑰本身。',
     },
     precise: {
       en: '`RIPEMD-160(SHA-256(x))`, the result of the opcode `OP_HASH160`; P2PKH, P2SH and P2WPKH outputs all use it.',
@@ -177,17 +177,17 @@ const CRYPTO: Entry[] = [
 const MONEY: Entry[] = [
   {
     id: 'electronic-coin',
-    name: { en: 'electronic coin', zh: '電子幣' },
-    aka: { en: 'coin', zh: '又譯電子貨幣、電子硬幣' },
+    name: { en: 'electronic coin', zh: '電子貨幣' },
+    aka: { en: 'coin', zh: '又譯電子幣、電子硬幣' },
     short: {
-      en: "The paper's definition of a coin: a chain of [[digital-signature|digital signatures]], each owner signing it over to the next.",
-      zh: '白皮書對「幣」的定義：一串[[digital-signature|數碼簽署]]，每位持有人簽署一次，把幣轉交下一位。',
+      en: "The paper’s definition of a coin: a chain of [[digital-signature|digital signatures]], each owner signing it over to the next.",
+      zh: '白皮書對一枚「電子貨幣」的定義：一條由[[digital-signature|數碼簽署]]組成的鏈，每位擁有者簽署一次，把它轉讓給下一位。',
     },
     precise: {
       en: 'In the software a coin is an [[utxo|unspent output]]; its signatures can be followed back, transaction by transaction, to the [[coinbase|coinbase transactions]] that created the value.',
-      zh: '在軟件裏，一枚幣就是一個[[utxo|未花費輸出]]；沿着簽署逐筆交易往回追，最終會到達創造這些價值的 [[coinbase|coinbase 交易]]。',
+      zh: '在軟件裏，一枚貨幣就是一個[[utxo|未花費輸出]]；沿着簽署逐筆交易往回追，最終會到達創造這些價值的 [[coinbase|coinbase 交易]]。',
     },
-    sections: [2, 7, 9, 12],
+    sections: [2, 6, 7, 9, 12],
     related: ['digital-signature', 'transaction', 'utxo', 'double-spending'],
   },
   {
@@ -196,7 +196,7 @@ const MONEY: Entry[] = [
     aka: { en: 'tx', zh: '簡寫 tx' },
     short: {
       en: 'A signed message that moves coins: it names earlier coins as [[input|inputs]] and assigns their value to new owners as [[output|outputs]].',
-      zh: '一則經簽署的轉賬訊息：以[[input|輸入]]指明動用哪些舊幣，再以[[output|輸出]]把價值交給新的持有人。',
+      zh: '一則經簽署的轉賬訊息：以[[input|輸入]]指明動用哪些舊幣，再以[[output|輸出]]把價值交給新的擁有者。',
     },
     precise: {
       en: 'Serialised as a version, a list of inputs, a list of outputs and a lock time, plus witness data since SegWit (BIP 141); its [[txid]] is the double SHA-256 of the serialisation without the witness.',
@@ -225,8 +225,8 @@ const MONEY: Entry[] = [
     name: { en: 'output', zh: '輸出' },
     aka: { en: 'transaction output, txout', zh: '又稱交易輸出' },
     short: {
-      en: "The part of a [[transaction]] that sets an amount and the condition for spending it, normally a signature from the new owner's key.",
-      zh: '[[transaction|交易]]中列明一筆金額及其動用條件的部分；條件通常是新持有人的簽署。',
+      en: "The part of a [[transaction]] that sets an amount and the condition for spending it, normally a signature from the new owner’s key.",
+      zh: '[[transaction|交易]]中列明一筆金額及其動用條件的部分；條件通常是新擁有者的簽署。',
     },
     precise: {
       en: 'An 8-byte amount in [[satoshi-unit|satoshis]] followed by a locking [[script|script]], the `scriptPubKey`; each output can be spent only once, and only whole.',
@@ -285,7 +285,7 @@ const MONEY: Entry[] = [
     name: { en: 'coinbase transaction', zh: 'coinbase 交易' },
     aka: { en: 'generation transaction', zh: '又稱幣基交易、創幣交易' },
     short: {
-      en: "The first [[transaction]] in every [[block]]: it spends no earlier coins and pays the block's creator the new coins and the fees.",
+      en: "The first [[transaction]] in every [[block]]: it spends no earlier coins and pays the block’s creator the new coins and the fees.",
       zh: '每個[[block|區塊]]的第一筆[[transaction|交易]]：它不動用任何舊幣，而是把新發行的幣連同手續費付給該區塊的創建者。',
     },
     precise: {
@@ -419,7 +419,7 @@ const MONEY: Entry[] = [
     },
     precise: {
       en: 'Finality is a matter of probability, not a fixed rule: the chance that a payment is replaced falls exponentially with each [[confirmation]], as section 11 of the paper calculates.',
-      zh: '終局性並非硬性規則，而是概率問題：每多一個[[confirmation|確認]]，付款被取代的機會便以指數下降，白皮書第 11 節有詳細計算。',
+      zh: '終局性並非硬性規則，而是概率問題：每多一個[[confirmation|確認]]，付款被取代的機會便以指數下降，白皮書第 11 章有詳細計算。',
     },
     sections: [1, 4, 11],
     related: ['confirmation', 'escrow', 'trusted-third-party', 'reorg'],
@@ -428,7 +428,7 @@ const MONEY: Entry[] = [
     id: 'escrow',
     name: { en: 'escrow', zh: '託管（escrow）' },
     short: {
-      en: "An arrangement that holds a buyer's payment until the goods arrive, protecting the buyer when payments cannot be reversed.",
+      en: "An arrangement that holds a buyer’s payment until the goods arrive, protecting the buyer when payments cannot be reversed.",
       zh: '先把買家的款項扣起，待貨物送達才放款的安排；在付款不可撤回的情況下，用來保障買家。',
     },
     precise: {
@@ -462,7 +462,7 @@ const CHAIN: Entry[] = [
     name: { en: 'block header', zh: '區塊頭' },
     aka: { en: 'header', zh: '又稱區塊標頭（台灣）' },
     short: {
-      en: "A [[block]]'s 80-byte summary: one hash that stands for all its transactions, the hash of the previous block, and the [[nonce|number that miners keep changing]].",
+      en: "A [[block]]’s 80-byte summary: one hash that stands for all its transactions, the hash of the previous block, and the [[nonce|number that miners keep changing]].",
       zh: '[[block|區塊]]開頭的 80 位元組摘要：內有代表全部交易的一個哈希、上一個區塊的哈希，以及礦工不斷更換的[[nonce|隨機數]]。',
     },
     precise: {
@@ -476,11 +476,11 @@ const CHAIN: Entry[] = [
     id: 'block-height',
     name: { en: 'block height', zh: '區塊高度' },
     short: {
-      en: "A [[block]]'s position in the chain, counted from the first block, which is height 0.",
+      en: "A [[block]]’s position in the chain, counted from the first block, which is height 0.",
       zh: '[[block|區塊]]在鏈上的位置，由第一個區塊起計，而第一個區塊的高度為 0。',
     },
     precise: {
-      en: "The height is not a field of the [[block-header|header]]; since BIP 34 it is written at the start of the [[coinbase|coinbase transaction]]'s input.",
+      en: "The height is not a field of the [[block-header|header]]; since BIP 34 it is written at the start of the [[coinbase|coinbase transaction]]’s input.",
       zh: '高度並不是[[block-header|區塊頭]]的欄位；自 BIP 34 起，它寫在 [[coinbase|coinbase 交易]]輸入的開頭。',
     },
     sections: [6, 11],
@@ -513,7 +513,7 @@ const CHAIN: Entry[] = [
       en: 'Bitcoin Core stores the blocks in `blkNNNNN.dat` files and tracks every known header in a block index; the active chain is the valid one with the most [[chainwork]].',
       zh: 'Bitcoin Core 把區塊存於 `blkNNNNN.dat` 檔案，並以區塊索引記錄所有已知的區塊頭；生效的是[[chainwork|累計工作量]]最多的有效鏈。',
     },
-    sections: [3, 4, 5],
+    sections: [0, 3, 4, 5, 8, 11, 12],
     related: ['block', 'timestamp-server', 'longest-chain', 'genesis-block'],
   },
   {
@@ -525,7 +525,7 @@ const CHAIN: Entry[] = [
       zh: '證明某份數據在某個時刻已經存在的憑據，因為當時公佈的[[hash|哈希]]已把它計算在內。',
     },
     precise: {
-      en: "Each [[block-header|header]] carries a 4-byte Unix time that must be later than the median of the previous 11 blocks and no more than two hours ahead of the node's clock.",
+      en: "Each [[block-header|header]] carries a 4-byte Unix time that must be later than the median of the previous 11 blocks and no more than two hours ahead of the node’s clock.",
       zh: '每個[[block-header|區塊頭]]載有 4 位元組的 Unix 時間，必須晚於前 11 個區塊的時間中位數，且不得比節點的時鐘快超過兩小時。',
     },
     sections: [0, 3],
@@ -539,8 +539,8 @@ const CHAIN: Entry[] = [
       zh: '為一批數據計算[[hash|哈希]]並廣泛公佈的服務；每個新哈希都包含上一個哈希，環環相扣成鏈。',
     },
     precise: {
-      en: "Bitcoin's version is distributed: the network as a whole plays the server, and [[proof-of-work]] takes the place of publishing in a newspaper or on Usenet.",
-      zh: '比特幣的版本是分散式的：由整個網絡充當伺服器，並以[[proof-of-work|工作量證明]]取代登報或在 Usenet 張貼。',
+      en: "Bitcoin’s version is distributed: the network as a whole plays the server, and [[proof-of-work]] takes the place of publishing in a newspaper or on Usenet.",
+      zh: '比特幣的版本是分佈式的：由整個網絡充當伺服器，並以[[proof-of-work|工作量證明]]取代登報或在 Usenet 張貼。',
     },
     sections: [1, 3, 4],
     related: ['timestamp', 'blockchain', 'proof-of-work'],
@@ -565,7 +565,7 @@ const CHAIN: Entry[] = [
     name: { en: 'nonce', zh: '隨機數（nonce）' },
     aka: { en: 'number used once', zh: '又稱臨時值、一次性數字' },
     short: {
-      en: "A number [[miner|miners]] change until the block's [[hash]] is low enough.",
+      en: "A number [[miner|miners]] change until the block’s [[hash]] is low enough.",
       zh: '[[miner|礦工]]不斷更換的一個數字，直至區塊的[[hash|哈希]]值夠小為止。',
     },
     precise: {
@@ -579,7 +579,7 @@ const CHAIN: Entry[] = [
     id: 'hashcash',
     name: { en: 'Hashcash', zh: 'Hashcash' },
     short: {
-      en: "Adam Back's earlier scheme that made email senders compute a costly [[hash]] to deter spam; the paper borrows its [[proof-of-work]].",
+      en: "Adam Back’s earlier scheme that made email senders compute a costly [[hash]] to deter spam; the paper borrows its [[proof-of-work]].",
       zh: 'Adam Back 早年的方案：電郵寄件人須先算出一個費時的[[hash|哈希]]，以遏止垃圾郵件；白皮書的[[proof-of-work|工作量證明]]借鑑於此。',
     },
     precise: {
@@ -607,26 +607,26 @@ const CHAIN: Entry[] = [
     id: 'target',
     name: { en: 'target', zh: '目標值' },
     short: {
-      en: "The threshold a block's [[hash]] must not exceed; the lower the target, the more tries it takes to find a valid block.",
+      en: "The threshold a block’s [[hash]] must not exceed; the lower the target, the more tries it takes to find a valid block.",
       zh: '區塊[[hash|哈希]]不得超過的門檻；目標值愈低，找到有效區塊所需的嘗試次數愈多。',
     },
     precise: {
       en: 'A 256-bit number stored in the header in a compact 4-byte form, the [[bits]] field; a hash passes when it is less than or equal to the target.',
-      zh: '一個 256 位元的數字，以 4 位元組的壓縮格式存於區塊頭的[[bits|難度位]]欄位；哈希小於或等於目標值即屬合格。',
+      zh: '一個 256 位元的數字，區塊頭只以 4 位元組的[[bits|壓縮目標值]]欄位記錄它；哈希小於或等於目標值即屬合格。',
     },
     sections: [4],
     related: ['difficulty', 'bits', 'zero-bits', 'proof-of-work'],
   },
   {
     id: 'bits',
-    name: { en: 'bits', zh: '難度位（bits）' },
-    aka: { en: 'nBits, compact target', zh: '又稱 nBits、壓縮目標值' },
+    name: { en: 'bits', zh: '壓縮目標值（bits）' },
+    aka: { en: 'nBits, compact target', zh: '又稱 nBits、難度位' },
     short: {
       en: 'The 4-byte field in the [[block-header|block header]] that records the current [[target]] in a compact form.',
       zh: '[[block-header|區塊頭]]內一個 4 位元組的欄位，以壓縮格式記錄現行的[[target|目標值]]。',
     },
     precise: {
-      en: "One byte of exponent and three of mantissa, like scientific notation in base 256; the genesis block's `0x1d00ffff` means `0x00ffff` followed by 26 zero bytes.",
+      en: "One byte of exponent and three of mantissa, like scientific notation in base 256; the genesis block’s `0x1d00ffff` means `0x00ffff` followed by 26 zero bytes.",
       zh: '首個位元組是指數，其餘三個是尾數，相當於 256 進制的科學記數法；創世區塊的 `0x1d00ffff` 即 `0x00ffff` 後接 26 個零位元組。',
     },
     sections: [4],
@@ -637,7 +637,7 @@ const CHAIN: Entry[] = [
     name: { en: 'zero bits', zh: '零位元' },
     aka: { en: 'leading zeros', zh: '又稱前導零' },
     short: {
-      en: "The zeros a [[hash]] must begin with in the paper's description of [[proof-of-work]]; each extra zero bit doubles the expected number of tries.",
+      en: "The zeros a [[hash]] must begin with in the paper’s description of [[proof-of-work]]; each extra zero bit doubles the expected number of tries.",
       zh: '白皮書描述[[proof-of-work|工作量證明]]時，要求[[hash|哈希]]開頭必須出現的零；每多一個零位元，預計嘗試次數便加倍。',
     },
     precise: {
@@ -674,7 +674,7 @@ const CHAIN: Entry[] = [
       en: 'It cannot be measured directly; it is estimated from the [[difficulty]] and how quickly recent blocks arrived, as the RPC `getnetworkhashps` does.',
       zh: '算力無法直接量度，只能按[[difficulty|難度]]和近期新區塊出現的速度估算，RPC `getnetworkhashps` 便是這樣計算。',
     },
-    sections: [0, 4, 6, 11],
+    sections: [0, 1, 4, 6, 11, 12],
     related: ['difficulty', 'miner', 'majority-attack', 'asic'],
   },
   {
@@ -712,7 +712,7 @@ const CHAIN: Entry[] = [
     name: { en: 'fork', zh: '分叉' },
     aka: { en: 'chain split', zh: '又稱分岔' },
     short: {
-      en: 'A moment when the chain has two competing tips, because two [[block|blocks]] were found on the same parent at nearly the same time.',
+      en: 'A moment when the chain has two competing ends, because two [[block|blocks]] were added after the same block at nearly the same time.',
       zh: '兩個[[block|區塊]]幾乎同時接在同一個區塊之後，令鏈暫時出現兩個互相競爭的末端。',
     },
     precise: {
@@ -727,12 +727,12 @@ const CHAIN: Entry[] = [
     name: { en: 'stale block', zh: '過時區塊（stale block）' },
     aka: { en: 'orphan block (loosely)', zh: '俗稱孤塊' },
     short: {
-      en: 'A valid [[block]] that lost a [[fork]]: another block at the same height was built on instead, so it is left out of the chain.',
-      zh: '在[[fork|分叉]]中落敗的有效[[block|區塊]]：礦工選擇接在同一高度的另一個區塊之後，它因而被排除在鏈外。',
+      en: 'A valid [[block]] that lost a [[fork]]: miners built on its rival instead, so it is left out of the chain.',
+      zh: '在[[fork|分叉]]中落敗的有效[[block|區塊]]：礦工選擇接在與它競爭的另一個區塊之後，它因而被排除在鏈外。',
     },
     precise: {
-      en: 'Its transactions are not lost: those missing from the winning branch return to the [[mempool]], but its [[block-subsidy|subsidy]] and fees pay no one.',
-      zh: '它所載的交易不會消失：未被勝出分支收錄的會回到[[mempool|記憶池]]；但它的[[block-subsidy|區塊補貼]]和手續費則無人能得。',
+      en: 'Its transactions are not lost: those missing from the winning branch return to the [[mempool]], but its miner earns nothing, because the [[block-subsidy|subsidy]] and fees it claimed are void.',
+      zh: '它所載的交易不會消失：未被勝出分支收錄的會回到[[mempool|記憶池]]；但挖出它的礦工一無所得，它領取的[[block-subsidy|區塊補貼]]和手續費一併作廢。',
     },
     sections: [5],
     related: ['fork', 'reorg', 'longest-chain'],
@@ -761,8 +761,8 @@ const CHAIN: Entry[] = [
       zh: '[[transaction|交易]]被收進一個[[block|區塊]]，便得到第一個確認；其後每接上一個新區塊，確認數加一。',
     },
     precise: {
-      en: "By the paper's calculation, once 5 blocks have followed a payment an attacker with 10% of the [[hash-rate|hash rate]] has less than a 0.1% chance of reversing it; waiting for six confirmations is a common convention.",
-      zh: '按白皮書的計算，付款之後再接上 5 個區塊，掌握一成[[hash-rate|算力]]的攻擊者成功逆轉的概率便低於 0.1%；慣例上會等六個確認。',
+      en: "By the paper’s calculation, once 5 more blocks sit on top of the block that holds a payment (6 confirmations), an attacker with 10% of the [[hash-rate|hash rate]] has less than a 0.1% chance of reversing it; 6 confirmations is also the usual convention.",
+      zh: '按白皮書的計算，付款所在的區塊之後再接上 5 個區塊（即 6 個確認），掌握一成[[hash-rate|算力]]的攻擊者成功逆轉的概率便低於 0.1%；等 6 個確認也是常見的慣例。',
     },
     sections: [7, 8, 11],
     related: ['block-height', 'reorg', 'irreversibility', 'majority-attack'],
@@ -776,10 +776,10 @@ const CHAIN: Entry[] = [
       zh: '掌握過半[[hash-rate|算力]]者發動的攻擊：他們延長鏈的速度勝過誠實節點，足以收回自己剛付出的款項。',
     },
     precise: {
-      en: "Even then the attacker cannot create coins or spend other people's: nodes still reject invalid transactions and blocks, as section 11 of the paper points out.",
-      zh: '即使如此，攻擊者仍不能憑空造幣或花掉別人的錢：節點照樣拒絕無效的交易和區塊，白皮書第 11 節已指出這一點。',
+      en: "Even then the attacker cannot create coins or spend other people’s: nodes still reject invalid transactions and blocks, as section 11 of the paper points out.",
+      zh: '即使如此，攻擊者仍不能憑空造幣或花掉別人的錢：節點照樣拒絕無效的交易和區塊，白皮書第 11 章已指出這一點。',
     },
-    sections: [0, 4, 6, 11],
+    sections: [0, 1, 4, 6, 8, 11, 12],
     related: ['hash-rate', 'longest-chain', 'double-spending', 'gamblers-ruin'],
   },
 ];
@@ -821,7 +821,7 @@ const NETWORK: Entry[] = [
     name: { en: 'full node', zh: '全節點' },
     aka: { en: 'fully validating node', zh: '又稱完整節點' },
     short: {
-      en: "A [[node]] that downloads every [[block]] and checks every rule for itself, trusting nobody else's word about what is valid.",
+      en: "A [[node]] that downloads every [[block]] and checks every rule for itself, trusting nobody else’s word about what is valid.",
       zh: '下載每個[[block|區塊]]並親自核對每條規則的[[node|節點]]，不必聽信任何人對交易是否有效的說法。',
     },
     precise: {
@@ -840,8 +840,8 @@ const NETWORK: Entry[] = [
       zh: '只儲存每個區塊簡短摘要的[[wallet|錢包]]，並向[[full-node|全節點]]索取證明，以確認自己的付款已被收錄。',
     },
     precise: {
-      en: "It verifies the [[proof-of-work]] on the headers and a [[merkle-branch|Merkle branch]] for each payment, but cannot check that the block's other transactions are valid.",
-      zh: '它會核實區塊頭的[[proof-of-work|工作量證明]]和每筆付款的[[merkle-branch|默克爾分支]]，卻無法檢查區塊內其他交易是否有效。',
+      en: "It verifies the [[proof-of-work]] on the headers and a [[merkle-branch|Merkle branch]] for each payment, but cannot check that the payment itself, or anything else in the block, follows the rules.",
+      zh: '它會核實區塊頭的[[proof-of-work|工作量證明]]和每筆付款的[[merkle-branch|默克爾分支]]，卻無法檢查這筆付款本身以至區塊內其他交易是否有效。',
     },
     sections: [8],
     related: ['spv', 'full-node', 'merkle-branch', 'compact-block-filters'],
@@ -865,7 +865,7 @@ const NETWORK: Entry[] = [
     name: { en: 'mempool', zh: '記憶池' },
     aka: { en: 'memory pool', zh: '又稱內存池（內地）、交易池' },
     short: {
-      en: "A [[node]]'s waiting room for valid [[transaction|transactions]] that have been broadcast but are not yet in a block.",
+      en: "A [[node]]’s waiting room for valid [[transaction|transactions]] that have been broadcast but are not yet in a block.",
       zh: '[[node|節點]]存放待處理[[transaction|交易]]的地方：這些交易已經廣播並通過檢查，但尚未被收進區塊。',
     },
     precise: {
@@ -898,8 +898,8 @@ const NETWORK: Entry[] = [
       zh: '[[node|節點]]在 [[inv]] 中看到陌生的哈希後，用來向對方索取完整交易或區塊的網絡訊息。',
     },
     precise: {
-      en: 'It has the same format as `inv`; the peer answers with `tx` or `block` messages, or with `notfound` when it no longer has the data.',
-      zh: '格式與 `inv` 相同；對方以 `tx` 或 `block` 訊息回覆，若已沒有該數據，則回覆 `notfound`。',
+      en: 'It has the same format as `inv`; the peer answers with `tx` or `block` messages, or with `notfound` for a transaction it no longer has.',
+      zh: '格式與 `inv` 相同；對方以 `tx` 或 `block` 訊息回覆，若索取的交易已不在手上，則回覆 `notfound`。',
     },
     sections: [5],
     related: ['inv', 'broadcast', 'peer-to-peer'],
@@ -929,7 +929,7 @@ const NETWORK: Entry[] = [
     },
     precise: {
       en: 'A transaction only has to reach enough nodes to get into a block, and a node that misses a block requests it once it sees a later one, as section 5 of the paper explains.',
-      zh: '交易只要傳到足夠多的節點，便能被收進區塊；節點若漏收某個區塊，會在收到下一個區塊時發現並補取，白皮書第 5 節有說明。',
+      zh: '交易只要傳到足夠多的節點，便能被收進區塊；節點若漏收某個區塊，會在收到下一個區塊時發現並補取，白皮書第 5 章有說明。',
     },
     sections: [0, 5, 12],
     related: ['broadcast', 'peer-to-peer', 'node'],
@@ -996,7 +996,7 @@ const MINING: Entry[] = [
     },
     precise: {
       en: 'It happens every 210,000 blocks; at the 33rd halving the [[block-subsidy|subsidy]] rounds down to zero, which fixes the total supply.',
-      zh: '每 210,000 個區塊發生一次；到第 33 次減半，[[block-subsidy|區塊補貼]]便向下取整為零，總供應量因而固定。',
+      zh: '每 210,000 個區塊發生一次；到第 33 次減半，[[block-subsidy|區塊補貼]]已不足 1 聰，捨去後變成零，總供應量因而固定。',
     },
     sections: [6],
     related: ['block-subsidy', 'supply-cap', 'block-height', 'incentive'],
@@ -1010,8 +1010,8 @@ const MINING: Entry[] = [
       zh: '比特幣總量的上限，略低於 2,100 萬枚；由於每個[[block|區塊]]新發行的幣不斷[[halving|減半]]，總量最終止於此數。',
     },
     precise: {
-      en: 'The paper speaks only of "a predetermined number of coins"; the figure of 21 million comes from the code, where the [[block-subsidy|subsidies]] add up to 20,999,999.9769 BTC.',
-      zh: '白皮書只說「預定數量的幣」；2,100 萬這個數字出自源碼，全部[[block-subsidy|區塊補貼]]相加為 20,999,999.9769 BTC。',
+      en: 'The paper speaks only of “a predetermined number of coins”; the figure of 21 million comes from the code, where the [[block-subsidy|subsidies]] add up to 20,999,999.9769 BTC.',
+      zh: '白皮書只說「預定數量的貨幣」；2,100 萬這個數字出自源碼，全部[[block-subsidy|區塊補貼]]相加為 20,999,999.9769 BTC。',
     },
     sections: [6],
     related: ['halving', 'block-subsidy', 'satoshi-unit'],
@@ -1060,18 +1060,18 @@ const MINING: Entry[] = [
   },
   {
     id: 'asic',
-    name: { en: 'ASIC', zh: 'ASIC 礦機' },
+    name: { en: 'ASIC', zh: 'ASIC 晶片' },
     aka: {
       en: 'application-specific integrated circuit, mining machine',
-      zh: '全稱特殊應用集成電路；俗稱礦機',
+      zh: '全稱專用集成電路；裝有這種晶片的挖礦機器俗稱礦機',
     },
     short: {
-      en: 'A chip built to do one thing only, here computing [[sha-256]] for [[mining]], far faster and with less power than a general-purpose processor.',
+      en: 'A chip built to do one thing only, here computing [[sha-256]] for [[mining]], far faster and more energy-efficient than a general-purpose processor.',
       zh: '只為單一用途而設計的晶片，在這裏專門計算 [[sha-256]] 來[[mining|挖礦]]，速度和能源效益遠勝一般處理器。',
     },
     precise: {
       en: 'The paper speaks of one-CPU-one-vote; an ASIC performs the same double SHA-256 on the 80-byte header, so the rules did not have to change.',
-      zh: '白皮書說的是「一 CPU 一票」；ASIC 對 80 位元組的區塊頭所做的仍是同一種雙重 SHA-256 運算，因此規則毋須改動。',
+      zh: '白皮書說的是「一個 CPU 一票」；ASIC 對 80 位元組的區塊頭所做的仍是同一種雙重 SHA-256 運算，因此規則毋須改動。',
     },
     sections: [4],
     related: ['miner', 'mining-pool', 'hash-rate', 'sha-256'],
@@ -1081,7 +1081,7 @@ const MINING: Entry[] = [
     name: { en: 'Stratum', zh: 'Stratum 協定' },
     aka: { en: 'Stratum mining protocol', zh: '又稱 Stratum 挖礦協定' },
     short: {
-      en: "The protocol a [[mining-pool|mining pool]] uses to send work to its [[miner|miners]]' machines and collect their results.",
+      en: "The protocol a [[mining-pool|mining pool]] uses to send work to its [[miner|miners]]’ machines and collect their results.",
       zh: '[[mining-pool|礦池]]用來向[[miner|礦工]]的機器分派工作並收回結果的通訊協定。',
     },
     precise: {
@@ -1164,8 +1164,8 @@ const STORAGE: Entry[] = [
       zh: '刪去[[node|節點]]不再需要的舊數據以節省磁碟空間，同時不削弱它的驗證能力。',
     },
     precise: {
-      en: "The paper prunes spent transactions inside a block's [[merkle-tree|Merkle tree]]; Bitcoin Core's `-prune` option instead deletes whole old block files and keeps the [[utxo|UTXO set]].",
-      zh: '白皮書的做法是在區塊的[[merkle-tree|默克爾樹]]內剪去已花費的交易；Bitcoin Core 的 `-prune` 選項則刪除整個舊區塊檔案，只保留 [[utxo|UTXO 集]]。',
+      en: "The paper prunes spent transactions inside a block’s [[merkle-tree|Merkle tree]]; Bitcoin Core’s `-prune` option instead deletes whole old block files and keeps the [[utxo|UTXO set]].",
+      zh: '白皮書的做法是在區塊的[[merkle-tree|默克爾樹]]內剪去已花費的交易；Bitcoin Core 的 `-prune` 選項則刪除整個舊區塊檔案，但保留 [[utxo|UTXO 集]]。',
     },
     sections: [7],
     related: ['merkle-tree', 'full-node', 'utxo', 'block'],
@@ -1198,15 +1198,15 @@ const STORAGE: Entry[] = [
     },
     precise: {
       en: 'BIP 37 (`filterload`, `merkleblock`); it leaks which addresses the client owns, so Bitcoin Core no longer serves it by default and [[compact-block-filters|compact block filters]] replace it.',
-      zh: '見 BIP 37（`filterload`、`merkleblock`）；它會洩露輕錢包擁有哪些地址，因此 Bitcoin Core 預設已不再提供，改由[[compact-block-filters|精簡區塊過濾器]]取代。',
+      zh: '見 BIP 37（`filterload`、`merkleblock`）；它會洩露輕錢包擁有哪些地址，因此 Bitcoin Core 預設已不再提供，改由[[compact-block-filters|區塊過濾器]]取代。',
     },
     sections: [8],
     related: ['light-client', 'spv', 'compact-block-filters'],
   },
   {
     id: 'compact-block-filters',
-    name: { en: 'compact block filters', zh: '精簡區塊過濾器' },
-    aka: { en: 'BIP 157/158 filters, Neutrino', zh: '又稱緊湊區塊過濾器、Neutrino' },
+    name: { en: 'compact block filters', zh: '區塊過濾器（compact block filters）' },
+    aka: { en: 'BIP 157/158 filters, Neutrino', zh: '又稱精簡區塊過濾器、緊湊區塊過濾器、Neutrino' },
     short: {
       en: 'A small summary of each [[block]] that a [[light-client|light client]] downloads and checks on its own device to see whether the block concerns it.',
       zh: '每個[[block|區塊]]的一份小型摘要，[[light-client|輕錢包]]下載後在自己的裝置上比對，判斷該區塊是否與自己有關。',
@@ -1232,8 +1232,8 @@ const PRIVACY: Entry[] = [
       zh: '以密鑰代替真實姓名行事：人人都看得見每把[[public-key|公鑰]]做過甚麼，卻不知道背後是誰。',
     },
     precise: {
-      en: "The protection ends once a key is tied to a person, for example by an exchange's identity checks: analysis can then follow the links between transactions, a risk that section 10 of the paper notes.",
-      zh: '一旦某把密鑰與真人身份扯上關係（例如經交易所的身份核實），這層保護便告失效，分析者可順着交易之間的關連追查下去；白皮書第 10 節已提到這個風險。',
+      en: "The protection ends once a key is tied to a person, for example by an exchange’s identity checks: analysis can then follow the links between transactions, a risk that section 10 of the paper notes.",
+      zh: '一旦某把密鑰與真人身份扯上關係（例如經交易所的身份核實），這層保護便告失效，分析者可順着交易之間的關連追查下去；白皮書第 10 章已提到這個風險。',
     },
     sections: [10],
     related: ['address-reuse', 'common-input-heuristic', 'public-key', 'hd-wallet'],
@@ -1244,10 +1244,10 @@ const PRIVACY: Entry[] = [
     aka: { en: 'key reuse', zh: '又稱重複使用地址' },
     short: {
       en: 'Receiving more than one payment at the same [[address]], which lets anyone see that those payments belong to one owner.',
-      zh: '以同一個[[address|地址]]收取多於一筆款項，令任何人都看得出這些款項同屬一人。',
+      zh: '以同一個[[address|地址]]收取多於一筆款項，令任何人都看得出這些款項同屬一位擁有者。',
     },
     precise: {
-      en: "The paper's advice is a new [[key-pair|key pair]] for each transaction; wallets follow it by deriving a fresh address for every payment they receive.",
+      en: "The paper’s advice is a new [[key-pair|key pair]] for each transaction; wallets follow it by deriving a fresh address for every payment they receive.",
       zh: '白皮書建議每筆交易都使用新的[[key-pair|密鑰對]]；錢包的做法是每次收款都推導出一個新地址。',
     },
     sections: [10],
@@ -1259,11 +1259,11 @@ const PRIVACY: Entry[] = [
     aka: { en: 'multi-input heuristic', zh: '又稱共同輸入所有權啟發式、多輸入啟發式' },
     short: {
       en: 'The assumption that all [[input|inputs]] of one [[transaction]] belong to the same owner, which chain analysts use to group addresses together.',
-      zh: '假定同一筆[[transaction|交易]]的所有[[input|輸入]]同屬一人；鏈上分析者據此把多個地址歸為同一持有人。',
+      zh: '假定同一筆[[transaction|交易]]的所有[[input|輸入]]同屬一人；鏈上分析者據此把多個地址歸為同一擁有者。',
     },
     precise: {
       en: 'Section 10 of the paper concedes this leak for multi-input transactions; transactions built jointly by several parties, such as CoinJoin, deliberately break the assumption.',
-      zh: '白皮書第 10 節已承認多輸入交易會洩露這種關連；由多方合力組成的交易（例如 CoinJoin）則刻意打破這個假定。',
+      zh: '白皮書第 10 章已承認多輸入交易會洩露這種關連；由多方合力組成的交易（例如 CoinJoin）則刻意打破這個假定。',
     },
     sections: [10],
     related: ['input', 'pseudonymity', 'address-reuse', 'coin-selection'],
@@ -1274,7 +1274,7 @@ const PRIVACY: Entry[] = [
     aka: { en: 'hierarchical deterministic wallet', zh: '全稱分層確定性錢包' },
     short: {
       en: 'A [[wallet]] that derives all its keys from one master secret, so a single backup covers every [[address]] it will ever use.',
-      zh: '所有密鑰都由同一個主秘密推導出來的[[wallet|錢包]]，只需備份一次，便涵蓋日後用到的每個[[address|地址]]。',
+      zh: '所有密鑰都由同一個種子推導出來的[[wallet|錢包]]，只需備份一次，便涵蓋日後用到的每個[[address|地址]]。',
     },
     precise: {
       en: "BIP 32 defines the derivation: keys form a tree addressed by paths such as `m/84'/0'/0'/0/5`, and an extended public key can derive addresses without being able to spend.",
@@ -1288,8 +1288,8 @@ const PRIVACY: Entry[] = [
     name: { en: 'seed phrase', zh: '助記詞' },
     aka: { en: 'recovery phrase, mnemonic', zh: '又稱種子短語、恢復短語' },
     short: {
-      en: "A list of 12 to 24 ordinary words that encodes a [[wallet]]'s master secret; anyone who has the words can spend the coins.",
-      zh: '12 至 24 個普通詞語，記錄了[[wallet|錢包]]的主秘密；誰拿到這組詞語，誰就能花掉裏面的幣。',
+      en: "A list of 12 to 24 ordinary words that encodes a [[wallet]]’s master secret; anyone who has the words can spend the coins.",
+      zh: '12 至 24 個普通詞語，記錄了[[wallet|錢包]]的種子；誰拿到這組詞語，誰就能花掉這個錢包控制的幣。',
     },
     precise: {
       en: 'BIP 39: the words come from a list of 2,048, each carrying 11 bits, with a checksum built in; PBKDF2 turns them into the seed of a [[hd-wallet|BIP 32 wallet]].',
@@ -1335,10 +1335,10 @@ const MATH: Entry[] = [
   },
   {
     id: 'gamblers-ruin',
-    name: { en: "Gambler's Ruin", zh: '賭徒破產問題' },
-    aka: { en: "gambler's ruin problem", zh: '又稱賭徒輸光問題' },
+    name: { en: "Gambler’s Ruin", zh: '賭徒破產問題' },
+    aka: { en: "gambler’s ruin problem", zh: '又稱賭徒輸光問題' },
     short: {
-      en: "A classic probability problem about a gambler who starts behind and keeps playing; the paper uses it to find an attacker's chance of ever catching up.",
+      en: "A classic probability problem about a gambler who starts behind and keeps playing; the paper uses it to find an attacker’s chance of ever catching up.",
       zh: '一道經典的概率問題，講述落後的賭徒不斷下注；白皮書藉此計算攻擊者最終追上誠實鏈的機會。',
     },
     precise: {
@@ -1391,8 +1391,8 @@ const ENGINEERING: Entry[] = [
       zh: '一部專用的小型裝置，令[[private-key|私鑰]]不必存於電腦，並在你於它的螢幕上確認後才簽署[[transaction|交易]]。',
     },
     precise: {
-      en: 'It receives an unsigned [[psbt|PSBT]] over USB, QR code or memory card and returns the signatures; the keys never leave the device.',
-      zh: '它經 USB、二維碼或記憶卡接收未簽署的 [[psbt|PSBT]]，然後交回簽署；密鑰始終不會離開裝置。',
+      en: 'It usually receives the unsigned transaction as a [[psbt|PSBT]] over USB, QR code or memory card and returns the signatures; the keys never leave the device.',
+      zh: '它通常經 USB、二維碼或記憶卡接收未簽署的 [[psbt|PSBT]]，然後交回簽署；密鑰始終不會離開裝置。',
     },
     sections: [2, 10],
     related: ['wallet', 'software-wallet', 'psbt', 'seed-phrase'],
@@ -1418,9 +1418,9 @@ const ENGINEERING: Entry[] = [
   {
     id: 'bitcoin-core',
     name: { en: 'Bitcoin Core', zh: 'Bitcoin Core' },
-    aka: { en: 'the reference implementation', zh: '又稱參考實作' },
+    aka: { en: 'the reference implementation', zh: '又稱參考實現' },
     short: {
-      en: "The open-source program descended from Satoshi Nakamoto's original release, and the most widely used software for running a [[full-node|full node]].",
+      en: "The open-source program descended from Satoshi Nakamoto’s original release, and the most widely used software for running a [[full-node|full node]].",
       zh: '由中本聰最初發佈的程式一脈相承而來的開源軟件，也是運行[[full-node|全節點]]最常用的軟件。',
     },
     precise: {

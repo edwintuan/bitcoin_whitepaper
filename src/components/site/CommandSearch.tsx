@@ -3,6 +3,7 @@ import { SECTIONS } from '@/content/sections';
 import { UI } from '@/content/ui';
 import { TERMS, TERM_IDS } from '@/glossary';
 import { useT } from '@/i18n/settings';
+import { searchable } from '@/text/format';
 import { plainRich } from '@/text/richtext';
 
 /**
@@ -60,7 +61,7 @@ export function CommandSearch({ isOpen, onOpenChange }: { isOpen: boolean; onOpe
             <CommandPaletteItem
               key={id}
               id={`term:${id}`}
-              textValue={`${term.name.en} ${term.name.zh} ${term.aka?.en ?? ''} ${term.aka?.zh ?? ''}`}
+              textValue={searchable(`${term.name.en} ${term.name.zh} ${term.aka?.en ?? ''} ${term.aka?.zh ?? ''}`)}
             >
               <span className="search-term">
                 <span className="search-term-name">{t(term.name)}</span>

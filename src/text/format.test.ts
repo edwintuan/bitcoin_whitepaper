@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { fill, formatBtc, formatCount, shortHex } from './format';
+import { fill, formatBtc, formatCount, searchable, shortHex } from './format';
 
 describe('formatBtc', () => {
   it('prints satoshis as bitcoin without trailing zeros', () => {
@@ -43,5 +43,14 @@ describe('fill', () => {
   });
   it('leaves an unknown placeholder empty', () => {
     expect(fill('a{x}b', {})).toBe('ab');
+  });
+});
+
+describe('searchable', () => {
+  it('adds a copy with straight apostrophes, so a query typed either way matches', () => {
+    expect(searchable('Gambler’s Ruin')).toBe("Gambler’s Ruin Gambler's Ruin");
+  });
+  it('leaves text without typographic apostrophes as it is', () => {
+    expect(searchable('Merkle tree 默克爾樹')).toBe('Merkle tree 默克爾樹');
   });
 });
