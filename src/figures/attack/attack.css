@@ -1,0 +1,438 @@
+/* Fig. 11.1: the attack calculator. Plain CSS on the site's tokens. */
+
+.atk-cap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 0 6px;
+  color: var(--color-ink-3);
+}
+.atk-sub {
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--color-ink-3);
+}
+/* A variable inside a label keeps its own case: p is not P. */
+.atk-var {
+  text-transform: none;
+}
+
+/* ---- the two inputs, shared by every scene ---- */
+/* The label and the value share a line; the slider has the full width; what the value means sits under it, clear of the thumb. */
+.atk-input {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'label value'
+    'slider slider'
+    'sub sub';
+  align-items: end;
+  gap: 0 14px;
+}
+.atk-input + .atk-input {
+  margin-top: 12px;
+}
+.atk-input > .label {
+  grid-area: label;
+}
+.atk-input > .stat-value {
+  grid-area: value;
+}
+.atk-slider {
+  grid-area: slider;
+}
+.atk-input > .atk-sub {
+  grid-area: sub;
+}
+.atk-znote {
+  margin-top: 12px;
+}
+
+/* ---- calculator: the result ---- */
+.atk-result {
+  padding: 11px 14px 12px;
+  background: var(--color-ink);
+  color: var(--color-cream);
+}
+.atk-result-cap {
+  margin: 0 0 7px;
+  color: var(--color-cream-3);
+}
+.atk-result-big {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 18px;
+  margin: 0;
+}
+.atk-p {
+  font-family: var(--font-display);
+  font-size: clamp(38px, 7.2vw, 60px);
+  line-height: 1;
+  letter-spacing: 0.01em;
+  color: var(--color-orange);
+  font-variant-numeric: tabular-nums;
+}
+.atk-odds {
+  font-size: 16px;
+}
+:lang(zh-Hant) .atk-odds {
+  font-size: 15px;
+}
+.atk-exact {
+  margin: 7px 0 0;
+  font-size: 11.5px;
+  color: var(--color-cream-3);
+}
+.atk-exact sup {
+  font-size: 9px;
+}
+
+/* ---- calculator: the chart ---- */
+.atk-axis {
+  color: var(--color-ink-3);
+}
+.atk-calc > .atk-plot {
+  margin-top: 4px;
+}
+.atk-calc > .atk-axis-x {
+  margin-top: 2px;
+  text-align: right;
+}
+.atk-plot svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+.atk-grid {
+  stroke: var(--color-rule);
+  stroke-width: 1;
+}
+.atk-axisline {
+  stroke: var(--color-ink);
+  stroke-width: 2;
+}
+.atk-tick {
+  fill: var(--color-ink-2);
+}
+.atk-tick-exp {
+  font-size: 9px;
+}
+.atk-threshold {
+  stroke: var(--color-orange-ink);
+  stroke-width: 2;
+}
+.atk-threshold-label {
+  fill: var(--color-orange-ink);
+  font-weight: 500;
+}
+.atk-curve {
+  fill: none;
+  stroke: var(--color-ink);
+  stroke-width: 2;
+}
+.atk-dot {
+  fill: var(--color-ink);
+}
+.atk-wait-mark {
+  fill: var(--color-orange-ink);
+}
+.atk-wait-label {
+  fill: var(--color-ink);
+  font-weight: 500;
+  paint-order: stroke;
+  stroke: var(--color-paper);
+  stroke-width: 3px;
+}
+.atk-guide {
+  stroke: var(--color-ink-3);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+.atk-point {
+  fill: var(--color-orange);
+}
+/* The answer to "how long": the figure's one tinted band. */
+.atk-callout {
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+:lang(zh-Hant) .atk-callout {
+  line-height: 1.75;
+}
+
+/* ---- the paper's code ---- */
+/* The listing beside the loop's values where the stage has room for both, above them where it has not. */
+.atk-code {
+  container-type: inline-size;
+}
+.atk-code-top {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+}
+@container (max-width: 539px) {
+  .atk-code-top {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.atk-listing {
+  font-size: 11px;
+  line-height: 1.55;
+}
+.atk-listing .code-no {
+  width: 34px;
+}
+.atk-listing[data-plain='true'] .code-line {
+  padding-left: 8px;
+}
+.atk-path {
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
+.atk-code-port .fig-note {
+  margin: 6px 0 0;
+}
+.atk-watch .atk-cap {
+  flex-wrap: wrap;
+  gap: 2px 10px;
+}
+.atk-echo {
+  color: var(--color-ink);
+  text-transform: none;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+/* The loop's values: ruled lists under one heavy line, and another heavy line above what is returned. */
+.atk-watch-list {
+  margin: 0;
+}
+.atk-watch > .atk-watch-list:first-of-type {
+  border-top: 3px solid var(--color-ink);
+}
+.atk-watch-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0 10px;
+  padding: 4px 6px;
+  border-bottom: 1px solid var(--color-rule);
+  outline-offset: -2px;
+  transition: background-color var(--duration-quick) var(--ease-out);
+}
+.atk-watch-row[data-on='true'] {
+  background: var(--color-orange-soft);
+}
+.atk-watch-row dt,
+.atk-watch-row dd {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.atk-watch-row dd {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.atk-watch-row .atk-gloss {
+  grid-column: 1 / -1;
+  font-family: var(--font-sans);
+  font-size: 11.5px;
+  line-height: 1.35;
+  text-align: left;
+  color: var(--color-ink-3);
+}
+:lang(zh-Hant) .atk-watch-row .atk-gloss {
+  line-height: 1.55;
+}
+.atk-watch-result .atk-watch-row {
+  border-bottom: 0;
+  border-top: 3px solid var(--color-ink);
+}
+.atk-watch-result dt,
+.atk-watch-result dd:not(.atk-gloss) {
+  font-weight: 500;
+}
+.atk-pass {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 10px;
+  margin: 8px 0 2px;
+  padding: 6px 7px;
+  background: var(--color-ink);
+  color: var(--color-cream);
+}
+.atk-pass-now {
+  margin: 0;
+  font-size: 11.5px;
+  color: var(--color-orange);
+}
+.atk-pass-buttons {
+  display: flex;
+  gap: 5px;
+}
+.atk-watch-hint {
+  margin: 8px 0 0;
+  font-size: 11.5px;
+}
+.atk-code > .atk-tables {
+  margin-top: 22px;
+}
+.atk-table-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(146px, 1fr));
+  gap: 14px 22px;
+}
+.atk-table-head {
+  margin: 0 0 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.atk-table ol {
+  margin: 0;
+  padding: 3px 0 0;
+  list-style: none;
+  border-top: 3px solid var(--color-ink);
+}
+.atk-table li {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 11.5px;
+  line-height: 1.6;
+}
+.atk-table-line {
+  white-space: pre;
+}
+.atk-table-mark {
+  color: var(--color-valid);
+  font-weight: 500;
+}
+.atk-table li[data-ok='false'] .atk-table-mark {
+  color: var(--color-invalid);
+}
+.atk-tables .fig-status {
+  min-height: 0;
+  margin: 10px 0 4px;
+}
+
+/* ---- the race ---- */
+.atk-lanes {
+  display: grid;
+  gap: 10px;
+}
+.atk-lane-name {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 0 4px;
+  color: var(--color-ink-3);
+}
+.atk-lane-name .mono {
+  color: var(--color-ink);
+}
+.atk-tiles {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 20px;
+  padding-bottom: 3px;
+  border-bottom: 1px solid var(--color-rule);
+  overflow: hidden;
+}
+/* A block is a solid tile: ink on the honest chain, orange on the attacker's. */
+.atk-tiles i {
+  flex: none;
+  width: calc(var(--pitch) - 2px);
+  height: 14px;
+  background: var(--color-ink);
+}
+.atk-lane[data-who='attacker'] .atk-tiles i {
+  background: var(--color-orange);
+}
+.atk-earlier {
+  flex: none;
+  width: 100px;
+  font-size: 11px;
+  color: var(--color-ink-3);
+  white-space: nowrap;
+}
+.atk-race-facts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 8px 28px;
+  margin-bottom: 0;
+}
+.atk-race-facts dt {
+  color: var(--color-ink-3);
+}
+.atk-race-facts dd {
+  margin: 2px 0 0;
+}
+.atk-race-facts dd.mono {
+  font-size: 15px;
+  line-height: 1.6;
+}
+.atk-walk {
+  font-family: var(--font-mono), var(--font-sans);
+  color: var(--color-ink);
+}
+.atk-walk svg {
+  display: block;
+  overflow: visible;
+}
+.atk-shimmer {
+  --shimmer-base: var(--color-ink-3);
+  --shimmer-highlight: var(--color-orange);
+  font-size: 12px;
+}
+/* A thousand races and what they add up to, under one heavy line. */
+.atk-tally {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 3px solid var(--color-ink);
+}
+.atk-compare {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px 16px;
+  margin: 14px 0 10px;
+}
+.atk-compare dt {
+  color: var(--color-ink-3);
+}
+.atk-compare dd {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin: 5px 0 0;
+}
+.atk-compare-paper {
+  padding-left: 14px;
+  border-left: 1px solid var(--color-rule);
+}
+
+@media (max-width: 640px) {
+  .atk-compare {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .atk-compare-paper {
+    grid-column: 1 / -1;
+    padding: 10px 0 0;
+    border-left: 0;
+    border-top: 1px solid var(--color-rule);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .atk-watch-row {
+    transition: none;
+  }
+}

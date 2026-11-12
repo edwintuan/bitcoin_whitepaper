@@ -1,0 +1,268 @@
+/* Fig. 12.1: the whole machine. Plain CSS on the site's tokens. */
+
+.mch-cap {
+  margin: 0 0 6px;
+  color: var(--color-ink-3);
+}
+.mch-dim {
+  color: var(--color-ink-3);
+}
+
+/* ---- the diagram: wires under, parts on top ---- */
+.mch-diagram {
+  position: relative;
+}
+.mch-wires {
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: visible;
+  font-family: var(--font-mono), var(--font-sans);
+  font-size: 11px;
+}
+.mch-wire {
+  fill: none;
+  stroke: var(--color-ink);
+  stroke-width: 2;
+}
+[data-tone='live'] .mch-wire {
+  stroke: var(--color-orange);
+  stroke-width: 3;
+}
+[data-tone='ghost'] .mch-wire {
+  stroke: var(--color-ink-4);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+}
+.mch-head[data-tone='plain'] {
+  fill: var(--color-ink);
+}
+.mch-head[data-tone='live'] {
+  fill: var(--color-orange);
+}
+.mch-head[data-tone='ghost'] {
+  fill: var(--color-ink-4);
+}
+.mch-wire-label {
+  fill: var(--color-ink-2);
+  paint-order: stroke;
+  stroke: var(--color-paper);
+  stroke-width: 4px;
+}
+[data-tone='live'] .mch-wire-label {
+  fill: var(--color-ink);
+  font-weight: 500;
+}
+/* The dashes say "not yet"; the words stay readable. */
+[data-tone='ghost'] .mch-wire-label {
+  fill: var(--color-ink-3);
+}
+
+/* A part is a solid shape with nothing boxed inside it. One not yet reached is only a dashed outline: that is its state. */
+.mch-part {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2px;
+  padding: 5px 10px;
+  border: 0;
+  background: var(--color-ink);
+  color: var(--color-cream);
+  text-align: start;
+  cursor: pointer;
+  transition:
+    background-color var(--duration-quick) var(--ease-out),
+    color var(--duration-quick) var(--ease-out);
+}
+.mch-part:hover {
+  background: var(--color-ink-2);
+}
+.mch-part[data-state='selected'] {
+  background: var(--color-orange);
+  color: var(--color-ink);
+}
+.mch-part[data-state='ghost'] {
+  border: 2px dashed var(--color-ink-4);
+  background: transparent;
+  color: var(--color-ink-3);
+}
+.mch-part[data-state='ghost']:hover {
+  background: var(--color-cream);
+}
+/*
+ * The walkthrough's pointer. A part has wires on every side and no gutter of
+ * its own, so the bar of `fig-pointed` sits on the part's leading edge.
+ */
+.mch-part.fig-pointed::before {
+  left: 0;
+  width: 5px;
+}
+.mch-part[data-state='selected'].fig-pointed::before {
+  background: var(--color-ink);
+}
+.mch-part-no {
+  font-size: 11px;
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+  opacity: 0.75;
+}
+.mch-part[data-state='ghost'] .mch-part-no {
+  opacity: 1;
+}
+.mch-part-name {
+  font-family: var(--font-display);
+  font-size: 16px;
+  line-height: 1.02;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+:lang(zh-Hant) .mch-part-name {
+  font-size: 14.5px;
+  font-weight: 900;
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+}
+
+/* ---- what the selected part does ---- */
+.mch-panel {
+  margin-top: 18px;
+}
+.mch-panel-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 0;
+}
+.mch-panel-no {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-orange-ink);
+}
+.mch-panel-name {
+  font-size: 24px;
+}
+:lang(zh-Hant) .mch-panel-name {
+  font-size: 18px;
+}
+.mch-panel-text {
+  min-height: 4.5em;
+  margin: 8px 0 0;
+}
+.mch-specimen {
+  margin: 10px 0 0;
+}
+.mch-specimen dt {
+  color: var(--color-ink-3);
+}
+.mch-specimen dd {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  min-height: 22px;
+  margin: 4px 0 0;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.mch-warning {
+  margin: 8px 0 0;
+}
+.mch-flows {
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.45;
+}
+:lang(zh-Hant) .mch-flows {
+  line-height: 1.7;
+}
+.mch-flows li {
+  position: relative;
+  padding-left: 22px;
+}
+.mch-flows li::before {
+  position: absolute;
+  left: 0;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  color: var(--color-orange-ink);
+}
+.mch-flows li[data-way='in']::before {
+  content: '→▮';
+  letter-spacing: -0.12em;
+}
+.mch-flows li[data-way='out']::before {
+  content: '▮→';
+  letter-spacing: -0.12em;
+}
+.mch .fig-status {
+  min-height: 0;
+  margin: 12px 0 0;
+}
+
+/* ---- what you now know: a ruled list under one heavy line ---- */
+.mch-know-cap {
+  margin-top: 22px;
+}
+.mch-know {
+  columns: 2 220px;
+  column-gap: 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 3px solid var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.4;
+}
+:lang(zh-Hant) .mch-know {
+  line-height: 1.65;
+}
+.mch-know li {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--color-rule);
+  break-inside: avoid;
+}
+.mch-know-no {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+@media (max-width: 640px) {
+  .mch-part {
+    padding: 4px 6px 4px 8px;
+  }
+  .mch-part.fig-pointed::before {
+    width: 4px;
+  }
+  .mch-part-name {
+    font-size: 13.5px;
+  }
+  :lang(zh-Hant) .mch-part-name {
+    font-size: 13px;
+  }
+  .mch-panel-text {
+    min-height: 0;
+  }
+}
+
+/* The narrowest phones: a box is about 74 px wide, and "Transaction" has to fit on one line. */
+@media (max-width: 340px) {
+  .mch-part-name,
+  :lang(zh-Hant) .mch-part-name {
+    font-size: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mch-part {
+    transition: none;
+  }
+}
