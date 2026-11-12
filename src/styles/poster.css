@@ -181,9 +181,23 @@
   .on-ink:focus-visible {
     outline-color: var(--color-orange);
   }
+  /*
+   * On a control the ring has the last word. Figure styles are not in a
+   * cascade layer, so an outline they draw on a button (to point at it during
+   * a walkthrough, say) would otherwise replace the ring and hide the focus.
+   * `:where()` keeps the list from adding weight, so a control can still
+   * choose its ring colour.
+   */
+  :where(button, a[href], input, select, textarea, summary, [role='button'], [role='radio'], [role='switch'], [role='tab'], [role='listitem'][tabindex]):focus-visible {
+    outline: 3px solid var(--color-ink) !important;
+    outline-offset: 2px !important;
+  }
+  .on-ink :where(button, a[href], input, select, textarea, summary, [role='button'], [role='radio'], [role='switch'], [role='tab'], [role='listitem'][tabindex]):focus-visible {
+    outline-color: var(--color-orange) !important;
+  }
   /* The selected segment sits on an ink pill, where an ink ring cannot be seen. */
   .seg-item:focus-visible {
-    outline-color: var(--color-orange);
+    outline-color: var(--color-orange) !important;
   }
   button {
     font: inherit;
