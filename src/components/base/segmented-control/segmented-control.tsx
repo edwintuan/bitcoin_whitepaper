@@ -92,7 +92,8 @@ export function SegmentedControl({ className, children, variant = "solid", ref, 
       {...props}
       className={(state) =>
         cx(
-          "relative inline-flex items-stretch border-2 border-(--seg-line)",
+          // No outline around the group: the filled pill is enough to show the choice.
+          "relative inline-flex items-stretch",
           variant === "solid" && "bg-transparent",
           typeof className === "function" ? className(state) : className,
         )
