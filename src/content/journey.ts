@@ -56,7 +56,7 @@ export const JOURNEY = {
     sigValid: { en: 'the signature is valid', zh: '簽署有效' },
     inMempool: { en: 'kept in the mempool and announced to peers', zh: '放進記憶池，並通知相鄰節點' },
     template: { en: 'block template', zh: '區塊模板' },
-    coinbase: { en: 'coinbase: pays the miner', zh: 'Coinbase：把報酬付給礦工' },
+    coinbase: { en: 'coinbase: pays the miner', zh: 'coinbase：把報酬付給礦工' },
     stranger: { en: 'someone else’s payment', zh: '別人的付款' },
     ours: { en: 'Alice → Bob', zh: '愛麗絲 → 鮑勃' },
     merkleRoot: { en: 'Merkle root', zh: '默克爾根' },
@@ -120,7 +120,7 @@ export const JOURNEY = {
       title: { en: 'A pool packs it into a block', zh: '礦池把它收進區塊' },
       text: {
         en: 'A [[mining-pool|mining pool]] asks its node for a block template: a batch of waiting transactions, usually the ones paying the highest [[fee|fees]], plus a [[coinbase|coinbase transaction]] that pays the miner. All of them are folded into a single [[merkle-root|Merkle root]].',
-        zh: '[[mining-pool|礦池]]向自己的節點索取區塊模板：一批等候中的交易（通常是[[fee|手續費]]最高的那些），再加上一筆把報酬付給礦工的 [[coinbase|Coinbase 交易]]。全部交易最後歸納成一個[[merkle-root|默克爾根]]。',
+        zh: '[[mining-pool|礦池]]向自己的節點索取區塊模板：一批等候中的交易（通常是[[fee|手續費]]最高的那些），再加上一筆把報酬付給礦工的 [[coinbase|coinbase 交易]]。全部交易最後歸納成一個[[merkle-root|默克爾根]]。',
       },
       speaks: 'getblocktemplate · Stratum',
       sections: [5, 6, 7],

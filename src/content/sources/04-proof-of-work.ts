@@ -116,7 +116,7 @@ bool CheckProofOfWorkImpl(uint256 hash, unsigned int nBits, const Consensus::Par
         {
           lines: [66, 76],
           note: {
-            en: "An exception that applies only to a test network. On the main network the previous target is simply loaded.",
+            en: "An exception that applies only to a test network. On the main network the previous target is loaded unchanged.",
             zh: "只適用於某個測試網絡的例外情況。在主網上，這裏只是載入上一期的目標值。",
           },
         },

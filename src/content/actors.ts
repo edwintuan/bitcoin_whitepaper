@@ -70,10 +70,13 @@ export const ACTORS: Record<ActorId, ActorDef> = {
       en: 'Assembles the block to be mined, shares the hashing among many machines and splits the reward.',
       zh: '組出待挖的區塊，把哈希運算分派給大量礦機，再按貢獻分配獎勵。',
     },
-    covers: { en: '§5 collecting transactions into a block, §6 the coinbase and its reward', zh: '§5 把交易收進區塊、§6 Coinbase 交易與獎勵' },
+    covers: {
+      en: '§4 sharing out the search, §5 collecting transactions into a block, §6 the coinbase and its reward',
+      zh: '§4 分派挖礦工作、§5 把交易收進區塊、§6 coinbase 交易與獎勵',
+    },
     examples: { en: 'Public pools; CKPool is open source', zh: '各大公開礦池；CKPool 為開源實現' },
     interfaces: ['getblocktemplate', 'Stratum v1 / v2'],
-    sections: [5, 6],
+    sections: [4, 5, 6],
   },
   'asic-miner': {
     id: 'asic-miner',
