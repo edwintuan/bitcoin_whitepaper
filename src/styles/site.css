@@ -1416,6 +1416,13 @@
   :lang(zh-Hant) .actor-name {
     font-size: 16px;
   }
+  .actor-sections {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 10px;
+    margin-top: 8px;
+    font-size: 12px;
+  }
   .actor-speaks {
     margin: 0;
     padding: 0;

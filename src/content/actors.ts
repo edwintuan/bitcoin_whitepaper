@@ -11,8 +11,6 @@ export interface ActorDef {
   examples: L<string>;
   /** Protocols and interfaces it speaks. Untranslated identifiers. */
   interfaces: string[];
-  /** Section numbers where it shows up. */
-  sections: number[];
 }
 
 /**
@@ -29,12 +27,11 @@ export const ACTORS: Record<ActorId, ActorDef> = {
       zh: '記錄哪些幣屬於你，組出交易，再交給簽署裝置簽署。',
     },
     covers: {
-      en: '§2 Transactions, §9 Combining and Splitting Value, §10 Privacy',
-      zh: '§2 交易、§9 價值的合併與分割、§10 私隱',
+      en: 'Builds and broadcasts transactions, chooses coins and fees, and gives every payment a fresh address',
+      zh: '組出並廣播交易、選幣與定手續費，並為每筆收款換上新地址',
     },
     examples: { en: 'Bitcoin Core wallet, Electrum, Sparrow', zh: 'Bitcoin Core 錢包、Electrum、Sparrow' },
     interfaces: ['PSBT (BIP 174)', 'HD keys (BIP 32 / 39)', 'Output descriptors'],
-    sections: [2, 9, 10],
   },
   'hardware-wallet': {
     id: 'hardware-wallet',
@@ -43,10 +40,12 @@ export const ACTORS: Record<ActorId, ActorDef> = {
       en: 'A small device that holds the private keys and signs. The keys never leave it.',
       zh: '保管私鑰並負責簽署的小型裝置，私鑰永不離開裝置。',
     },
-    covers: { en: '§2 Digital signatures, by keeping the private key', zh: '§2 數碼簽署（保管私鑰）' },
+    covers: {
+      en: 'Makes the digital signatures, and checks on its own screen where the payment and the change go',
+      zh: '產生數碼簽署，並在自己的螢幕上核對付款與找續的去向',
+    },
     examples: { en: 'Trezor, Ledger, Coldcard', zh: 'Trezor、Ledger、Coldcard' },
     interfaces: ['USB', 'QR codes', 'microSD', 'HWI'],
-    sections: [2, 10],
   },
   'full-node': {
     id: 'full-node',
@@ -56,12 +55,11 @@ export const ACTORS: Record<ActorId, ActorDef> = {
       zh: '按規則核對每個區塊和每筆交易，轉發給其他節點，並儲存整條鏈。',
     },
     covers: {
-      en: '§3 to §5 checking and relaying, §6 the rules of issuance, §7 storage',
-      zh: '§3 至 §5 驗證與傳播、§6 發行規則、§7 儲存',
+      en: 'Enforces every rule of the paper: signatures, no double-spending, proof-of-work, the longest chain, issuance',
+      zh: '執行白皮書的每一條規則：簽署、不得雙重支付、工作量證明、最長鏈、發行量',
     },
     examples: { en: 'Bitcoin Core (bitcoind), btcd', zh: 'Bitcoin Core（bitcoind）、btcd' },
     interfaces: ['P2P · TCP 8333', 'JSON-RPC · 8332', 'REST', 'ZMQ'],
-    sections: [3, 4, 5, 6, 7, 8, 11],
   },
   'mining-pool': {
     id: 'mining-pool',
@@ -71,12 +69,11 @@ export const ACTORS: Record<ActorId, ActorDef> = {
       zh: '組出待挖的區塊，把哈希運算分派給大量礦機，再按貢獻分配獎勵。',
     },
     covers: {
-      en: '§4 sharing out the search, §5 collecting transactions into a block, §6 the coinbase and its reward',
-      zh: '§4 分派挖礦工作、§5 把交易收進區塊、§6 coinbase 交易與獎勵',
+      en: 'Collects transactions into a block, shares out the search for its proof-of-work, and claims the reward',
+      zh: '把交易收進區塊、分派尋找工作量證明的工作，並領取獎勵',
     },
     examples: { en: 'Public pools; CKPool is open source', zh: '各大公開礦池；CKPool 為開源實現' },
     interfaces: ['getblocktemplate', 'Stratum v1 / v2'],
-    sections: [4, 5, 6],
   },
   'asic-miner': {
     id: 'asic-miner',
@@ -85,10 +82,9 @@ export const ACTORS: Record<ActorId, ActorDef> = {
       en: 'Hardware built for one job: double SHA-256 on block headers, as fast as it can.',
       zh: '只做一件事的專用硬件：以最快速度對區塊頭做雙重 SHA-256。',
     },
-    covers: { en: '§4 Proof-of-Work', zh: '§4 工作量證明' },
+    covers: { en: 'Searches for the proof-of-work, hash by hash', zh: '逐個哈希地尋找工作量證明' },
     examples: { en: 'SHA-256 ASIC machines and their firmware', zh: 'SHA-256 專用礦機及其固件' },
     interfaces: ['Stratum client'],
-    sections: [4],
   },
   'light-client': {
     id: 'light-client',
@@ -97,10 +93,9 @@ export const ACTORS: Record<ActorId, ActorDef> = {
       en: 'Keeps only block headers and asks full nodes to prove a payment is in a block.',
       zh: '只保存區塊頭，並要求全節點證明某筆付款確實在某個區塊之內。',
     },
-    covers: { en: '§8 Simplified Payment Verification', zh: '§8 簡易支付驗證' },
+    covers: { en: 'Simplified payment verification: headers and a Merkle branch', zh: '簡易支付驗證：區塊頭加一條默克爾分支' },
     examples: { en: 'Phone wallets, Electrum, Neutrino', zh: '手機錢包、Electrum、Neutrino' },
     interfaces: ['Merkle proofs', 'BIP 157 / 158', 'Electrum protocol'],
-    sections: [8],
   },
   explorer: {
     id: 'explorer',
@@ -109,10 +104,12 @@ export const ACTORS: Record<ActorId, ActorDef> = {
       en: 'Index the chain so anyone can look things up, and decide how many confirmations to wait for.',
       zh: '為整條鏈建立索引供人查閱，並自行決定要等多少個確認。',
     },
-    covers: { en: '§11 how many confirmations count as final', zh: '§11 多少個確認才算數' },
+    covers: {
+      en: 'Show when a payment was buried and how deep, and choose how many confirmations to wait for',
+      zh: '顯示一筆付款何時被埋入鏈中、埋得多深，並決定要等多少個確認',
+    },
     examples: { en: 'mempool.space, Esplora', zh: 'mempool.space、Esplora' },
     interfaces: ['REST', 'Electrum protocol'],
-    sections: [3, 11],
   },
 };
 

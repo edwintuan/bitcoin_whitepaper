@@ -1,9 +1,11 @@
 import { ACTORS, ACTOR_ORDER } from '@/content/actors';
+import { ACTOR_SECTIONS } from '@/content/actorSections';
+import { SECTION_IDS } from '@/content/types';
 import { UI } from '@/content/ui';
 import { useT } from '@/i18n/settings';
 import { ActorIcon } from './WhoRuns';
 
-/** Appendix A: every actor, what it does, and what it speaks, in one table. */
+/** Appendix A: every actor, what it does, where the page explains it, and what it speaks, in one table. */
 export function EngineeringMap() {
   const t = useT();
   const a = UI.appendix;
@@ -42,7 +44,16 @@ export function EngineeringMap() {
                       </span>
                     </th>
                     <td data-label={t(a.colWhat)}>{t(actor.what)}</td>
-                    <td data-label={t(a.colCovers)}>{t(actor.covers)}</td>
+                    <td data-label={t(a.colCovers)}>
+                      {t(actor.covers)}
+                      <span className="actor-sections mono">
+                        {ACTOR_SECTIONS[id].map((number) => (
+                          <a key={number} className="link" href={`#${SECTION_IDS[number]}`}>
+                            {number === 0 ? t(UI.abstract) : `§${number}`}
+                          </a>
+                        ))}
+                      </span>
+                    </td>
                     <td data-label={t(a.colExamples)}>{t(actor.examples)}</td>
                     <td data-label={t(a.colInterfaces)}>
                       <ul className="actor-speaks mono">
