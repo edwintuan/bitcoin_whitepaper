@@ -11,6 +11,7 @@ export const UI = {
   },
   brand: { en: 'Bitcoin, explained', zh: '比特幣，逐塊拆解' },
   credit: { en: 'Provided by Animus Laboratories', zh: '由 Animus Laboratories 提供' },
+  sourceLink: { en: 'Source on GitHub', zh: 'GitHub 原始碼' },
   skipToContent: { en: 'Skip to the paper', zh: '跳至正文' },
 
   language: { en: 'Language', zh: '語言' },

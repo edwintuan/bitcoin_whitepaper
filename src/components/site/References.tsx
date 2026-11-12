@@ -6,6 +6,9 @@ import { useT } from '@/i18n/settings';
 /** The Bitcoin Core release every source excerpt on the page is taken from. */
 const CORE_TAG = 'v32.1';
 
+/** Where this site's own source lives. */
+const SOURCE_URL = 'https://github.com/edwintuan/bitcoin_whitepaper';
+
 /** The paper's own reference list, then where this page's facts come from. */
 export function References() {
   const t = useT();
@@ -64,6 +67,9 @@ export function Footer() {
           <BrandMark /> {t(UI.brand)}
         </p>
         <p className="label footer-credit">{t(UI.credit)}</p>
+        <a className="label footer-source" href={SOURCE_URL} target="_blank" rel="noreferrer noopener">
+          {t(UI.sourceLink)} <span aria-hidden="true">↗</span>
+        </a>
         <a className="label footer-top" href="#top">
           {t(UI.backToTop)} <span aria-hidden="true">↑</span>
         </a>

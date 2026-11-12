@@ -1647,6 +1647,9 @@
   .footer-credit {
     color: var(--color-orange);
   }
+  .footer-source {
+    text-underline-offset: 3px;
+  }
   .footer-top {
     margin-left: auto;
     text-underline-offset: 3px;
