@@ -255,11 +255,11 @@
 
 ### 词表
 
-共 93 个术语，全部中英双语，集中在 `src/glossary/terms.ts`，同时生成附录 B（按下列九个类别分组、可筛选）与 `⌘K` 搜索索引（BoardUI Command Palette，可搜术语与章节）。带「▣」的 28 个有活的小图。
+共 94 个术语，全部中英双语，集中在 `src/glossary/terms.ts`，同时生成附录 B（按下列九个类别分组、可筛选）与 `⌘K` 搜索索引（BoardUI Command Palette，可搜术语与章节）。带「▣」的 29 个有活的小图，小图文件为 `src/glossary/visuals/<术语 id>.tsx`，按文件名自动注册。
 
 - **密码学**：hash ▣、sha-256、double-sha256、digital-signature ▣、public-key、private-key、key-pair ▣、ecdsa、address ▣、hash160
 - **货币与交易**：electronic-coin、transaction ▣、input、output、utxo ▣、change ▣、fee ▣、coinbase ▣、satoshi-unit、double-spending ▣、trusted-third-party、mint、script、txid、psbt、coin-selection、irreversibility、escrow
-- **链与共识**：block ▣、block-header ▣、block-height、genesis-block、blockchain、timestamp、timestamp-server ▣、proof-of-work ▣、hashcash、difficulty ▣、target、bits、zero-bits、retarget、hash-rate、longest-chain ▣、chainwork、fork ▣、stale-block、reorg、confirmation ▣、majority-attack
+- **链与共识**：block ▣、block-header ▣、block-height、genesis-block、blockchain、timestamp、timestamp-server ▣、proof-of-work ▣、nonce ▣、hashcash、difficulty ▣、target、bits、zero-bits、retarget、hash-rate、longest-chain ▣、chainwork、fork ▣、stale-block、reorg、confirmation ▣、majority-attack
 - **网络**：peer-to-peer ▣、node、full-node、light-client、broadcast、mempool ▣、inv、getdata、version-handshake、best-effort、compact-blocks
 - **激励与挖矿**：incentive、block-subsidy、halving ▣、supply-cap、miner、mining、mining-pool ▣、asic、stratum、getblocktemplate
 - **存储与轻量验证**：merkle-tree ▣、merkle-root、merkle-branch ▣、pruning、spv ▣、bloom-filter、compact-block-filters
@@ -455,12 +455,13 @@ interface SectionContent {
   id: SectionId; number: number; part: 1 | 2 | 3 | 4 | 5 | 6;
   title: L<string>; tldr: L<string>; analogy: L<string>;
   body: L<string[]>;
-  figure: { title: L<string>; steps: L<{ title: string; text: string }[]> };
-  whoRuns: { actor: ActorId; role: L<string>; artifact: { kind: 'rpc' | 'cli' | 'p2p' | 'file' | 'hardware' | 'bip'; label: string; detail: L<string> } }[];
-  sources: SourceId[];
+  figure: { component: string; title: L<string>; steps: L<{ title: string; text: string }[]> };
+  whoRuns: { actor: ActorId; role: L<string>; artifact: { kind: 'rpc' | 'cli' | 'p2p' | 'file' | 'hardware' | 'bip'; label: string; detail: L<string>; snippet?: string } }[];
   paperVsToday: L<string[]>;
 }
 ```
+
+每章的白皮书原文与源码片段各在独立文件（`content/whitepaper/<nn>-<id>.ts`、`content/sources/<nn>-<id>.ts`），与章节内容文件同名，通过 `import.meta.glob` 自动汇集，章节之间不共享索引文件。
 
 ### 部署
 
