@@ -1,0 +1,143 @@
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import type { ReactNode } from 'react';
+import { DEPTHS } from '@/content/types';
+import type { Depth, L, Lang } from '@/content/types';
+
+const LANG_KEY = 'bwe.lang';
+const DEPTH_KEY = 'bwe.depth';
+
+/** What goes on <html lang>. The Chinese is Traditional, Hong Kong usage. */
+export const HTML_LANG: Record<Lang, string> = { en: 'en', zh: 'zh-Hant-HK' };
+
+function parseLang(value: string | null | undefined): Lang | null {
+  if (!value) return null;
+  const tag = value.toLowerCase();
+  if (tag === 'en' || tag.startsWith('en-')) return 'en';
+  if (tag.startsWith('zh')) return 'zh';
+  return null;
+}
+
+function parseDepth(value: string | null | undefined): Depth | null {
+  return DEPTHS.includes(value as Depth) ? (value as Depth) : null;
+}
+
+/** URL `?lang=` wins, then the stored choice, then the browser's preference list. */
+export function resolveInitialLang(input: {
+  search: string;
+  stored: string | null;
+  languages: readonly string[];
+}): Lang {
+  const fromUrl = parseLang(new URLSearchParams(input.search).get('lang'));
+  if (fromUrl) return fromUrl;
+  const fromStore = parseLang(input.stored);
+  if (fromStore) return fromStore;
+  for (const tag of input.languages) {
+    const lang = parseLang(tag);
+    if (lang) return lang;
+  }
+  return 'en';
+}
+
+/** URL `?depth=` wins, then the stored choice; otherwise the middle depth. */
+export function resolveInitialDepth(input: { search: string; stored: string | null }): Depth {
+  return (
+    parseDepth(new URLSearchParams(input.search).get('depth')) ?? parseDepth(input.stored) ?? 'curious'
+  );
+}
+
+// Storage can be unavailable (private windows, blocked cookies). The choice
+// then simply lives in memory for the visit.
+function readStored(key: string): string | null {
+  try {
+    return window.localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function writeStored(key: string, value: string): void {
+  try {
+    window.localStorage.setItem(key, value);
+  } catch {
+    // Nothing to do: the in-memory state already holds the choice.
+  }
+}
+
+export interface Settings {
+  lang: Lang;
+  depth: Depth;
+  setLang(lang: Lang): void;
+  setDepth(depth: Depth): void;
+  /**
+   * Increases each time the reader picks a depth. Collapsible blocks reset to
+   * that depth's defaults when it changes, discarding manual open/close.
+   */
+  depthEpoch: number;
+}
+
+const SettingsContext = createContext<Settings | null>(null);
+
+export function SettingsProvider({
+  children,
+  initialLang,
+  initialDepth,
+}: {
+  children: ReactNode;
+  /** Overrides detection. Used by tests. */
+  initialLang?: Lang;
+  initialDepth?: Depth;
+}) {
+  const [lang, setLangState] = useState<Lang>(
+    () =>
+      initialLang ??
+      resolveInitialLang({
+        search: window.location.search,
+        stored: readStored(LANG_KEY),
+        languages: navigator.languages ?? [navigator.language],
+      }),
+  );
+  const [depth, setDepthState] = useState<Depth>(
+    () =>
+      initialDepth ??
+      resolveInitialDepth({ search: window.location.search, stored: readStored(DEPTH_KEY) }),
+  );
+  const [depthEpoch, setDepthEpoch] = useState(0);
+
+  useEffect(() => {
+    document.documentElement.lang = HTML_LANG[lang];
+  }, [lang]);
+
+  const setLang = useCallback((next: Lang) => {
+    setLangState(next);
+    writeStored(LANG_KEY, next);
+  }, []);
+
+  const setDepth = useCallback((next: Depth) => {
+    setDepthState(next);
+    setDepthEpoch((epoch) => epoch + 1);
+    writeStored(DEPTH_KEY, next);
+  }, []);
+
+  const value = useMemo<Settings>(
+    () => ({ lang, depth, setLang, setDepth, depthEpoch }),
+    [lang, depth, setLang, setDepth, depthEpoch],
+  );
+
+  return <SettingsContext.Provider value={value}>{children}</SettingsContext.Provider>;
+}
+
+export function useSettings(): Settings {
+  const settings = useContext(SettingsContext);
+  if (!settings) throw new Error('useSettings must be used inside <SettingsProvider>');
+  return settings;
+}
+
+export function pick<T>(value: L<T>, lang: Lang): T {
+  return value[lang];
+}
+
+/** Returns a function that picks the current language out of an `L<T>`. */
+export function useT(): <T>(value: L<T>) => T {
+  const { lang } = useSettings();
+  return useCallback(<T,>(value: L<T>) => value[lang], [lang]);
+}
