@@ -23,16 +23,19 @@ export interface HexViewProps {
 const hex = (byte: number) => byte.toString(16).padStart(2, '0');
 
 /**
- * Raw bytes with their fields told apart by alternating tints. Hovering or
- * focusing a field reports it, so a legend beside the view can follow along.
+ * Raw bytes with their fields told apart by alternating tints. Hovering,
+ * tapping or focusing a field reports it, so a legend beside the view can
+ * follow along. To assistive technology it is a list of named fields; the
+ * bytes themselves are not read out one by one.
  */
 export function HexView({ bytes, segments, active = null, onActive, perRow = 16, className }: HexViewProps) {
   return (
-    <div className={cx('hexview mono', className)} style={{ ['--per-row' as string]: perRow }} role="group">
+    <div className={cx('hexview mono', className)} style={{ ['--per-row' as string]: perRow }} role="list">
       {segments.map((segment, index) => (
         <span
           key={`${segment.name}-${segment.start}`}
           className="hex-seg"
+          role="listitem"
           data-tint={index % 4}
           data-active={active === segment.name}
           tabIndex={onActive ? 0 : undefined}
