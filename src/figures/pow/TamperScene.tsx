@@ -8,7 +8,7 @@ import { GENESIS_HASH } from '@/lib/header';
 import { COPY, fill } from './copy';
 import { TOY_TARGET, buildChain, chainProblems, editBlock, headerOf } from './toyChain';
 import type { ToyBlock } from './toyChain';
-import { useMiner } from './useMiner';
+import { useMiner } from '@/state/useMiner';
 
 /** Slow the repair down so its cost can be watched. */
 const REPAIR_RATE = 700;

@@ -6,7 +6,7 @@ import { useT } from '@/i18n/settings';
 import { leadingZeroBits, targetToHex } from '@/lib/header';
 import { BLOCK_1, expectedTries, toyTarget } from './blocks';
 import { COPY, fill } from './copy';
-import { useMiner } from './useMiner';
+import { useMiner } from '@/state/useMiner';
 
 type FieldKey = keyof typeof COPY.fields;
 

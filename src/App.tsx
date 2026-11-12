@@ -1,4 +1,5 @@
 import { Fragment, useEffect, useLayoutEffect } from 'react';
+import { Hero } from '@/components/site/Hero';
 import { PartDivider } from '@/components/site/PartDivider';
 import { SectionShell } from '@/components/site/SectionShell';
 import { TopBar } from '@/components/site/TopBar';
@@ -31,6 +32,7 @@ function Page() {
     <>
       <TopBar />
       <main id="top">
+        <Hero />
         {PARTS.map((part) => {
           const sections = part.sections.map(sectionByNumber).filter((section) => section !== undefined);
           if (sections.length === 0) return null;

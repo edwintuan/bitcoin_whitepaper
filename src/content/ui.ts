@@ -107,6 +107,42 @@ export const UI = {
     open: { en: 'What is this?', zh: '這是甚麼？' },
   },
 
+  hero: {
+    kickerLeft: {
+      en: 'Satoshi Nakamoto · 2008 · explained block by block',
+      zh: '中本聰 · 2008 · 逐塊拆解',
+    },
+    kickerRight: { en: '9 pages · 12 sections · real SHA-256', zh: '9 頁 · 12 章 · 真實 SHA-256' },
+    /** The paper's title in three parts; the middle one is set in cream. */
+    title: {
+      en: ['Bitcoin: A Peer-to-Peer ', 'Electronic Cash', ' System'],
+      zh: ['比特幣：一種點對點的', '電子現金', '系統'],
+    } as L<readonly [string, string, string]>,
+    lede: {
+      en: 'The nine-page paper that started Bitcoin, taken apart section by section. Nothing here is a recording: every hash, signature and block on this page is computed in your browser as you read.',
+      zh: '催生比特幣的九頁白皮書，逐章拆解。這裏沒有預錄的動畫：頁面上每一個哈希、每一個簽署、每一個區塊，都是你閱讀時在瀏覽器裏即場算出來的。',
+    },
+    start: { en: 'Start reading', zh: '開始閱讀' },
+    chainLabel: {
+      en: 'A chain of blocks being mined in this page with real double SHA-256.',
+      zh: '本頁正以真實的雙重 SHA-256 挖出的一條區塊鏈。',
+    },
+    mining: {
+      en: 'Mining block {height}: its hash must begin with {bits} zero bits. {tried} tries so far, {rate} a second.',
+      zh: '正在挖第 {height} 號區塊：其哈希須以 {bits} 個零位元開頭。已試 {tried} 次，每秒 {rate} 次。',
+    },
+    found: {
+      en: 'Block {height} found after {tried} tries. Checking it takes one.',
+      zh: '第 {height} 號區塊找到了，共試 {tried} 次；要驗證它，一次就夠。',
+    },
+    pausedNote: { en: 'Mining paused.', zh: '挖礦已暫停。' },
+    pause: { en: 'Pause mining', zh: '暫停挖礦' },
+    resume: { en: 'Resume mining', zh: '繼續挖礦' },
+    conf: { en: 'conf', zh: '確認' },
+    miningShort: { en: 'mining…', zh: '挖礦中…' },
+    foundShort: { en: 'found', zh: '已找到' },
+  },
+
   copied: { en: 'Copied', zh: '已複製' },
   copy: { en: 'Copy', zh: '複製' },
   valid: { en: 'Valid', zh: '有效' },
