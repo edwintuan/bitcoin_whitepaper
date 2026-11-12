@@ -132,7 +132,8 @@ export function SegmentedControlItem({
       className={(state) =>
         cx(
           "t-tab label relative z-10 inline-flex cursor-pointer items-center justify-center px-2.5 py-1.5 text-center whitespace-nowrap",
-          "outline-none focus-visible:ring-2 focus-visible:ring-border-focus-ring",
+          // Focus ring: `.seg-item:focus-visible` in styles/poster.css.
+          "seg-item",
           state.isSelected
             ? "text-(color:--seg-on)"
             : "text-(color:--seg-off)",

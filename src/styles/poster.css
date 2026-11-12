@@ -181,6 +181,10 @@
   .on-ink:focus-visible {
     outline-color: var(--color-orange);
   }
+  /* The selected segment sits on an ink pill, where an ink ring cannot be seen. */
+  .seg-item:focus-visible {
+    outline-color: var(--color-orange);
+  }
   button {
     font: inherit;
     color: inherit;
@@ -396,10 +400,11 @@
     letter-spacing: 0.08em;
     padding-block: 6px;
   }
-  .btn:hover:not(:disabled) {
+  /* A button that would disable itself when pressed uses aria-disabled instead, so it keeps the focus. */
+  .btn:hover:not(:disabled, [aria-disabled='true']) {
     background: #ffa63a;
   }
-  .btn:active:not(:disabled) {
+  .btn:active:not(:disabled, [aria-disabled='true']) {
     transform: scale(var(--scale-small));
   }
   .btn:disabled,
@@ -413,13 +418,13 @@
     background: var(--color-ink);
     color: var(--color-cream);
   }
-  .btn-dark:hover:not(:disabled) {
+  .btn-dark:hover:not(:disabled, [aria-disabled='true']) {
     background: var(--color-ink-2);
   }
   .btn-line {
     background: transparent;
   }
-  .btn-line:hover:not(:disabled) {
+  .btn-line:hover:not(:disabled, [aria-disabled='true']) {
     background: var(--color-cream-2);
   }
   .btn-sm {
@@ -438,7 +443,7 @@
   .on-ink .btn-line {
     color: var(--color-cream);
   }
-  .on-ink .btn-line:hover:not(:disabled) {
+  .on-ink .btn-line:hover:not(:disabled, [aria-disabled='true']) {
     background: var(--color-ink-2);
   }
 

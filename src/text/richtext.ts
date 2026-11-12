@@ -6,6 +6,7 @@
  *   {§4}  {§4|words}       a link to a section of the paper (0 = Abstract)
  *   **strong**  *em*  `code`
  *   [words](https://…)     an external link
+ *   [words](#anchor)       a link to a place on this page
  *
  * Markers do not nest. Anything malformed is left as plain text, so a typo in
  * the copy shows up on the page instead of breaking it.
@@ -25,7 +26,7 @@ const MARKER = new RegExp(
     String.raw`\*\*([^*]+)\*\*`, // 5 strong
     String.raw`\*([^*\s](?:[^*]*[^*\s])?)\*`, // 6 em: no space just inside the stars
     '`([^`]+)`', // 7 code
-    String.raw`\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)`, // 8 text, 9 href
+    String.raw`\[([^\]]+)\]\((https?:\/\/[^\s)]+|#[a-z0-9]+(?:-[a-z0-9]+)*)\)`, // 8 text, 9 href
   ].join('|'),
   'g',
 );

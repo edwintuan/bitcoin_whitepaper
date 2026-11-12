@@ -1,4 +1,4 @@
-import { Component, Suspense, createContext, lazy, useCallback, useContext, useMemo, useRef, useState } from 'react';
+import { Component, Suspense, createContext, lazy, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import type { ComponentType, LazyExoticComponent, ReactNode } from 'react';
 import type { SectionContent } from '@/content/types';
 import { UI } from '@/content/ui';
@@ -86,6 +86,17 @@ export function FigureFrame({ section }: { section: SectionContent }) {
     [steps.length],
   );
 
+  // Leaving the walkthrough, or replaying it, replaces the button the reader
+  // has just pressed. This says where the keyboard focus goes instead.
+  const replayButton = useRef<HTMLButtonElement>(null);
+  const forwardButton = useRef<HTMLButtonElement>(null);
+  const focusAfter = useRef<'replay' | 'forward' | null>(null);
+  useEffect(() => {
+    if (focusAfter.current === 'replay') replayButton.current?.focus();
+    if (focusAfter.current === 'forward') forwardButton.current?.focus();
+    focusAfter.current = null;
+  }, [step]);
+
   const api = useMemo<FigureApi>(
     () => ({ step, total: steps.length, goTo, active: onScreen && pageVisible, reducedMotion }),
     [step, steps.length, goTo, onScreen, pageVisible, reducedMotion],
@@ -125,22 +136,46 @@ export function FigureFrame({ section }: { section: SectionContent }) {
                 </p>
               </div>
               <div className="figure-step-nav">
-                <button type="button" className="btn btn-sm btn-line" onClick={() => goTo(step - 1)} disabled={step === 0}>
+                {/* aria-disabled, not disabled: a button that disables itself when pressed loses the focus. */}
+                <button
+                  type="button"
+                  className="btn btn-sm btn-line"
+                  aria-disabled={step === 0}
+                  onClick={() => {
+                    if (step > 0) goTo(step - 1);
+                  }}
+                >
                   {t(UI.stepPrev)}
                 </button>
                 {step < steps.length - 1 ? (
-                  <button type="button" className="btn btn-sm btn-dark" onClick={() => goTo(step + 1)}>
+                  <button ref={forwardButton} type="button" className="btn btn-sm btn-dark" onClick={() => goTo(step + 1)}>
                     {t(UI.stepNext)}
                   </button>
                 ) : (
-                  <button type="button" className="btn btn-sm btn-dark" onClick={() => goTo(null)}>
+                  <button
+                    ref={forwardButton}
+                    type="button"
+                    className="btn btn-sm btn-dark"
+                    onClick={() => {
+                      focusAfter.current = 'replay';
+                      goTo(null);
+                    }}
+                  >
                     {t(UI.stepSkip)}
                   </button>
                 )}
               </div>
             </>
           ) : (
-            <button type="button" className="figure-replay label" onClick={() => goTo(0)}>
+            <button
+              ref={replayButton}
+              type="button"
+              className="figure-replay label"
+              onClick={() => {
+                focusAfter.current = 'forward';
+                goTo(0);
+              }}
+            >
               {t(UI.stepRestart)}
             </button>
           )}

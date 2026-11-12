@@ -106,3 +106,18 @@ describe('plainRich', () => {
     expect(plainRich('{§11|the calculations}', nameOf)).toBe('the calculations');
   });
 });
+
+describe('links inside the page', () => {
+  it('reads [words](#anchor) as a link to a place on this page', () => {
+    expect(parseRich('See [Appendix A](#engineering-map) for all of them.')).toEqual([
+      { type: 'text', text: 'See ' },
+      { type: 'link', text: 'Appendix A', href: '#engineering-map' },
+      { type: 'text', text: ' for all of them.' },
+    ]);
+  });
+  it('still reads an external link, and leaves anything else as text', () => {
+    expect(parseRich('[BIP 32](https://example.org/bip-0032)')).toEqual([{ type: 'link', text: 'BIP 32', href: 'https://example.org/bip-0032' }]);
+    expect(parseRich('[x](javascript:alert(1))')).toEqual([{ type: 'text', text: '[x](javascript:alert(1))' }]);
+    expect(parseRich('[x](#Not An Anchor)')).toEqual([{ type: 'text', text: '[x](#Not An Anchor)' }]);
+  });
+});

@@ -1233,7 +1233,7 @@ const PRIVACY: Entry[] = [
     },
     precise: {
       en: "The protection ends once a key is tied to a person, for example by an exchange’s identity checks: analysis can then follow the links between transactions, a risk that section 10 of the paper notes.",
-      zh: '一旦某把密鑰與真人身份扯上關係（例如經交易所的身份核實），這層保護便告失效，分析者可順着交易之間的關連追查下去；白皮書第 10 章已提到這個風險。',
+      zh: '一旦某把密鑰與真人身份扯上關係（例如經交易所的身份核實），這層保護便告失效，分析者可順着交易之間的關聯追查下去；白皮書第 10 章已提到這個風險。',
     },
     sections: [10],
     related: ['address-reuse', 'common-input-heuristic', 'public-key', 'hd-wallet'],
@@ -1263,7 +1263,7 @@ const PRIVACY: Entry[] = [
     },
     precise: {
       en: 'Section 10 of the paper concedes this leak for multi-input transactions; transactions built jointly by several parties, such as CoinJoin, deliberately break the assumption.',
-      zh: '白皮書第 10 章已承認多輸入交易會洩露這種關連；由多方合力組成的交易（例如 CoinJoin）則刻意打破這個假定。',
+      zh: '白皮書第 10 章已承認多輸入交易會洩露這種關聯；由多方合力組成的交易（例如 CoinJoin）則刻意打破這個假定。',
     },
     sections: [10],
     related: ['input', 'pseudonymity', 'address-reuse', 'coin-selection'],

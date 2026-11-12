@@ -13,6 +13,13 @@ describe('findZhProblems', () => {
     expect(findZhProblems('軟體與硬體')).toEqual(['「軟體」→「軟件」', '「硬體」→「硬件」']);
   });
 
+  it('keeps to one spelling where Hong Kong writing has two', () => {
+    // The site writes 賬 for accounts and 關聯 for a link between things, as the paper's translation does.
+    expect(findZhProblems('銀行帳戶')).toEqual(['「帳戶」→「賬戶」']);
+    expect(findZhProblems('兩筆交易之間的關連')).toEqual(['「關連」→「關聯」']);
+    expect(findZhProblems('賬戶之間的關聯')).toEqual([]);
+  });
+
   it('flags simplified characters', () => {
     expect(findZhProblems('这个区块')).toEqual(['simplified: 这个区块']);
     expect(findZhProblems('驗證簽名')).toEqual([]);

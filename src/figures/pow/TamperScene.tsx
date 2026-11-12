@@ -82,6 +82,9 @@ export function TamperScene() {
     setChain(buildChain(samples));
   };
 
+  const canRepair = broken > 0 && repairing === null;
+  const canStartOver = touched || repairing !== null;
+
   const message =
     repairing !== null
       ? null
@@ -146,10 +149,25 @@ export function TamperScene() {
       </ChainRow>
 
       <div className="fig-row">
-        <button type="button" className="btn" onClick={() => repairFrom(firstBroken)} disabled={broken === 0 || repairing !== null}>
+        {/* aria-disabled, not disabled: both buttons change state when pressed and would lose the focus. */}
+        <button
+          type="button"
+          className="btn"
+          aria-disabled={!canRepair}
+          onClick={() => {
+            if (canRepair) repairFrom(firstBroken);
+          }}
+        >
           {t(COPY.repair)}
         </button>
-        <button type="button" className="btn btn-line btn-sm" onClick={startOver} disabled={!touched && repairing === null}>
+        <button
+          type="button"
+          className="btn btn-line btn-sm"
+          aria-disabled={!canStartOver}
+          onClick={() => {
+            if (canStartOver) startOver();
+          }}
+        >
           {t(COPY.startOver)}
         </button>
         <dl className="pow-live mono">

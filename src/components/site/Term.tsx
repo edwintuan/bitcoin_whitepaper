@@ -38,7 +38,7 @@ export function Term({ id, label }: { id: string; label?: string }) {
     return (
       <>
         <Pressable onPress={() => setOpen(true)}>
-          <span role="button" className="kw" aria-haspopup="dialog" aria-expanded={open}>
+          <span role="button" tabIndex={0} className="kw" aria-haspopup="dialog" aria-expanded={open}>
             {text}
           </span>
         </Pressable>
@@ -51,7 +51,7 @@ export function Term({ id, label }: { id: string; label?: string }) {
 
   return (
     <PopoverTrigger isOpen={open} onOpenChange={onOpenChange}>
-      <span role="button" className="kw">
+      <span role="button" tabIndex={0} className="kw">
         {text}
       </span>
       <Popover placement="bottom start" offset={6} aria-label={shownName} className="term-pop" dialogClassName="term-dialog">

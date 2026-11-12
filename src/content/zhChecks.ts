@@ -28,6 +28,11 @@ const PREFERRED: [avoid: string, use: string][] = [
   ['通貨膨脹', '通脹'],
   ['商家', '商戶'],
   ['品質', '質素'],
+  // Hong Kong writing has both forms of these; the site keeps to the one the paper's translation uses.
+  ['帳戶', '賬戶'],
+  ['帳目', '賬目'],
+  ['記帳', '記賬'],
+  ['關連', '關聯'],
 ];
 
 /** Characters that exist only in Simplified Chinese. A sample, not the full set. */

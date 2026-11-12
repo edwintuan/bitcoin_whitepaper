@@ -36,7 +36,12 @@ export function Rich({ text }: { text: string }) {
               </code>
             );
           case 'link':
-            return (
+            // A link to a place on this page stays in this tab.
+            return token.href.startsWith('#') ? (
+              <a key={index} className="link" href={token.href}>
+                {token.text}
+              </a>
+            ) : (
               <a key={index} className="link" href={token.href} target="_blank" rel="noreferrer noopener">
                 {token.text}
               </a>
@@ -53,7 +58,7 @@ export function Rich({ text }: { text: string }) {
               // A span, for the same reason as in Term: it must wrap and punctuate like the text around it.
               return (
                 <Pressable key={index} onPress={() => navigate(token.id)}>
-                  <span role="button" className="kw-in">
+                  <span role="button" tabIndex={0} className="kw-in">
                     {token.label ?? t(def.name)}
                   </span>
                 </Pressable>
