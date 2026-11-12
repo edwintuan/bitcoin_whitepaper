@@ -6,3 +6,4 @@ coverage/
 *.local
 *.log
 .vite/
+reference/
