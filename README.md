@@ -139,3 +139,15 @@ See `docs/authoring.md`. Section 4 (Proof-of-Work) is the reference.
 
 Keys and addresses generated in the page are for demonstration only. Never
 send funds to them.
+
+## Support
+
+The site is free, has no ads and tracks nothing. If it helped you, a tip to any
+of these addresses keeps it going. Compare the first and last few characters
+after pasting: a payment to a wrong address cannot be undone.
+
+| Network | Address |
+| --- | --- |
+| Bitcoin | `bc1qfl9phz8p4capyd2ewz0w4u3s0wgu05kwv2cya6` |
+| Ethereum and any EVM chain | `0x7E9620a4bAB85aED025b8c8d6277834084b0D261` |
+| TRON | `TYR5uQCUpk2MztNWQgBP9E9BKNUVgdLvFr` |

@@ -1,4 +1,5 @@
 import { BrandMark } from './BrandMark';
+import { Support } from './Support';
 import { REFERENCES, WHITEPAPER_META } from '@/content/references';
 import { UI } from '@/content/ui';
 import { useT } from '@/i18n/settings';
@@ -52,6 +53,7 @@ export function References() {
               {t(a.paperLink)} <span aria-hidden="true">↗</span>
             </a>
           </p>
+          <Support />
         </div>
       </div>
     </section>

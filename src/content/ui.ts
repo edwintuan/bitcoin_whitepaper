@@ -197,6 +197,26 @@ export const UI = {
     paperLink: { en: 'Read the original PDF', zh: '閱讀原始 PDF' },
   },
 
+  support: {
+    title: { en: 'Support this project', zh: '支持這個項目' },
+    note: {
+      en: 'This site is free, has no ads and tracks nothing. If it helped you, a tip to any of these addresses keeps it going.',
+      zh: '本站免費，沒有廣告，亦不追蹤讀者。若對你有幫助，歡迎向以下任何一個地址捐助，支持本站繼續運作。',
+    },
+    networks: {
+      bitcoin: { en: 'Bitcoin', zh: 'Bitcoin' },
+      evm: { en: 'Ethereum and any EVM chain', zh: '以太坊及任何 EVM 鏈' },
+      tron: { en: 'TRON', zh: 'TRON' },
+    },
+    copy: { en: 'Copy', zh: '複製' },
+    copied: { en: 'Copied', zh: '已複製' },
+    copyLabel: { en: 'Copy the {name} address', zh: '複製 {name} 地址' },
+    check: {
+      en: 'After pasting, compare the first and last few characters with what is shown here. A payment to a wrong address cannot be undone.',
+      zh: '貼上後，請核對開頭和結尾幾個字元是否與這裏顯示的一致。付款一旦發往錯誤地址，便無法撤回。',
+    },
+  },
+
   demoKeysWarning: {
     en: 'Keys made on this page are for demonstration. Never send real funds to them.',
     zh: '本頁生成的密鑰僅供示範，切勿向其轉入真實資金。',
