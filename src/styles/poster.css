@@ -199,6 +199,14 @@
     outline-color: var(--color-orange);
   }
   /*
+   * A dark block that takes focus itself (a code listing that scrolls) sits on
+   * the light page. A ring outside it would be orange on cream, about 2:1, so
+   * the ring is drawn inside, on the block's own dark ground.
+   */
+  .on-ink:focus-visible {
+    outline-offset: -3px;
+  }
+  /*
    * On a control the ring has the last word. Figure styles are not in a
    * cascade layer, so an outline they draw on a button (to point at it during
    * a walkthrough, say) would otherwise replace the ring and hide the focus.

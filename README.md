@@ -93,6 +93,8 @@ scripts/
   subset-fonts.mjs      cut the Chinese fonts down to the characters in use
   shots.mjs             drive the installed Chrome and save screenshots
   layout-audit.mjs      measure every chapter for clipped, tiny or faint text
+  a11y-audit.mjs        check names, focus rings and press targets in a browser
+  hans.mjs              write the table behind the Simplified Chinese edition
 docs/
   authoring.md          how to write a chapter, a figure or a term visual
   superpowers/          the design spec and the implementation plan

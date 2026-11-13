@@ -635,3 +635,8 @@
     animation: none;
   }
 }
+
+/* The switch's label is what a finger presses: 24px at least. */
+.net-transport label {
+  min-height: 24px;
+}
